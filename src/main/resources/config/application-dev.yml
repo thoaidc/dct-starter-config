@@ -21,3 +21,12 @@ logging:
     file: UTF-8
   # Custom properties to define logs file paths according to different profiles
   file-path: mnt/logs
+
+dct-base:
+  security:
+    auth:
+      enabled-tls: false
+      base64-secret-key: ZGN0LWJhc2Utc2VjcmV0LWtleS10b2tlbi12YWxpZGl0eS04NjQwMDAwMG1zLWZvci1yZW1lbWJlci1tZS04NjQwMDAwMG1z
+      # Token is valid default in 1 hour and 7 days for remember me
+      token-validity: 3600000 # milliseconds
+      token-validity-for-remember-me: 604800000 # milliseconds

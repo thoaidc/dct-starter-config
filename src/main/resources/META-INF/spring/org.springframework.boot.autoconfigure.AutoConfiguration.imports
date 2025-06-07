@@ -1,0 +1,2 @@
+com.dct.base.autoconfig.JwtAutoConfiguration
+com.dct.base.autoconfig.LocaleAutoConfiguration
