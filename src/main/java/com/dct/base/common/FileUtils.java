@@ -6,7 +6,6 @@ import com.dct.base.dto.upload.ImageDTO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.scheduling.annotation.Async;
-import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -27,7 +26,6 @@ import java.util.Objects;
  * Provides methods for storing files, compressing images automatically
  * @author thoaidc
  */
-@Service
 @SuppressWarnings("unused")
 public class FileUtils {
 
