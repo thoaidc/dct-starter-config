@@ -4,6 +4,8 @@ import com.dct.base.common.MessageTranslationUtils;
 import com.dct.base.constants.BaseSecurityConstants;
 import com.dct.base.interceptor.BaseResponseFilter;
 import com.dct.base.interceptor.DefaultBaseResponseFilter;
+import com.dct.base.security.config.BaseCorsRequestMatchersConfig;
+import com.dct.base.security.config.DefaultBaseCorsRequestMatchersConfig;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -13,8 +15,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
-
-import java.util.List;
 
 @AutoConfiguration
 public class InterceptorAutoConfiguration {
@@ -29,6 +29,13 @@ public class InterceptorAutoConfiguration {
         return new DefaultBaseResponseFilter(messageTranslationUtils);
     }
 
+    @Bean
+    @ConditionalOnMissingBean(BaseCorsRequestMatchersConfig.class)
+    public BaseCorsRequestMatchersConfig defaultBaseCorsRequestMatchersConfig() {
+        log.debug("[{}] - Use default CORS request matchers configuration", ENTITY_NAME);
+        return new DefaultBaseCorsRequestMatchersConfig();
+    }
+
     /**
      * Configures the CORS (Cross-Origin Resource Sharing) filter in the application <p>
      * CORS is a security mechanism that allows or denies requests between different origins <p>
@@ -36,16 +43,19 @@ public class InterceptorAutoConfiguration {
      */
     @Bean
     @ConditionalOnMissingBean(CorsFilter.class)
-    public CorsFilter defaultCorsFilter() {
+    public CorsFilter defaultCorsFilter(BaseCorsRequestMatchersConfig corsRequestMatchersConfig) {
         log.debug("[{}] - Auto configure default CORS filter", ENTITY_NAME);
         CorsConfiguration config = new CorsConfiguration();
-        config.setAllowedOriginPatterns(List.of(BaseSecurityConstants.CORS.ALLOWED_ORIGIN_PATTERNS));
-        config.setAllowedHeaders(List.of(BaseSecurityConstants.CORS.ALLOWED_HEADERS));
-        config.setAllowedMethods(List.of(BaseSecurityConstants.CORS.ALLOWED_REQUEST_METHODS));
-        config.setAllowCredentials(BaseSecurityConstants.CORS.ALLOW_CREDENTIALS);
-
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        source.registerCorsConfiguration(BaseSecurityConstants.CORS.APPLY_FOR, config);
+
+        config.setAllowedOriginPatterns(corsRequestMatchersConfig.getAllowedOriginPatterns());
+        config.setAllowedHeaders(corsRequestMatchersConfig.getAllowedHeaders());
+        config.setAllowedMethods(corsRequestMatchersConfig.getAllowedMethods());
+        config.setAllowCredentials(corsRequestMatchersConfig.isAllowCredentials());
+
+        for (String pattern : corsRequestMatchersConfig.applyFor()) {
+            source.registerCorsConfiguration(pattern, config);
+        }
 
         return new CorsFilter(source);
     }

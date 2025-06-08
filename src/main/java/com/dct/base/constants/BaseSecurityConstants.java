@@ -4,7 +4,6 @@ import com.dct.base.dto.auth.BaseAuthTokenDTO;
 import com.dct.base.security.config.BaseSecurityFilterChain;
 import com.dct.base.autoconfig.InterceptorAutoConfiguration;
 
-@SuppressWarnings("unused")
 public interface BaseSecurityConstants {
 
     // The encryption complexity in PasswordEncoder's algorithm (between 4 and 31)
@@ -83,11 +82,11 @@ public interface BaseSecurityConstants {
     }
 
     /**
-     * The configurations applied in the CORS filter in {@link InterceptorAutoConfiguration#defaultCorsFilter()}
+     * The configurations applied in the CORS filter in {@link InterceptorAutoConfiguration#defaultCorsFilter}
      */
     interface CORS {
-        String APPLY_FOR = "/**"; // CORS filter is applied to all requests
-        String[] ALLOWED_HEADERS = {
+        String DEFAULT_APPLY_FOR = "/**"; // CORS filter is applied to all requests
+        String[] DEFAULT_ALLOWED_HEADERS = {
                 "Content-Type",     // Content format
                 "Authorization",    // Authentication token
                 "Accept",           // Client-expected content
@@ -99,8 +98,8 @@ public interface BaseSecurityConstants {
                 "X-Device-ID"       // Device ID (optional)
         };
 
-        String[] ALLOWED_REQUEST_METHODS = {"GET", "PUT", "POST", "DELETE"};
-        String[] ALLOWED_ORIGIN_PATTERNS = {"*"}; // The list of domains allowed to access the resources. * means all
-        boolean ALLOW_CREDENTIALS = true; // Allow sending cookies or authentication information
+        String[] DEFAULT_ALLOWED_REQUEST_METHODS = {"GET", "PUT", "POST", "DELETE"};
+        String[] DEFAULT_ALLOWED_ORIGIN_PATTERNS = {"*"}; // The list of domains allowed to access the resources. * means all
+        boolean DEFAULT_ALLOW_CREDENTIALS = true; // Allow sending cookies or authentication information
     }
 }

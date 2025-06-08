@@ -4,7 +4,6 @@ package com.dct.base.constants;
  * Contains the common configuration constants for the project without security configurations
  * @author thoaidc
  */
-@SuppressWarnings("unused")
 public interface BaseCommonConstants {
 
     // The location where the resource bundle files for i18n messages are stored
