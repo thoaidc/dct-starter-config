@@ -9,9 +9,9 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
         org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration.class
     }
 )
-public class DctBaseApplication {
+public class DctBaseStarterApplication {
 
     public static void main(String[] args) {
-        SpringApplication.run(DctBaseApplication.class, args);
+        SpringApplication.run(DctBaseStarterApplication.class, args);
     }
 }
