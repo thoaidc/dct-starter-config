@@ -1,8 +1,8 @@
 package com.dct.base.security.jwt;
 
 import com.dct.base.config.properties.SecurityProps;
-import com.dct.base.constants.ExceptionConstants;
-import com.dct.base.constants.SecurityConstants;
+import com.dct.base.constants.BaseExceptionConstants;
+import com.dct.base.constants.BaseSecurityConstants;
 import com.dct.base.dto.auth.BaseAuthTokenDTO;
 import com.dct.base.exception.BaseAuthenticationException;
 import com.dct.base.exception.BaseBadRequestException;
@@ -57,9 +57,9 @@ public class DefaultJwtProvider extends BaseJwtProvider {
 
         return Jwts.builder()
                 .subject(authTokenDTO.getAuthentication().getName())
-                .claim(SecurityConstants.TOKEN_PAYLOAD.USER_ID, authTokenDTO.getUserId())
-                .claim(SecurityConstants.TOKEN_PAYLOAD.USERNAME, authTokenDTO.getUsername())
-                .claim(SecurityConstants.TOKEN_PAYLOAD.AUTHORITIES, String.join(",", userAuthorities))
+                .claim(BaseSecurityConstants.TOKEN_PAYLOAD.USER_ID, authTokenDTO.getUserId())
+                .claim(BaseSecurityConstants.TOKEN_PAYLOAD.USERNAME, authTokenDTO.getUsername())
+                .claim(BaseSecurityConstants.TOKEN_PAYLOAD.AUTHORITIES, String.join(",", userAuthorities))
                 .signWith(secretKey)
                 .issuedAt(new Date())
                 .expiration(new Date(validityInMilliseconds))
@@ -71,7 +71,7 @@ public class DefaultJwtProvider extends BaseJwtProvider {
         log.debug("[{}] - Validate token by default config", ENTITY_NAME);
 
         if (!StringUtils.hasText(token))
-            throw new BaseBadRequestException(ENTITY_NAME, ExceptionConstants.BAD_CREDENTIALS);
+            throw new BaseBadRequestException(ENTITY_NAME, BaseExceptionConstants.BAD_CREDENTIALS);
 
         try {
             return getAuthentication(token);
@@ -87,16 +87,16 @@ public class DefaultJwtProvider extends BaseJwtProvider {
             log.error("[{}] - Invalid JWT string (null, empty,...): {}", ENTITY_NAME, e.getMessage());
         }
 
-        throw new BaseAuthenticationException(ENTITY_NAME, ExceptionConstants.TOKEN_INVALID_OR_EXPIRED);
+        throw new BaseAuthenticationException(ENTITY_NAME, BaseExceptionConstants.TOKEN_INVALID_OR_EXPIRED);
     }
 
     @Override
     public Authentication getAuthentication(String token) {
         Claims claims = (Claims) jwtParser.parse(token).getPayload();
-        String authorities = (String) claims.get(SecurityConstants.TOKEN_PAYLOAD.AUTHORITIES);
+        String authorities = (String) claims.get(BaseSecurityConstants.TOKEN_PAYLOAD.AUTHORITIES);
 
         if (!StringUtils.hasText(authorities)) {
-            throw new BaseAuthenticationException(ENTITY_NAME, ExceptionConstants.FORBIDDEN);
+            throw new BaseAuthenticationException(ENTITY_NAME, BaseExceptionConstants.FORBIDDEN);
         }
 
         Collection<SimpleGrantedAuthority> userAuthorities = Arrays.stream(authorities.split(","))

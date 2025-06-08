@@ -3,7 +3,7 @@ package com.dct.base.constants;
 import com.dct.base.dto.auth.BaseAuthTokenDTO;
 
 @SuppressWarnings("unused")
-public interface SecurityConstants {
+public interface BaseSecurityConstants {
 
     /**
      * The corresponding keys to store information in the payload of a JWT token <p>

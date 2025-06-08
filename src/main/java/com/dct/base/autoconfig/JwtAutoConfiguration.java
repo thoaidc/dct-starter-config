@@ -4,7 +4,7 @@ import com.dct.base.aop.BaseCheckAuthorizeAspect;
 import com.dct.base.aop.DefaultCheckAuthorizeAspect;
 import com.dct.base.common.MessageTranslationUtils;
 import com.dct.base.config.properties.SecurityProps;
-import com.dct.base.constants.PropertiesConstants;
+import com.dct.base.constants.BasePropertiesConstants;
 import com.dct.base.security.jwt.BaseJwtFilter;
 import com.dct.base.security.jwt.BaseJwtProvider;
 import com.dct.base.security.jwt.DefaultJwtFilter;
@@ -19,7 +19,7 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.annotation.Bean;
 
 @AutoConfiguration
-@ConditionalOnProperty(prefix = PropertiesConstants.SECURITY_CONFIG, name = PropertiesConstants.SECRET_KEY_PROPERTY)
+@ConditionalOnProperty(prefix = BasePropertiesConstants.SECURITY_CONFIG, name = BasePropertiesConstants.SECRET_KEY_PROPERTY)
 @EnableConfigurationProperties(SecurityProps.class)
 public class JwtAutoConfiguration {
 

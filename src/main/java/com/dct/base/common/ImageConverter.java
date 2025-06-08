@@ -1,6 +1,6 @@
 package com.dct.base.common;
 
-import com.dct.base.constants.CommonConstants;
+import com.dct.base.constants.BaseCommonConstants;
 import com.dct.base.dto.upload.ImageDTO;
 import com.dct.base.dto.upload.ImageParameterDTO;
 
@@ -43,11 +43,11 @@ public class ImageConverter {
     }
 
     public static boolean isValidImageFormat(MultipartFile file) {
-        return isValidImageFormat(file, CommonConstants.UPLOAD_RESOURCES.VALID_IMAGE_FORMATS);
+        return isValidImageFormat(file, BaseCommonConstants.UPLOAD_RESOURCES.VALID_IMAGE_FORMATS);
     }
 
     public static boolean isCompressibleImage(MultipartFile file) {
-        return isValidImageFormat(file, CommonConstants.UPLOAD_RESOURCES.COMPRESSIBLE_IMAGE_FORMATS);
+        return isValidImageFormat(file, BaseCommonConstants.UPLOAD_RESOURCES.COMPRESSIBLE_IMAGE_FORMATS);
     }
 
     public static ImageDTO compressImage(MultipartFile image) throws IOException {
@@ -62,10 +62,10 @@ public class ImageConverter {
             return null;
 
         File compressedImage = switch (imageParameterDTO.getImageType()) {
-            case CommonConstants.UPLOAD_RESOURCES.PNG,
-                 CommonConstants.UPLOAD_RESOURCES.WEBP -> webpLossyCompression(imageParameterDTO);
-            case CommonConstants.UPLOAD_RESOURCES.JPEG,
-                 CommonConstants.UPLOAD_RESOURCES.JPG -> jpegLossyCompression(imageParameterDTO);
+            case BaseCommonConstants.UPLOAD_RESOURCES.PNG,
+                 BaseCommonConstants.UPLOAD_RESOURCES.WEBP -> webpLossyCompression(imageParameterDTO);
+            case BaseCommonConstants.UPLOAD_RESOURCES.JPEG,
+                 BaseCommonConstants.UPLOAD_RESOURCES.JPG -> jpegLossyCompression(imageParameterDTO);
             default -> {
                 log.error("Could not compress image `{}`", image.getOriginalFilename());
                 yield null;
@@ -80,7 +80,7 @@ public class ImageConverter {
         File temporaryCompressedImage = File.createTempFile("compressed_", imageParameter.getFileExtension());
 
         try (FileImageOutputStream output = new FileImageOutputStream(temporaryCompressedImage)) {
-            ImageWriter writer = getImageWriter(CommonConstants.UPLOAD_RESOURCES.WEBP);
+            ImageWriter writer = getImageWriter(BaseCommonConstants.UPLOAD_RESOURCES.WEBP);
             BufferedImage resizedImage = resizeImage(imageParameter);
             log.debug("Writing compressed image to `{}`", temporaryCompressedImage.getAbsolutePath());
 
@@ -175,8 +175,8 @@ public class ImageConverter {
         int imageHeight = bufferedImage.getHeight();
         long imageFileSize = image.getSize();
         String imageFileName = Optional.ofNullable(image.getOriginalFilename()).orElse("");
-        String defaultImageFormat = CommonConstants.UPLOAD_RESOURCES.DEFAULT_IMAGE_FORMAT;
-        String defaultImageType = CommonConstants.UPLOAD_RESOURCES.WEBP;
+        String defaultImageFormat = BaseCommonConstants.UPLOAD_RESOURCES.DEFAULT_IMAGE_FORMAT;
+        String defaultImageType = BaseCommonConstants.UPLOAD_RESOURCES.WEBP;
         String imageFileExtension = "", imageType = "";
 
         if (!imageFileName.isBlank() && imageFileName.contains(".")) {

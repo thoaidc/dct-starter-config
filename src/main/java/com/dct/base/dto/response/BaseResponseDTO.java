@@ -1,7 +1,7 @@
 package com.dct.base.dto.response;
 
-import com.dct.base.constants.HttpStatusConstants;
-import com.dct.base.constants.ResultConstants;
+import com.dct.base.constants.BaseHttpStatusConstants;
+import com.dct.base.constants.BaseResultConstants;
 
 import java.io.Serial;
 import java.io.Serializable;
@@ -62,9 +62,9 @@ public class BaseResponseDTO implements Serializable {
         }
 
         public BaseResponseDTO ok() {
-            instance.code = HttpStatusConstants.OK;
-            instance.status = HttpStatusConstants.STATUS.SUCCESS;
-            instance.message = instance.message != null ? instance.message : ResultConstants.SUCCESS;
+            instance.code = BaseHttpStatusConstants.OK;
+            instance.status = BaseHttpStatusConstants.STATUS.SUCCESS;
+            instance.message = instance.message != null ? instance.message : BaseResultConstants.SUCCESS;
             return instance;
         }
 

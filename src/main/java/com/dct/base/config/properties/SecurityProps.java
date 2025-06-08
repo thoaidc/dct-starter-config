@@ -1,6 +1,6 @@
 package com.dct.base.config.properties;
 
-import com.dct.base.constants.PropertiesConstants;
+import com.dct.base.constants.BasePropertiesConstants;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
@@ -13,14 +13,14 @@ import org.springframework.context.annotation.Configuration;
  * {@link ConfigurationProperties} helps Spring map config properties to fields,
  * instead of using @{@link Value} for each property individually <p>
  *
- * {@link PropertiesConstants#SECURITY_CONFIG} decides the prefix for the configurations that will be mapped <p>
+ * {@link BasePropertiesConstants#SECURITY_CONFIG} decides the prefix for the configurations that will be mapped <p>
  *
  * See <a href="">application-dev.yml</a> for detail
  *
  * @author thoaidc
  */
 @Configuration
-@ConfigurationProperties(prefix = PropertiesConstants.SECURITY_CONFIG)
+@ConfigurationProperties(prefix = BasePropertiesConstants.SECURITY_CONFIG)
 public class SecurityProps {
 
     private boolean enabledTls;

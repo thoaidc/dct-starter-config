@@ -5,7 +5,7 @@ package com.dct.base.constants;
  * @author thoaidc
  */
 @SuppressWarnings("unused")
-public interface HttpStatusConstants {
+public interface BaseHttpStatusConstants {
 
     // The status indicating successful processing of the request (in the case of valid input data and no system errors)
     interface STATUS {

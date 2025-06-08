@@ -6,15 +6,28 @@ package com.dct.base.constants;
  * <ul>
  *   <li><a href="">resources/i18n/messages</a></li>
  * </ul>
- * These paths are defined in {@link CommonConstants#MESSAGE_SOURCE_BASENAME}
+ * These paths are defined in {@link BaseCommonConstants#MESSAGE_SOURCE_BASENAME}
  *
  * @author thoaidc
  */
 @SuppressWarnings("unused")
-public interface ExceptionConstants {
+public interface BaseExceptionConstants {
 
     // I18n exception
     String TRANSLATE_NOT_FOUND = "exception.i18n.notFound";
+
+    // Http exception
+    String METHOD_NOT_ALLOW = "exception.http.methodNotAllow";
+
+    // Runtime exception OR undetermined error
+    String UNCERTAIN_ERROR = "exception.uncertain";
+    String NULL_EXCEPTION = "exception.nullPointer";
+
+    // Request data error
+    String INVALID_REQUEST_DATA = "exception.request.data.invalid";
+
+    // Upload file request
+    String MAXIMUM_UPLOAD_SIZE_EXCEEDED = "exception.upload.maximumSizeExceed";
 
     // Authentication exception
     String BAD_CREDENTIALS = "exception.auth.badCredentials";

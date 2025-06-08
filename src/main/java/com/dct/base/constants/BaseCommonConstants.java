@@ -5,7 +5,7 @@ package com.dct.base.constants;
  * @author thoaidc
  */
 @SuppressWarnings("unused")
-public interface CommonConstants {
+public interface BaseCommonConstants {
 
     // The location where the resource bundle files for i18n messages are stored
     String[] MESSAGE_SOURCE_BASENAME = { "classpath:i18n/messages" };

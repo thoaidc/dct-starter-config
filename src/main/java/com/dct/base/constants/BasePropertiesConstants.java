@@ -7,7 +7,7 @@ package com.dct.base.constants;
  * @author thoaidc
  */
 @SuppressWarnings("unused")
-public interface PropertiesConstants {
+public interface BasePropertiesConstants {
 
     String SECURITY_CONFIG = "dct-base.security.auth";
     String SECRET_KEY_PROPERTY = "base64-secret-key";

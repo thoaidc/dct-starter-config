@@ -5,7 +5,7 @@ package com.dct.base.constants;
  * @author thoaidc
  */
 @SuppressWarnings("unused")
-public interface RegexConstants {
+public interface BaseRegexConstants {
 
     String USERNAME_PATTERN = "^[a-zA-Z0-9]{2,45}$"; // Includes only numbers and letters
 

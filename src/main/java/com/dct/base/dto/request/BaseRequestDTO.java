@@ -1,6 +1,6 @@
 package com.dct.base.dto.request;
 
-import com.dct.base.constants.DatetimeConstants;
+import com.dct.base.constants.BaseDatetimeConstants;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -64,11 +64,11 @@ public class BaseRequestDTO implements Serializable {
     public String getFromDateSearch() {
         if (StringUtils.hasText(fromDate)) {
             try {
-                DateTimeFormatter formatter = DateTimeFormatter.ofPattern(DatetimeConstants.Formatter.DEFAULT);
+                DateTimeFormatter formatter = DateTimeFormatter.ofPattern(BaseDatetimeConstants.Formatter.DEFAULT);
                 LocalDateTime localDateTime = LocalDateTime.parse(fromDate, formatter)
-                        .atZone(ZoneId.of(DatetimeConstants.ZoneID.ASIA_HO_CHI_MINH))
+                        .atZone(ZoneId.of(BaseDatetimeConstants.ZoneID.ASIA_HO_CHI_MINH))
                         .toLocalDateTime();
-                return formatter.withZone(ZoneId.of(DatetimeConstants.ZoneID.ASIA_HO_CHI_MINH)).format(localDateTime);
+                return formatter.withZone(ZoneId.of(BaseDatetimeConstants.ZoneID.ASIA_HO_CHI_MINH)).format(localDateTime);
             } catch (DateTimeParseException e) {
                 log.error("Could not parse fromDate from request, skip filter by fromDate. {}", e.getMessage());
             }
@@ -80,11 +80,11 @@ public class BaseRequestDTO implements Serializable {
     public String getToDateSearch() {
         if (StringUtils.hasText(toDate)) {
             try {
-                DateTimeFormatter formatter = DateTimeFormatter.ofPattern(DatetimeConstants.Formatter.DEFAULT);
+                DateTimeFormatter formatter = DateTimeFormatter.ofPattern(BaseDatetimeConstants.Formatter.DEFAULT);
                 LocalDateTime localDateTime = LocalDateTime.parse(toDate, formatter)
-                        .atZone(ZoneId.of(DatetimeConstants.ZoneID.ASIA_HO_CHI_MINH))
+                        .atZone(ZoneId.of(BaseDatetimeConstants.ZoneID.ASIA_HO_CHI_MINH))
                         .toLocalDateTime();
-                return formatter.withZone(ZoneId.of(DatetimeConstants.ZoneID.ASIA_HO_CHI_MINH)).format(localDateTime);
+                return formatter.withZone(ZoneId.of(BaseDatetimeConstants.ZoneID.ASIA_HO_CHI_MINH)).format(localDateTime);
             } catch (DateTimeParseException e) {
                 log.error("Could not parse toDate from request, skip filter by toDate. {}", e.getMessage());
             }

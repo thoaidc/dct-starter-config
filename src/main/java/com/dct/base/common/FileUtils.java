@@ -1,6 +1,6 @@
 package com.dct.base.common;
 
-import com.dct.base.constants.CommonConstants;
+import com.dct.base.constants.BaseCommonConstants;
 import com.dct.base.dto.upload.ImageDTO;
 
 import org.slf4j.Logger;
@@ -48,7 +48,7 @@ public class FileUtils {
     }
 
     private File getFileToSave(String fileName, boolean isMakeNew) {
-        File file = new File(CommonConstants.UPLOAD_RESOURCES.DEFAULT_DIRECTORY + File.separator + fileName);
+        File file = new File(BaseCommonConstants.UPLOAD_RESOURCES.DEFAULT_DIRECTORY + File.separator + fileName);
 
         if (file.exists() || !isMakeNew)
             return file;
@@ -74,7 +74,7 @@ public class FileUtils {
         String uniqueName = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd_HH-mm-ss_SSS"));
 
         if (Objects.isNull(fileNameOrFileExtension))
-            return uniqueName + CommonConstants.UPLOAD_RESOURCES.DEFAULT_IMAGE_FORMAT;
+            return uniqueName + BaseCommonConstants.UPLOAD_RESOURCES.DEFAULT_IMAGE_FORMAT;
 
         String fileExtension = fileNameOrFileExtension.substring(fileNameOrFileExtension.lastIndexOf("."));
         return uniqueName + fileExtension;
@@ -94,7 +94,7 @@ public class FileUtils {
                     log.warn("Could not clean up temporary when save image: {}", fileToSaveImage.getAbsolutePath());
 
                 log.debug("Save new file to: {}", fileToSaveImage.getAbsolutePath());
-                return CommonConstants.UPLOAD_RESOURCES.PREFIX_PATH + fileName;
+                return BaseCommonConstants.UPLOAD_RESOURCES.PREFIX_PATH + fileName;
             }
         } catch (IOException e) {
             log.error("Could not save file: {}", imageDTO.getImageParameterDTO().getOriginalImageFilename(), e);
@@ -120,7 +120,7 @@ public class FileUtils {
 
         try {
             file.transferTo(directory);
-            return CommonConstants.UPLOAD_RESOURCES.PREFIX_PATH + fileName;
+            return BaseCommonConstants.UPLOAD_RESOURCES.PREFIX_PATH + fileName;
         } catch (IOException e) {
             log.error("Could not save this file to: {}", directory.getAbsolutePath(), e);
         }
@@ -138,7 +138,7 @@ public class FileUtils {
             String filePath = save(file);
 
             if (Objects.isNull(filePath))
-                filePaths.add(CommonConstants.UPLOAD_RESOURCES.DEFAULT_IMAGE_PATH_FOR_ERROR);
+                filePaths.add(BaseCommonConstants.UPLOAD_RESOURCES.DEFAULT_IMAGE_PATH_FOR_ERROR);
             else
                 filePaths.add(filePath);
         }
@@ -182,8 +182,8 @@ public class FileUtils {
         if (!StringUtils.hasText(filePath))
             return false;
 
-        int positionPrefixPath = filePath.lastIndexOf(CommonConstants.UPLOAD_RESOURCES.PREFIX_PATH);
-        int prefixSize = CommonConstants.UPLOAD_RESOURCES.PREFIX_PATH.length();
+        int positionPrefixPath = filePath.lastIndexOf(BaseCommonConstants.UPLOAD_RESOURCES.PREFIX_PATH);
+        int prefixSize = BaseCommonConstants.UPLOAD_RESOURCES.PREFIX_PATH.length();
         String fileName = filePath.substring(positionPrefixPath + prefixSize);
         File file = getFileToSave(fileName, false);
 

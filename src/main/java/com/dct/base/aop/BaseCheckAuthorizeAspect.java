@@ -1,7 +1,7 @@
 package com.dct.base.aop;
 
 import com.dct.base.aop.annotation.CheckAuthorize;
-import com.dct.base.constants.ExceptionConstants;
+import com.dct.base.constants.BaseExceptionConstants;
 import com.dct.base.exception.BaseAuthenticationException;
 
 import jakarta.servlet.http.HttpServletRequest;
@@ -70,7 +70,7 @@ public abstract class BaseCheckAuthorizeAspect {
         } catch (Exception ignore) {}
 
         // Throw an exception to allow CustomExceptionHandler handling and return a response to the client
-        throw new BaseAuthenticationException(ENTITY_NAME, ExceptionConstants.FORBIDDEN);
+        throw new BaseAuthenticationException(ENTITY_NAME, BaseExceptionConstants.FORBIDDEN);
     }
 
     protected abstract boolean checkAuthorize(String[] requiredAuthorities);

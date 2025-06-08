@@ -1,8 +1,8 @@
 package com.dct.base.security.jwt;
 
 import com.dct.base.common.JsonUtils;
-import com.dct.base.constants.HttpStatusConstants;
-import com.dct.base.constants.SecurityConstants;
+import com.dct.base.constants.BaseHttpStatusConstants;
+import com.dct.base.constants.BaseSecurityConstants;
 import com.dct.base.dto.response.BaseResponseDTO;
 import com.dct.base.exception.BaseException;
 
@@ -58,19 +58,19 @@ public abstract class BaseJwtFilter extends OncePerRequestFilter {
 
         if (Objects.nonNull(cookies)) {
             bearerToken = Arrays.stream(cookies)
-                    .filter(cookie -> SecurityConstants.COOKIES.HTTP_ONLY_COOKIE_ACCESS_TOKEN.equals(cookie.getName()))
+                    .filter(cookie -> BaseSecurityConstants.COOKIES.HTTP_ONLY_COOKIE_ACCESS_TOKEN.equals(cookie.getName()))
                     .findFirst()
                     .map(Cookie::getValue)
                     .orElse(null);
         }
 
         if (!StringUtils.hasText(bearerToken))
-            bearerToken = request.getHeader(SecurityConstants.HEADER.AUTHORIZATION_HEADER);
+            bearerToken = request.getHeader(BaseSecurityConstants.HEADER.AUTHORIZATION_HEADER);
 
         if (!StringUtils.hasText(bearerToken))
-            bearerToken = request.getHeader(SecurityConstants.HEADER.AUTHORIZATION_GATEWAY_HEADER);
+            bearerToken = request.getHeader(BaseSecurityConstants.HEADER.AUTHORIZATION_GATEWAY_HEADER);
 
-        if (StringUtils.hasText(bearerToken) && bearerToken.startsWith(SecurityConstants.HEADER.TOKEN_TYPE))
+        if (StringUtils.hasText(bearerToken) && bearerToken.startsWith(BaseSecurityConstants.HEADER.TOKEN_TYPE))
             return bearerToken.substring(7);
 
         return bearerToken;
@@ -78,13 +78,13 @@ public abstract class BaseJwtFilter extends OncePerRequestFilter {
 
     protected void handleAuthException(HttpServletResponse response, BaseException exception) throws IOException {
         log.error("[{}] - Handling exception {}", ENTITY_NAME, exception.getClass().getName(), exception);
-        response.setStatus(HttpStatusConstants.UNAUTHORIZED);
+        response.setStatus(BaseHttpStatusConstants.UNAUTHORIZED);
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
         response.setCharacterEncoding(StandardCharsets.UTF_8.name());
 
         BaseResponseDTO responseDTO = BaseResponseDTO.builder()
-                .code(HttpStatusConstants.UNAUTHORIZED)
-                .success(HttpStatusConstants.STATUS.FAILED)
+                .code(BaseHttpStatusConstants.UNAUTHORIZED)
+                .success(BaseHttpStatusConstants.STATUS.FAILED)
                 .message(exception.getLocalizedMessage())
                 .build();
 

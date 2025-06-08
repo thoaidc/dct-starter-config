@@ -1,7 +1,7 @@
 package com.dct.base.constants;
 
 @SuppressWarnings("unused")
-public interface DatetimeConstants {
+public interface BaseDatetimeConstants {
 
     long ONE_SECOND = 1L;
     long ONE_MINUTE = 60 * ONE_SECOND;

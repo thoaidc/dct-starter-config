@@ -2,7 +2,7 @@ package com.dct.base.security.jwt;
 
 import com.dct.base.common.JsonUtils;
 import com.dct.base.common.MessageTranslationUtils;
-import com.dct.base.constants.HttpStatusConstants;
+import com.dct.base.constants.BaseHttpStatusConstants;
 import com.dct.base.dto.response.BaseResponseDTO;
 import com.dct.base.exception.BaseException;
 
@@ -44,13 +44,13 @@ public class DefaultJwtFilter extends BaseJwtFilter {
     @Override
     protected void handleAuthException(HttpServletResponse response, BaseException exception) throws IOException {
         log.error("[{}] - Handling exception {}", ENTITY_NAME, exception.getClass().getName(), exception);
-        response.setStatus(HttpStatusConstants.UNAUTHORIZED);
+        response.setStatus(BaseHttpStatusConstants.UNAUTHORIZED);
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
         response.setCharacterEncoding(StandardCharsets.UTF_8.name());
 
         BaseResponseDTO responseDTO = BaseResponseDTO.builder()
-                .code(HttpStatusConstants.UNAUTHORIZED)
-                .success(HttpStatusConstants.STATUS.FAILED)
+                .code(BaseHttpStatusConstants.UNAUTHORIZED)
+                .success(BaseHttpStatusConstants.STATUS.FAILED)
                 .message(messageTranslationUtils.getMessageI18n(exception.getErrorKey(), exception.getArgs()))
                 .build();
 

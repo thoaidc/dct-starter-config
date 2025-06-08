@@ -9,11 +9,12 @@ import com.dct.base.dto.response.BaseResponseDTO;
  * <ul>
  *   <li><a href="">resources/i18n/messages</a></li>
  * </ul>
- * These paths are defined in {@link CommonConstants#MESSAGE_SOURCE_BASENAME}
+ * These paths are defined in {@link BaseCommonConstants#MESSAGE_SOURCE_BASENAME}
  *
  * @author thoaidc
  */
-public interface ResultConstants {
+@SuppressWarnings("unused")
+public interface BaseResultConstants {
 
     // Get data success
     String GET_DATA_SUCCESS = "result.data.success";

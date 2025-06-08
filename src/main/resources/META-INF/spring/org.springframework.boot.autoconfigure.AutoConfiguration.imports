@@ -1,3 +1,4 @@
 com.dct.base.autoconfig.JwtAutoConfiguration
 com.dct.base.autoconfig.LocaleAutoConfiguration
 com.dct.base.autoconfig.FileAutoConfiguration
+com.dct.base.autoconfig.GlobalExceptionHandlerAutoConfiguration
