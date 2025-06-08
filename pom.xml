@@ -22,7 +22,7 @@
         <spring-boot.version>3.1.5</spring-boot.version>
         <directory>${project.basedir}/target</directory>
         <profiles.active>dev</profiles.active>
-        <main-start-class>com.dct.base.DctBaseApplication</main-start-class>
+        <main-start-class>com.dct.base.DctBaseStarterApplication</main-start-class>
 
         <maven.compiler.source>${java.version}</maven.compiler.source>
         <maven.compiler.target>${java.version}</maven.compiler.target>
@@ -319,7 +319,7 @@
                     <archive>
                         <manifest>
                             <addClasspath>true</addClasspath>
-                            <mainClass>com.dct.base.BaseApplication</mainClass>
+                            <mainClass>${main-start-class}</mainClass>
                         </manifest>
                     </archive>
                 </configuration>
