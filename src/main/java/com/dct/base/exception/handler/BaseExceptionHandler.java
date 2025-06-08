@@ -35,7 +35,6 @@ import java.util.Objects;
  *
  * @author thoaidc
  */
-@SuppressWarnings("unused")
 @ControllerAdvice
 public abstract class BaseExceptionHandler extends ResponseEntityExceptionHandler {
 

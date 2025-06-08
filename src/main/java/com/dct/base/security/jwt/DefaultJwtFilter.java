@@ -5,6 +5,7 @@ import com.dct.base.common.MessageTranslationUtils;
 import com.dct.base.constants.BaseHttpStatusConstants;
 import com.dct.base.dto.response.BaseResponseDTO;
 import com.dct.base.exception.BaseException;
+import com.dct.base.security.config.BaseSecurityAuthorizeRequestConfig;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -14,25 +15,36 @@ import org.slf4j.LoggerFactory;
 import org.springframework.http.MediaType;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.util.AntPathMatcher;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
 
 public class DefaultJwtFilter extends BaseJwtFilter {
 
     private static final Logger log = LoggerFactory.getLogger(DefaultJwtFilter.class);
     private static final String ENTITY_NAME = "DefaultJwtFilter";
+    private final BaseSecurityAuthorizeRequestConfig securityAuthorizeRequestConfig;
     private final MessageTranslationUtils messageTranslationUtils;
     private final BaseJwtProvider jwtProvider;
 
-    public DefaultJwtFilter(BaseJwtProvider jwtProvider, MessageTranslationUtils messageTranslationUtils) {
+    public DefaultJwtFilter(BaseSecurityAuthorizeRequestConfig securityAuthorizeRequestConfig,
+                            BaseJwtProvider jwtProvider,
+                            MessageTranslationUtils messageTranslationUtils) {
+        this.securityAuthorizeRequestConfig = securityAuthorizeRequestConfig;
         this.jwtProvider = jwtProvider;
         this.messageTranslationUtils = messageTranslationUtils;
     }
 
     @Override
     protected boolean shouldAuthenticateRequest(HttpServletRequest request) {
-        return true;
+        AntPathMatcher antPathMatcher = new AntPathMatcher();
+        String requestURI = request.getRequestURI();
+        log.info("[{}] - Filtering {}: {}", ENTITY_NAME, request.getMethod(), requestURI);
+
+        return Arrays.stream(securityAuthorizeRequestConfig.getPublicPatterns())
+                .noneMatch(pattern -> antPathMatcher.match(pattern, requestURI));
     }
 
     @Override

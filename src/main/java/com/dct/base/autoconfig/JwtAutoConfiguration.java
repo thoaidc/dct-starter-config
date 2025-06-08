@@ -5,6 +5,7 @@ import com.dct.base.aop.DefaultCheckAuthorizeAspect;
 import com.dct.base.common.MessageTranslationUtils;
 import com.dct.base.config.properties.SecurityProps;
 import com.dct.base.constants.BasePropertiesConstants;
+import com.dct.base.security.config.BaseSecurityAuthorizeRequestConfig;
 import com.dct.base.security.jwt.BaseJwtFilter;
 import com.dct.base.security.jwt.BaseJwtProvider;
 import com.dct.base.security.jwt.DefaultJwtFilter;
@@ -35,9 +36,11 @@ public class JwtAutoConfiguration {
 
     @Bean
     @ConditionalOnMissingBean(BaseJwtFilter.class)
-    protected BaseJwtFilter defaultJwtFilter(BaseJwtProvider jwtProvider, MessageTranslationUtils messageUtils) {
+    protected BaseJwtFilter defaultJwtFilter(BaseSecurityAuthorizeRequestConfig authorizeRequestConfig,
+                                             BaseJwtProvider jwtProvider,
+                                             MessageTranslationUtils messageUtils) {
         log.debug("[{}] - Auto configure default JWT Filter", ENTITY_NAME);
-        return new DefaultJwtFilter(jwtProvider, messageUtils);
+        return new DefaultJwtFilter(authorizeRequestConfig, jwtProvider, messageUtils);
     }
 
     @Bean

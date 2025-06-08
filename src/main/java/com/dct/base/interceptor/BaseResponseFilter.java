@@ -23,7 +23,6 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseBodyAdvice;
  *
  * @author thoaidc
  */
-@SuppressWarnings("unused")
 @ControllerAdvice
 public abstract class BaseResponseFilter implements ResponseBodyAdvice<Object> {
 
