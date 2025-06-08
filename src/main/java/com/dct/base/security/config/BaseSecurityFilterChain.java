@@ -16,6 +16,7 @@ import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.header.HeaderWriterFilter;
 import org.springframework.security.web.header.writers.ReferrerPolicyHeaderWriter;
 import org.springframework.security.web.servlet.util.matcher.MvcRequestMatcher;
 import org.springframework.web.filter.CorsFilter;
@@ -62,8 +63,8 @@ public abstract class BaseSecurityFilterChain {
 
     protected void addFilters(HttpSecurity http) {
         log.debug("[{}] - Use default filters orders configuration", ENTITY_NAME);
-        http.addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
-            .addFilterBefore(corsFilter, BaseJwtFilter.class);
+        http.addFilterAfter(corsFilter, HeaderWriterFilter.class)
+            .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
     }
 
     protected void exceptionHandlers(HttpSecurity http) throws Exception {
