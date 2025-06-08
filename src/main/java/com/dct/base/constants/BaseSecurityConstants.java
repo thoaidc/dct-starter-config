@@ -1,9 +1,15 @@
 package com.dct.base.constants;
 
 import com.dct.base.dto.auth.BaseAuthTokenDTO;
+import com.dct.base.security.config.BaseSecurityFilterChain;
+import com.dct.base.autoconfig.InterceptorAutoConfiguration;
 
 @SuppressWarnings("unused")
 public interface BaseSecurityConstants {
+
+    // The encryption complexity in PasswordEncoder's algorithm (between 4 and 31)
+    // Higher values mean the password is harder to attack, but too high will reduce performance
+    int BCRYPT_COST_FACTOR = 12;
 
     /**
      * The corresponding keys to store information in the payload of a JWT token <p>
@@ -53,5 +59,48 @@ public interface BaseSecurityConstants {
                 "midi=(), " + // Prevent access to MIDI (digital musical instruments)
                 "payment=(), " + // Prevent use of payment features
                 "sync-xhr=()"; // Prevent use of synchronous XMLHttpRequest requests
+    }
+
+    /**
+     * The paths for security configuration in {@link BaseSecurityFilterChain} <p>
+     * Requests matching the patterns below will have their own specific security rules applied <p>
+     * Requests not listed will require authentication by default
+     */
+    interface REQUEST_MATCHERS {
+        String[] DEFAULT_PUBLIC_API_PATTERNS = {
+                "/",
+                "/**.html",
+                "/**.css",
+                "/**.js",
+                "/**.ico",
+                "/i18n/**",
+                "/uploads/**",
+                "/register",
+                "/login",
+                "/p/**",
+                "/api/p/**"
+        };
+    }
+
+    /**
+     * The configurations applied in the CORS filter in {@link InterceptorAutoConfiguration#defaultCorsFilter()}
+     */
+    interface CORS {
+        String APPLY_FOR = "/**"; // CORS filter is applied to all requests
+        String[] ALLOWED_HEADERS = {
+                "Content-Type",     // Content format
+                "Authorization",    // Authentication token
+                "Accept",           // Client-expected content
+                "Origin",           // Origin of the request
+                "X-CSRF-Token",     // Anti-CSRF token
+                "X-Requested-With", // Ajax request markup
+                "Access-Control-Allow-Origin", // Server response header
+                "X-App-Version",    // Application version (optional)
+                "X-Device-ID"       // Device ID (optional)
+        };
+
+        String[] ALLOWED_REQUEST_METHODS = {"GET", "PUT", "POST", "DELETE"};
+        String[] ALLOWED_ORIGIN_PATTERNS = {"*"}; // The list of domains allowed to access the resources. * means all
+        boolean ALLOW_CREDENTIALS = true; // Allow sending cookies or authentication information
     }
 }

@@ -4,3 +4,4 @@ com.dct.base.autoconfig.FileAutoConfiguration
 com.dct.base.autoconfig.GlobalExceptionHandlerAutoConfiguration
 com.dct.base.autoconfig.InterceptorAutoConfiguration
 com.dct.base.autoconfig.SecurityAutoConfiguration
+com.dct.base.autoconfig.SecurityFilterChainAutoConfiguration
