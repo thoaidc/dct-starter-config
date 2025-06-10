@@ -1,8 +1,9 @@
 package com.dct.base.constants;
 
 import com.dct.base.dto.auth.BaseAuthTokenDTO;
-import com.dct.base.security.config.BaseSecurityFilterChain;
+import com.dct.base.security.config.BaseSecurityFilterChainConfig;
 import com.dct.base.autoconfig.InterceptorAutoConfiguration;
+import org.springframework.http.HttpMethod;
 
 public interface BaseSecurityConstants {
 
@@ -61,7 +62,7 @@ public interface BaseSecurityConstants {
     }
 
     /**
-     * The paths for security configuration in {@link BaseSecurityFilterChain} <p>
+     * The paths for security configuration in {@link BaseSecurityFilterChainConfig} <p>
      * Requests matching the patterns below will have their own specific security rules applied <p>
      * Requests not listed will require authentication by default
      */
@@ -98,7 +99,15 @@ public interface BaseSecurityConstants {
                 "X-Device-ID"       // Device ID (optional)
         };
 
-        String[] DEFAULT_ALLOWED_REQUEST_METHODS = {"GET", "PUT", "POST", "DELETE"};
+        String[] DEFAULT_ALLOWED_REQUEST_METHODS = {
+            HttpMethod.GET.name(),
+            HttpMethod.PUT.name(),
+            HttpMethod.POST.name(),
+            HttpMethod.PATCH.name(),
+            HttpMethod.DELETE.name(),
+            HttpMethod.OPTIONS.name()
+        };
+
         String[] DEFAULT_ALLOWED_ORIGIN_PATTERNS = {"*"}; // The list of domains allowed to access the resources. * means all
         boolean DEFAULT_ALLOW_CREDENTIALS = true; // Allow sending cookies or authentication information
     }

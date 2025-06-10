@@ -13,7 +13,6 @@ import org.springframework.security.config.annotation.web.configurers.AbstractHt
 import org.springframework.security.config.annotation.web.configurers.HeadersConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.AuthenticationEntryPoint;
-import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.header.HeaderWriterFilter;
@@ -21,22 +20,23 @@ import org.springframework.security.web.header.writers.ReferrerPolicyHeaderWrite
 import org.springframework.security.web.servlet.util.matcher.MvcRequestMatcher;
 import org.springframework.web.filter.CorsFilter;
 
-@SuppressWarnings("unused")
-public abstract class BaseSecurityFilterChain {
+import java.util.Arrays;
 
-    private static final Logger log = LoggerFactory.getLogger(BaseSecurityFilterChain.class);
-    private static final String ENTITY_NAME = "BaseSecurityFilterChain";
+public abstract class BaseSecurityFilterChainConfig {
+
+    private static final Logger log = LoggerFactory.getLogger(BaseSecurityFilterChainConfig.class);
+    private static final String ENTITY_NAME = "BaseSecurityFilterChainConfig";
     private final CorsFilter corsFilter;
     private final BaseJwtFilter jwtFilter;
     private final AccessDeniedHandler accessDeniedHandler;
     private final AuthenticationEntryPoint authenticationEntryPoint;
     private final BaseSecurityAuthorizeRequestConfig securityAuthorizeRequestConfig;
 
-    protected BaseSecurityFilterChain(CorsFilter corsFilter,
-                                      BaseJwtFilter jwtFilter,
-                                      AccessDeniedHandler accessDeniedHandler,
-                                      AuthenticationEntryPoint authenticationEntryPoint,
-                                      BaseSecurityAuthorizeRequestConfig securityAuthorizeRequestConfig) {
+    protected BaseSecurityFilterChainConfig(CorsFilter corsFilter,
+                                            BaseJwtFilter jwtFilter,
+                                            AccessDeniedHandler accessDeniedHandler,
+                                            AuthenticationEntryPoint authenticationEntryPoint,
+                                            BaseSecurityAuthorizeRequestConfig securityAuthorizeRequestConfig) {
         this.corsFilter = corsFilter;
         this.jwtFilter = jwtFilter;
         this.accessDeniedHandler = accessDeniedHandler;
@@ -44,30 +44,19 @@ public abstract class BaseSecurityFilterChain {
         this.securityAuthorizeRequestConfig = securityAuthorizeRequestConfig;
     }
 
-    protected SecurityFilterChain securityFilterChain(HttpSecurity http, MvcRequestMatcher.Builder mvc) throws Exception {
-        cors(http);
-        addFilters(http);
-        exceptionHandlers(http);
-        headersSecurity(http);
-        sessionManagementStrategy(http);
-        authorizeHttpRequests(http, mvc);
-        oauth2(http);
-        return http.build();
-    }
-
-    protected void cors(HttpSecurity http) throws Exception {
+    public void cors(HttpSecurity http) throws Exception {
         // Because of using JWT, CSRF is not required
         log.debug("[{}] - Use default cors and csrf configuration: CSRF is disabled", ENTITY_NAME);
         http.csrf(AbstractHttpConfigurer::disable).cors(Customizer.withDefaults());
     }
 
-    protected void addFilters(HttpSecurity http) {
+    public void addFilters(HttpSecurity http) {
         log.debug("[{}] - Use default filters orders configuration", ENTITY_NAME);
         http.addFilterAfter(corsFilter, HeaderWriterFilter.class)
             .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
     }
 
-    protected void exceptionHandlers(HttpSecurity http) throws Exception {
+    public void exceptionHandlers(HttpSecurity http) throws Exception {
         log.debug("[{}] - Use default exception handlers configuration", ENTITY_NAME);
         http.exceptionHandling(handler -> handler
             .authenticationEntryPoint(authenticationEntryPoint)
@@ -75,7 +64,7 @@ public abstract class BaseSecurityFilterChain {
         );
     }
 
-    protected void headersSecurity(HttpSecurity http) throws Exception {
+    public void headersSecurity(HttpSecurity http) throws Exception {
         log.debug("[{}] - Use default headers security configuration", ENTITY_NAME);
         http.headers(header -> header
             .frameOptions(HeadersConfigurer.FrameOptionsConfig::sameOrigin)
@@ -85,16 +74,18 @@ public abstract class BaseSecurityFilterChain {
         );
     }
 
-    protected void sessionManagementStrategy(HttpSecurity http) throws Exception {
+    public void sessionManagementStrategy(HttpSecurity http) throws Exception {
         log.debug("[{}] - Use default session management strategy configuration: STATELESS", ENTITY_NAME);
         http.sessionManagement(sessionManager ->
                 sessionManager.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
     }
 
-    protected void authorizeHttpRequests(HttpSecurity http, MvcRequestMatcher.Builder mvc) throws Exception {
+    public void authorizeHttpRequests(HttpSecurity http, MvcRequestMatcher.Builder mvc) throws Exception {
+        String[] publicApiPatterns = securityAuthorizeRequestConfig.getPublicPatterns();
         log.debug("[{}] - Use default authorize http requests configuration: FormLogin is disabled", ENTITY_NAME);
+        log.debug("[{}] - Ignore authorize request matchers: {}", ENTITY_NAME, Arrays.toString(publicApiPatterns));
         http.authorizeHttpRequests(registry -> registry
-            .requestMatchers(SecurityUtils.convertToMvcMatchers(mvc, securityAuthorizeRequestConfig.getPublicPatterns()))
+            .requestMatchers(SecurityUtils.convertToMvcMatchers(mvc, publicApiPatterns))
             .permitAll()
             // Used with custom CORS filters in CORS (Cross-Origin Resource Sharing) mechanism
             // The browser will send OPTIONS requests (preflight requests) to check
@@ -105,7 +96,8 @@ public abstract class BaseSecurityFilterChain {
         .formLogin(AbstractHttpConfigurer::disable);
     }
 
-    protected void oauth2(HttpSecurity http) {
-        log.debug("[{}] - Use default oauth2 configuration", ENTITY_NAME);
+    @SuppressWarnings("unused")
+    public void oauth2(HttpSecurity http) {
+        // Add logic Oauth2 config here
     }
 }
