@@ -6,6 +6,8 @@ package com.dct.base.constants;
  */
 public interface BaseCommonConstants {
 
+    String DEFAULT_CREATOR = "SYSTEM"; // Used instead of the default user value mentioned above to store in database
+
     // The location where the resource bundle files for i18n messages are stored
     String[] MESSAGE_SOURCE_BASENAME = { "classpath:i18n/messages" };
 

@@ -1,0 +1,39 @@
+# ===================================================================
+# Spring Boot configuration.
+#
+# This configuration will be overridden by the Spring profile you use
+# For example: application-dev.yml if you use the "dev" profile.
+# ===================================================================
+
+# ===================================================================
+# Standard Spring Boot properties.
+# Full reference is available at:
+# https://docs.spring.io/spring-boot/reference/features/profiles.html
+# ===================================================================
+
+spring:
+  autoconfigure:
+    exclude:
+      - org.springframework.boot.autoconfigure.orm.jpa.HibernateJpaAutoConfiguration
+      - org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration
+      - com.dct.base.config.BaseAuditingConfig
+
+logging:
+  level:
+    root: debug
+    com.dct.base: debug
+    org.springframework.security: debug
+  charset:
+    console: UTF-8
+    file: UTF-8
+  # Custom properties to define logs file paths according to different profiles
+  file-path: mnt/logs
+
+dct-base:
+  security:
+    auth:
+      enabled-tls: false
+      base64-secret-key: ZGN0LWJhc2Utc2VjcmV0LWtleS10b2tlbi12YWxpZGl0eS04NjQwMDAwMG1zLWZvci1yZW1lbWJlci1tZS04NjQwMDAwMG1z
+      # Token is valid default in 1 hour and 7 days for remember me
+      token-validity: 3600000 # milliseconds
+      token-validity-for-remember-me: 604800000 # milliseconds
