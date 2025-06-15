@@ -11,3 +11,4 @@ com.dct.base.autoconfig.ResourceHandlersAutoConfiguration
 com.dct.base.autoconfig.SecurityAutoConfiguration
 com.dct.base.autoconfig.SecurityFilterChainAutoConfiguration
 com.dct.base.autoconfig.TransactionManagementAutoConfiguration
+com.dct.base.autoconfig.WebSocketAutoConfiguration

@@ -14,4 +14,5 @@ public interface BasePropertiesConstants {
     String HIKARI_CONFIG = "spring.datasource.hikari";
     String HIKARI_DATASOURCE_CONFIG = "spring.datasource.hikari.data-source-properties";
     String UPLOAD_CONFIG = "dct.base.upload";
+    String ENABLED_SOCKET = "dct.base.socket.enabled";
 }

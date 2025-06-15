@@ -37,3 +37,5 @@ dct:
         # Token is valid default in 1 hour and 7 days for remember me
         token-validity: 3600000 # milliseconds
         token-validity-for-remember-me: 604800000 # milliseconds
+    socket:
+      enabled: true
