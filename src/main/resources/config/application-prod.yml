@@ -52,11 +52,12 @@ spring:
       # Maximum size for each file that a user can upload
       max-file-size: 10MB
 
-dct-base:
-  security:
-    auth:
-      enabled-tls: true
-      base64-secret-key: ${DCT_STARTER_SECRET_KEY}
-      # Token is valid default in 1 hour and 7 days for remember me
-      token-validity: 3600000 # milliseconds
-      token-validity-for-remember-me: 604800000 # milliseconds
+dct:
+  base:
+    security:
+      auth:
+        enabled-tls: true
+        base64-secret-key: ${DCT_STARTER_SECRET_KEY}
+        # Token is valid default in 1 hour and 7 days for remember me
+        token-validity: 3600000 # milliseconds
+        token-validity-for-remember-me: 604800000 # milliseconds

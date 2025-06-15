@@ -10,6 +10,7 @@ public interface BaseCommonConstants {
 
     // The location where the resource bundle files for i18n messages are stored
     String[] MESSAGE_SOURCE_BASENAME = { "classpath:i18n/messages" };
+    String MESSAGE_SOURCE_ENCODING = "UTF-8"; // Specifies the charset for i18n messages
 
     interface UPLOAD_RESOURCES {
         String DEFAULT_DIRECTORY = "/uploads/";
@@ -22,5 +23,29 @@ public interface BaseCommonConstants {
         String WEBP = "webp";
         String JPG = "jpg";
         String JPEG = "jpeg";
+    }
+
+    /**
+     * Configures the handling of static resources <p>
+     * Static resource requests listed in the {@link STATIC_RESOURCES#PATHS} section will be automatically searched for
+     * and mapped to the directories listed in the {@link STATIC_RESOURCES#LOCATIONS} section
+     */
+    interface STATIC_RESOURCES {
+
+        String[] PATHS = {
+            "/**.js",
+            "/**.css",
+            "/**.svg",
+            "/**.png",
+            "/**.ico",
+            "/content/**",
+            "/uploads/**",
+            "/i18n/**"
+        };
+
+        String[] LOCATIONS = {
+            "classpath:/static/",
+            "classpath:/static/i18n/"
+        };
     }
 }
