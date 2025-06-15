@@ -12,6 +12,25 @@ public interface BaseCommonConstants {
     String[] MESSAGE_SOURCE_BASENAME = { "classpath:i18n/messages" };
     String MESSAGE_SOURCE_ENCODING = "UTF-8"; // Specifies the charset for i18n messages
 
+    // The paths that will be ignored by interceptors when processing requests
+    String[] INTERCEPTOR_EXCLUDED_PATHS = {
+        "/**.html",
+        "/**.js",
+        "/**.css",
+        "/**.webp",
+        "/**.jpg",
+        "/**.jpeg",
+        "/**.gif",
+        "/**.svg",
+        "/**.png",
+        "/**.ico",
+        "/uploads/**",
+        "/file/**",
+        "/login",
+        "/error**",
+        "/i18n/**"
+    };
+
     interface UPLOAD_RESOURCES {
         String DEFAULT_DIRECTORY = "/uploads/";
         String PREFIX_PATH = "/uploads/";
@@ -33,13 +52,18 @@ public interface BaseCommonConstants {
     interface STATIC_RESOURCES {
 
         String[] PATHS = {
+            "/**.html",
             "/**.js",
             "/**.css",
+            "/**.webp",
+            "/**.jpg",
+            "/**.jpeg",
+            "/**.gif",
             "/**.svg",
             "/**.png",
             "/**.ico",
-            "/content/**",
             "/uploads/**",
+            "/file/**",
             "/i18n/**"
         };
 

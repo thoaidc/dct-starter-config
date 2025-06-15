@@ -4,6 +4,8 @@ import com.dct.base.common.MessageTranslationUtils;
 import com.dct.base.constants.BaseSecurityConstants;
 import com.dct.base.interceptor.BaseResponseFilter;
 import com.dct.base.interceptor.DefaultBaseResponseFilter;
+import com.dct.base.interceptor.DefaultInterceptorPatternsConfig;
+import com.dct.base.interceptor.InterceptorPatternsConfig;
 import com.dct.base.security.config.BaseCorsRequestMatchersConfig;
 import com.dct.base.security.config.DefaultBaseCorsRequestMatchersConfig;
 
@@ -34,6 +36,13 @@ public class InterceptorAutoConfiguration {
     public BaseCorsRequestMatchersConfig defaultBaseCorsRequestMatchersConfig() {
         log.debug("[{}] - Use default CORS request matchers configuration", ENTITY_NAME);
         return new DefaultBaseCorsRequestMatchersConfig();
+    }
+
+    @Bean
+    @ConditionalOnMissingBean(InterceptorPatternsConfig.class)
+    public InterceptorPatternsConfig defaultInterceptorPatternsConfig() {
+        log.debug("[{}] - Use default excluded interceptor patterns", ENTITY_NAME);
+        return new DefaultInterceptorPatternsConfig();
     }
 
     /**

@@ -1,7 +1,7 @@
 package com.dct.base.security.config;
 
 @SuppressWarnings("unused")
-public abstract class BaseSecurityAuthorizeRequestConfig {
+public interface BaseSecurityAuthorizeRequestConfig {
 
-    public abstract String[] getPublicPatterns();
+    String[] getPublicPatterns();
 }

@@ -2,7 +2,7 @@ package com.dct.base.security.config;
 
 import com.dct.base.constants.BaseSecurityConstants;
 
-public class DefaultBaseSecurityAuthorizeRequestConfig extends BaseSecurityAuthorizeRequestConfig {
+public class DefaultBaseSecurityAuthorizeRequestConfig implements BaseSecurityAuthorizeRequestConfig {
 
     @Override
     public String[] getPublicPatterns() {

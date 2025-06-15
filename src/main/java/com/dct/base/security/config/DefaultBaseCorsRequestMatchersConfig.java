@@ -4,7 +4,7 @@ import com.dct.base.constants.BaseSecurityConstants;
 
 import java.util.List;
 
-public class DefaultBaseCorsRequestMatchersConfig extends BaseCorsRequestMatchersConfig {
+public class DefaultBaseCorsRequestMatchersConfig implements BaseCorsRequestMatchersConfig {
 
     @Override
     public List<String> applyFor() {
