@@ -22,6 +22,35 @@ logging:
   # Custom properties to define logs file paths according to different profiles
   file-path: mnt/logs
 
+spring:
+  sql:
+    init:
+      mode: never
+  jpa:
+    # Avoid causing LazyInitializationException if querying outside the scope of EntityManager or causing poor performance
+    open-in-view: false
+    hibernate:
+      # Hibernate only checks if the current schema matches the entity
+      # If it does not match, the application will not start
+      # Do not make any changes to the schema
+      ddl-auto: validate
+    properties:
+      hibernate:
+        show_sql: true
+        format_sql: false
+        jdbc:
+          time_zone: UTC
+          ddl-auto: validate
+  jackson:
+    time-zone: UTC
+  servlet:
+    multipart:
+      enabled: true
+      # Maximum size of the entire HTTP request when uploading multipart data (including files and other parameters)
+      max-request-size: 30MB
+      # Maximum size for each file that a user can upload
+      max-file-size: 10MB
+
 dct-base:
   security:
     auth:

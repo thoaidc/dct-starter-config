@@ -5,4 +5,5 @@ com.dct.base.autoconfig.GlobalExceptionHandlerAutoConfiguration
 com.dct.base.autoconfig.InterceptorAutoConfiguration
 com.dct.base.autoconfig.SecurityAutoConfiguration
 com.dct.base.autoconfig.SecurityFilterChainAutoConfiguration
-com.dct.base.config.BaseAuditingConfig
+com.dct.base.autoconfig.DataSourceAutoConfiguration
+com.dct.base.autoconfig.AuditingAutoConfiguration

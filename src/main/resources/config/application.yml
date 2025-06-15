@@ -18,4 +18,12 @@ spring:
     active: "@profiles.active@"
 
 server:
+  servlet:
+    session:
+      cookie:
+        # The session cookie that Spring Boot creates will have the HttpOnly attribute
+        # Setting HttpOnly helps protect cookies from Cross-Site Scripting (XSS) attacks
+        # Cookies will still be sent with each HTTP request (and can therefore be used for session authentication)
+        # But Cookies cannot be accessed from the client side using JavaScript (e.g. via document.cookie)
+        http-only: true
   port: 8080

@@ -10,4 +10,7 @@ public interface BasePropertiesConstants {
 
     String SECURITY_CONFIG = "dct-base.security.auth";
     String SECRET_KEY_PROPERTY = "base64-secret-key";
+    String DATASOURCE_CONFIG = "spring.datasource";
+    String HIKARI_CONFIG = "spring.datasource.hikari";
+    String HIKARI_DATASOURCE_CONFIG = "spring.datasource.hikari.data-source-properties";
 }

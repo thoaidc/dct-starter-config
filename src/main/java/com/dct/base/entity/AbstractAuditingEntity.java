@@ -1,6 +1,6 @@
 package com.dct.base.entity;
 
-import com.dct.base.config.BaseAuditingConfig;
+import com.dct.base.autoconfig.AuditingAutoConfiguration;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.EntityListeners;
@@ -25,7 +25,7 @@ import java.time.Instant;
  * Provides a mechanism to automatically track information about data creation and modification in entities<p>
  * This is part of the Auditing model in Hibernate/Spring Data JPA <p>
  * Which helps automatically record who created, modified data and when <p>
- * {@link EntityListeners}({@link AuditingEntityListener}.class) to enable {@link BaseAuditingConfig#auditorProvider()}
+ * {@link EntityListeners}({@link AuditingEntityListener}.class) to enable {@link AuditingAutoConfiguration#auditorProvider()}
  *
  * @author thoaidc
  */
@@ -49,7 +49,7 @@ public abstract class AbstractAuditingEntity implements Serializable {
     /**
      * Used by Spring Data JPA to automatically populate information about the record creator <p>
      * Requires additional AuditorAware configuration to identify the current user <p>
-     * Use JPA Auditing configuration in {@link BaseAuditingConfig} to auto set values
+     * Use JPA Auditing configuration in {@link AuditingAutoConfiguration} to auto set values
      */
     @CreatedBy
     @Column(name = "created_by", length = 45, updatable = false)
@@ -63,7 +63,7 @@ public abstract class AbstractAuditingEntity implements Serializable {
     /**
      * Automatically save the information of the person who made the last edit <p>
      * Requires additional AuditorAware configuration to identify the current user <p>
-     * Use JPA Auditing configuration in {@link BaseAuditingConfig} to auto set values
+     * Use JPA Auditing configuration in {@link AuditingAutoConfiguration} to auto set values
      */
     @LastModifiedBy
     @Column(name = "last_modified_by", length = 45)
