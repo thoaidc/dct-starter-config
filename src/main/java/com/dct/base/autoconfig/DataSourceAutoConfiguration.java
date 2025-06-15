@@ -12,7 +12,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
-import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.context.annotation.Bean;
 
 import javax.sql.DataSource;
@@ -21,7 +20,6 @@ import java.util.Properties;
 
 @AutoConfiguration
 @ConditionalOnProperty(name = "spring.datasource.url")
-@EnableTransactionManagement
 public class DataSourceAutoConfiguration {
 
     private static final Logger log = LoggerFactory.getLogger(DataSourceAutoConfiguration.class);
