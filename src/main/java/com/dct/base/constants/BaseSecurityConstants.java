@@ -79,8 +79,7 @@ public interface BaseSecurityConstants {
                 "/login",
                 "/p/**",
                 "/api/p/**",
-                "/login/**",
-                "/oauth2/**"
+                "/login/oauth2/**"
         };
     }
 

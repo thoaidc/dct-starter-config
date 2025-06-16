@@ -54,6 +54,7 @@ spring:
 
 dct:
   base:
+    domain: http://localhost:${server.port}
     security:
       auth:
         enabled-tls: true

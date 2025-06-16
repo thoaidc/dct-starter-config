@@ -45,7 +45,7 @@ dct:
         base-authorize-uri: /api/p/v1/auth/oauth2/authorize # Add /{registrationId} (eg: /google) when calling from clients
         clients:
           - provider: google
-            client-name: Demo Starter
+            client-name: Demo Starter Google
             client-id: ${GOOGLE_CLIENT_ID}
             client-secret: ${GOOGLE_CLIENT_SECRET}
             scope:
@@ -56,3 +56,16 @@ dct:
             token-uri: https://oauth2.googleapis.com/token
             user-info-uri: https://openidconnect.googleapis.com/v1/userinfo
             username-attribute-name: sub
+
+          - provider: facebook
+            client-name: Demo Starter Facebook
+            client-id: ${FACEBOOK_CLIENT_ID}
+            client-secret: ${FACEBOOK_CLIENT_SECRET}
+            scope:
+              - email
+              - public_profile
+            authorization-uri: https://www.facebook.com/v13.0/dialog/oauth
+            redirect-uri: ${dct.base.domain}/login/oauth2/code/facebook
+            token-uri: https://graph.facebook.com/v13.0/oauth/access_token
+            user-info-uri: https://graph.facebook.com/me?fields=id,name,email
+            username-attribute-name: id
