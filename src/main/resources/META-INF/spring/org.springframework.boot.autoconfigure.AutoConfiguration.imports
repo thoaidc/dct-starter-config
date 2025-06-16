@@ -7,6 +7,7 @@ com.dct.base.autoconfig.HttpClientAutoConfiguration
 com.dct.base.autoconfig.InterceptorAutoConfiguration
 com.dct.base.autoconfig.JwtAutoConfiguration
 com.dct.base.autoconfig.LocaleAutoConfiguration
+com.dct.base.autoconfig.OAuth2AutoConfiguration
 com.dct.base.autoconfig.ResourceHandlersAutoConfiguration
 com.dct.base.autoconfig.SecurityAutoConfiguration
 com.dct.base.autoconfig.SecurityFilterChainAutoConfiguration

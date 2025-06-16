@@ -39,4 +39,6 @@ public interface BaseExceptionConstants {
     String UNAUTHORIZED = "exception.auth.unauthorized";
     String FORBIDDEN = "exception.auth.forbidden";
     String TOKEN_INVALID_OR_EXPIRED = "exception.auth.token.invalidOrExpired";
+
+    String OAUTH2_AUTHORIZATION_CODE_EXCEPTION = "";
 }

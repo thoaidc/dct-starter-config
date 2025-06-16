@@ -78,7 +78,9 @@ public interface BaseSecurityConstants {
                 "/register",
                 "/login",
                 "/p/**",
-                "/api/p/**"
+                "/api/p/**",
+                "/login/**",
+                "/oauth2/**"
         };
     }
 

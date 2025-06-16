@@ -97,7 +97,7 @@ public abstract class BaseSecurityFilterChainConfig {
     }
 
     @SuppressWarnings("unused")
-    public void oauth2(HttpSecurity http) {
+    public void oauth2(HttpSecurity http) throws Exception {
         // Add logic Oauth2 config here
     }
 }

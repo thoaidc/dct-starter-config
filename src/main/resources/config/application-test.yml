@@ -30,6 +30,9 @@ logging:
 
 dct:
   base:
+    domain: http://localhost:${server.port}
+    socket:
+      enabled: false
     security:
       auth:
         enabled-tls: false
@@ -37,5 +40,19 @@ dct:
         # Token is valid default in 1 hour and 7 days for remember me
         token-validity: 3600000 # milliseconds
         token-validity-for-remember-me: 604800000 # milliseconds
-    socket:
-      enabled: true
+      oauth2:
+        enabled: false
+        base-authorize-uri: /api/p/v1/auth/oauth2/authorize # Add /{registrationId} (eg: /google) when calling from clients
+        clients:
+          - provider: google
+            client-name: Demo Starter
+            client-id: ${GOOGLE_CLIENT_ID}
+            client-secret: ${GOOGLE_CLIENT_SECRET}
+            scope:
+              - https://www.googleapis.com/auth/userinfo.email
+              - https://www.googleapis.com/auth/userinfo.profile
+            authorization-uri: https://accounts.google.com/o/oauth2/auth
+            redirect-uri: ${dct.base.domain}/login/oauth2/code/google
+            token-uri: https://oauth2.googleapis.com/token
+            user-info-uri: https://openidconnect.googleapis.com/v1/userinfo
+            username-attribute-name: sub
