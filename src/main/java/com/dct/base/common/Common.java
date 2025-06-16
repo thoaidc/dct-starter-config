@@ -1,5 +1,9 @@
 package com.dct.base.common;
 
+import com.dct.base.constants.BaseDatetimeConstants;
+import com.dct.base.dto.response.AuditingEntityDTO;
+import com.dct.base.entity.AbstractAuditingEntity;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -21,5 +25,23 @@ public class Common {
         }
 
         return fieldMap;
+    }
+
+    public static void setAuditingInfo(AbstractAuditingEntity entity, AuditingEntityDTO auditingDTO) {
+        auditingDTO.setCreatedByStr(entity.getCreatedBy());
+        auditingDTO.setLastModifiedByStr(entity.getLastModifiedBy());
+
+        try {
+            String createdDate = DateUtils.ofInstant(entity.getCreatedDate())
+                    .toString(BaseDatetimeConstants.Formatter.DD_MM_YYYY_HH_MM_SS_DASH);
+
+            String lastModifiedDate = DateUtils.ofInstant(entity.getLastModifiedDate())
+                    .toString(BaseDatetimeConstants.Formatter.DD_MM_YYYY_HH_MM_SS_DASH);
+
+            auditingDTO.setCreatedDateStr(createdDate);
+            auditingDTO.setLastModifiedDateStr(lastModifiedDate);
+        } catch (Exception e) {
+            log.error("[{}] - Could not set entity auditing info. {}", ENTITY_NAME, e.getMessage());
+        }
     }
 }
