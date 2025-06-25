@@ -9,9 +9,11 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.core.env.Environment;
+import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.security.core.context.SecurityContextHolder;
 
 @SpringBootApplication
+@EnableAsync
 @EnableAspectJAutoProxy(proxyTargetClass = true)
 public class DctBaseStarterApplication {
 

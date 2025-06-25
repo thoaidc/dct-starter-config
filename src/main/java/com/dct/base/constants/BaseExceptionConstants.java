@@ -41,4 +41,5 @@ public interface BaseExceptionConstants {
     String TOKEN_INVALID_OR_EXPIRED = "exception.auth.token.invalidOrExpired";
 
     String OAUTH2_AUTHORIZATION_CODE_EXCEPTION = "";
+    String DATASOURCE_CONFIG_NOT_NULL = "";
 }

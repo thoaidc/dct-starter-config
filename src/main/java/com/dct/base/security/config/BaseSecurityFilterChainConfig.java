@@ -1,7 +1,6 @@
 package com.dct.base.security.config;
 
 import com.dct.base.common.SecurityUtils;
-import com.dct.base.constants.BaseSecurityConstants;
 import com.dct.base.security.jwt.BaseJwtFilter;
 
 import org.slf4j.Logger;
@@ -68,9 +67,7 @@ public abstract class BaseSecurityFilterChainConfig {
         log.debug("[{}] - Use default headers security configuration", ENTITY_NAME);
         http.headers(header -> header
             .frameOptions(HeadersConfigurer.FrameOptionsConfig::sameOrigin)
-            .contentSecurityPolicy(policy -> policy.policyDirectives(BaseSecurityConstants.HEADER.SECURITY_POLICY))
             .referrerPolicy(config -> config.policy(ReferrerPolicyHeaderWriter.ReferrerPolicy.STRICT_ORIGIN_WHEN_CROSS_ORIGIN))
-            .permissionsPolicy(config -> config.policy(BaseSecurityConstants.HEADER.PERMISSIONS_POLICY))
         );
     }
 

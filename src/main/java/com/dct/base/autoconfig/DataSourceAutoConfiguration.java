@@ -3,6 +3,8 @@ package com.dct.base.autoconfig;
 import com.dct.base.config.properties.DataSourceProps;
 import com.dct.base.config.properties.HikariDataSourceProps;
 import com.dct.base.config.properties.HikariProps;
+import com.dct.base.constants.BaseExceptionConstants;
+import com.dct.base.exception.BaseIllegalArgumentException;
 
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
@@ -16,6 +18,7 @@ import org.springframework.context.annotation.Bean;
 
 import javax.sql.DataSource;
 import java.nio.charset.StandardCharsets;
+import java.util.Objects;
 import java.util.Properties;
 
 @AutoConfiguration
@@ -43,28 +46,37 @@ public class DataSourceAutoConfiguration {
         HikariConfig hikariConfig = new HikariConfig();
         Properties properties = new Properties();
 
+        if (Objects.isNull(dataSourceProps)) {
+            throw new BaseIllegalArgumentException(ENTITY_NAME, BaseExceptionConstants.DATASOURCE_CONFIG_NOT_NULL);
+        }
+
         hikariConfig.setDriverClassName(dataSourceProps.getDriverClassName());
         hikariConfig.setJdbcUrl(dataSourceProps.getUrl());
         hikariConfig.setUsername(dataSourceProps.getUsername());
         hikariConfig.setPassword(dataSourceProps.getPassword());
 
-        hikariConfig.setAutoCommit(hikariProps.getAutoCommit());
-        hikariConfig.setAllowPoolSuspension(hikariProps.getAllowPoolSuspension());
-        hikariConfig.setMaximumPoolSize(hikariProps.getMaximumPoolSize());
-        hikariConfig.setMinimumIdle(hikariProps.getMinimumIdle());
-        hikariConfig.setIdleTimeout(hikariProps.getIdleTimeout());
-        hikariConfig.setMaxLifetime(hikariProps.getMaxLifetime());
-        hikariConfig.setConnectionTimeout(hikariProps.getConnectionTimeout());
-        hikariConfig.setPoolName(hikariProps.getPoolName());
+        if (Objects.nonNull(this.hikariProps)) {
+            hikariConfig.setAutoCommit(hikariProps.getAutoCommit());
+            hikariConfig.setAllowPoolSuspension(hikariProps.getAllowPoolSuspension());
+            hikariConfig.setMaximumPoolSize(hikariProps.getMaximumPoolSize());
+            hikariConfig.setMinimumIdle(hikariProps.getMinimumIdle());
+            hikariConfig.setIdleTimeout(hikariProps.getIdleTimeout());
+            hikariConfig.setMaxLifetime(hikariProps.getMaxLifetime());
+            hikariConfig.setConnectionTimeout(hikariProps.getConnectionTimeout());
+            hikariConfig.setPoolName(hikariProps.getPoolName());
+        }
 
         // Health check configuration
         hikariConfig.setConnectionTestQuery("SELECT 1");
         hikariConfig.setValidationTimeout(5000);
 
-        properties.setProperty("cachePrepStmts", String.valueOf(hikariDataSourceProps.getCachePrepStmts()));
-        properties.setProperty("prepStmtCacheSize", String.valueOf(hikariDataSourceProps.getPrepStmtCacheSize()));
-        properties.setProperty("prepStmtCacheSqlLimit", String.valueOf(hikariDataSourceProps.getPrepStmtCacheSqlLimit()));
-        properties.setProperty("useServerPrepStmts", String.valueOf(hikariDataSourceProps.getUseServerPrepStmts()));
+        if (Objects.nonNull(hikariDataSourceProps)) {
+            properties.setProperty("cachePrepStmts", String.valueOf(hikariDataSourceProps.getCachePrepStmts()));
+            properties.setProperty("prepStmtCacheSize", String.valueOf(hikariDataSourceProps.getPrepStmtCacheSize()));
+            properties.setProperty("prepStmtCacheSqlLimit", String.valueOf(hikariDataSourceProps.getPrepStmtCacheSqlLimit()));
+            properties.setProperty("useServerPrepStmts", String.valueOf(hikariDataSourceProps.getUseServerPrepStmts()));
+        }
+
         properties.setProperty("passwordCharacterEncoding", StandardCharsets.UTF_8.name());
         properties.setProperty("serverTimezone", "UTC"); // Uses the UTC standard for internationalized time
         hikariConfig.setDataSourceProperties(properties);
