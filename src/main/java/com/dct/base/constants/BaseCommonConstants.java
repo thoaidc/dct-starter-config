@@ -9,11 +9,11 @@ public interface BaseCommonConstants {
     String DEFAULT_CREATOR = "SYSTEM"; // Used instead of the default user value mentioned above to store in database
 
     // The location where the resource bundle files for i18n messages are stored
-    String[] MESSAGE_SOURCE_BASENAME = { "classpath:i18n/messages" };
-    String MESSAGE_SOURCE_ENCODING = "UTF-8"; // Specifies the charset for i18n messages
+    String[] DEFAULT_MESSAGE_SOURCE_BASENAME = { "classpath:i18n/messages" };
+    String DEFAULT_MESSAGE_SOURCE_ENCODING = "UTF-8"; // Specifies the charset for i18n messages
 
     // The paths that will be ignored by interceptors when processing requests
-    String[] INTERCEPTOR_EXCLUDED_PATHS = {
+    String[] DEFAULT_INTERCEPTOR_EXCLUDED_PATTERNS = {
         "/**.html",
         "/**.js",
         "/**.css",

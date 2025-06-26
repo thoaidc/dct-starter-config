@@ -3,7 +3,6 @@ package com.dct.base.autoconfig;
 import com.dct.base.common.MessageTranslationUtils;
 import com.dct.base.config.properties.I18nProps;
 import com.dct.base.constants.ActivateStatus;
-import com.dct.base.constants.BaseCommonConstants;
 import com.dct.base.constants.BasePropertiesConstants;
 
 import org.slf4j.Logger;
@@ -20,6 +19,7 @@ import org.springframework.web.servlet.LocaleResolver;
 import org.springframework.web.servlet.i18n.AcceptHeaderLocaleResolver;
 
 import java.util.Locale;
+import java.util.Optional;
 
 /**
  * Supports internationalization (i18n) and integration with validation <p>
@@ -37,6 +37,11 @@ public class LocaleAutoConfiguration {
 
     private static final Logger log = LoggerFactory.getLogger(LocaleAutoConfiguration.class);
     private static final String ENTITY_NAME = "LocaleAutoConfiguration";
+    private final I18nProps i18nProps;
+
+    public LocaleAutoConfiguration(I18nProps i18nProps) {
+        this.i18nProps = i18nProps;
+    }
 
     @Bean
     public LocaleResolver defaultLocaleResolver() {
@@ -52,8 +57,8 @@ public class LocaleAutoConfiguration {
         ReloadableResourceBundleMessageSource messageSource = new ReloadableResourceBundleMessageSource();
         // Set the location of the message files
         // Spring will look for files by name messages_{locale}.properties
-        messageSource.setBasenames(BaseCommonConstants.MESSAGE_SOURCE_BASENAME);
-        messageSource.setDefaultEncoding(BaseCommonConstants.MESSAGE_SOURCE_ENCODING);
+        messageSource.setBasenames(Optional.ofNullable(i18nProps).orElse(new I18nProps()).getBaseNames());
+        messageSource.setDefaultEncoding(Optional.ofNullable(i18nProps).orElse(new I18nProps()).getEncoding());
         return messageSource;
     }
 

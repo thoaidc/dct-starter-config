@@ -28,7 +28,7 @@ public class ResourceHandlersAutoConfiguration implements WebMvcConfigurer {
     private final ResourceProps resourceProps;
 
     public ResourceHandlersAutoConfiguration(ResourceProps resourceProps) {
-        this.resourceProps = resourceProps;
+        this.resourceProps = Optional.ofNullable(resourceProps).orElse(new ResourceProps());
     }
 
     /**

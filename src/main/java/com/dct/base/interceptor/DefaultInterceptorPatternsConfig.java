@@ -16,6 +16,6 @@ public class DefaultInterceptorPatternsConfig implements InterceptorPatternsConf
     @Override
     public String[] excludedPaths() {
         return Optional.ofNullable(interceptorProps.getExcludedPatterns())
-                .orElse(BaseCommonConstants.INTERCEPTOR_EXCLUDED_PATHS);
+                .orElse(BaseCommonConstants.DEFAULT_INTERCEPTOR_EXCLUDED_PATTERNS);
     }
 }

@@ -96,17 +96,19 @@ public class OAuth2AutoConfiguration {
         }
 
         return clientProps.stream()
-                .map(clientProp -> ClientRegistration.withRegistrationId(clientProp.getProvider())
-                .clientId(clientProp.getClientId())
-                .clientName(clientProp.getClientName())
-                .clientSecret(clientProp.getClientSecret())
-                .scope(clientProp.getScope())
-                .authorizationGrantType(AuthorizationGrantType.AUTHORIZATION_CODE)
-                .authorizationUri(clientProp.getAuthorizationUri())
-                .redirectUri(clientProp.getRedirectUri())
-                .tokenUri(clientProp.getTokenUri())
-                .userInfoUri(clientProp.getUserInfoUri())
-                .userNameAttributeName(clientProp.getUsernameAttributeName())
-                .build()).toArray(ClientRegistration[]::new);
+                .map(clientProp ->
+                    ClientRegistration.withRegistrationId(clientProp.getProvider())
+                    .clientId(clientProp.getClientId())
+                    .clientName(clientProp.getClientName())
+                    .clientSecret(clientProp.getClientSecret())
+                    .scope(clientProp.getScope())
+                    .authorizationGrantType(AuthorizationGrantType.AUTHORIZATION_CODE)
+                    .authorizationUri(clientProp.getAuthorizationUri())
+                    .redirectUri(clientProp.getRedirectUri())
+                    .tokenUri(clientProp.getTokenUri())
+                    .userInfoUri(clientProp.getUserInfoUri())
+                    .userNameAttributeName(clientProp.getUsernameAttributeName())
+                    .build()
+                ).toArray(ClientRegistration[]::new);
     }
 }

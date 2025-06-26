@@ -1,11 +1,12 @@
 package com.dct.base.config.properties;
 
+import com.dct.base.constants.BaseCommonConstants;
 import com.dct.base.constants.BasePropertiesConstants;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
-import java.util.List;
+import java.util.Optional;
 
 /**
  * When the application starts, Spring will automatically create an instance of this class
@@ -23,19 +24,19 @@ import java.util.List;
 @ConfigurationProperties(prefix = BasePropertiesConstants.I18N_CONFIG)
 public class I18nProps {
 
-    private List<String> baseNames;
+    private String[] baseNames;
     private String encoding;
 
-    public List<String> getBaseNames() {
-        return baseNames;
+    public String[] getBaseNames() {
+        return Optional.ofNullable(baseNames).orElse(BaseCommonConstants.DEFAULT_MESSAGE_SOURCE_BASENAME);
     }
 
-    public void setBaseNames(List<String> baseNames) {
+    public void setBaseNames(String[] baseNames) {
         this.baseNames = baseNames;
     }
 
     public String getEncoding() {
-        return encoding;
+        return Optional.ofNullable(encoding).orElse(BaseCommonConstants.DEFAULT_MESSAGE_SOURCE_ENCODING);
     }
 
     public void setEncoding(String encoding) {
