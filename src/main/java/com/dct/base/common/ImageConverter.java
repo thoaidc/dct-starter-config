@@ -43,7 +43,7 @@ public class ImageConverter {
     }
 
     public static boolean isValidImageFormat(MultipartFile file) {
-        return isValidImageFormat(file, BaseCommonConstants.UPLOAD_RESOURCES.VALID_IMAGE_FORMATS);
+        return isValidImageFormat(file, BaseCommonConstants.UPLOAD_RESOURCES.DEFAULT_VALID_IMAGE_FORMATS);
     }
 
     public static boolean isCompressibleImage(MultipartFile file) {

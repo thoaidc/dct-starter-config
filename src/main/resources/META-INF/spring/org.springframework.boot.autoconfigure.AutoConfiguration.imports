@@ -1,7 +1,6 @@
 com.dct.base.autoconfig.AuditingAutoConfiguration
 com.dct.base.autoconfig.DataConverterAutoConfiguration
 com.dct.base.autoconfig.DataSourceAutoConfiguration
-com.dct.base.autoconfig.FileAutoConfiguration
 com.dct.base.autoconfig.GlobalExceptionHandlerAutoConfiguration
 com.dct.base.autoconfig.HttpClientAutoConfiguration
 com.dct.base.autoconfig.InterceptorAutoConfiguration

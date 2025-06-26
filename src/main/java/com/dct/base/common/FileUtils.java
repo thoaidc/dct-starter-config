@@ -5,7 +5,6 @@ import com.dct.base.dto.upload.ImageDTO;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -21,6 +20,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
+import java.util.UUID;
 
 /**
  * Provides methods for storing files, compressing images automatically
@@ -30,6 +30,16 @@ import java.util.Objects;
 public class FileUtils {
 
     private static final Logger log = LoggerFactory.getLogger(FileUtils.class);
+    private String uploadDirectory = BaseCommonConstants.UPLOAD_RESOURCES.DEFAULT_DIRECTORY;
+    private String prefixPath = BaseCommonConstants.UPLOAD_RESOURCES.DEFAULT_PREFIX_PATH;
+
+    public void setUploadDirectory(String uploadDirectory) {
+        this.uploadDirectory = StringUtils.hasText(uploadDirectory) ? uploadDirectory : this.uploadDirectory;
+    }
+
+    public void setPrefixPath(String prefixPath) {
+        this.prefixPath = StringUtils.hasText(prefixPath) ? prefixPath : this.prefixPath;
+    }
 
     public static boolean invalidUploadFile(MultipartFile file) {
         return file == null || file.isEmpty() || !Objects.nonNull(file.getOriginalFilename());
@@ -48,7 +58,7 @@ public class FileUtils {
     }
 
     private File getFileToSave(String fileName, boolean isMakeNew) {
-        File file = new File(BaseCommonConstants.UPLOAD_RESOURCES.DEFAULT_DIRECTORY + File.separator + fileName);
+        File file = new File(uploadDirectory + File.separator + fileName);
 
         if (file.exists() || !isMakeNew)
             return file;
@@ -71,13 +81,13 @@ public class FileUtils {
     }
 
     public static String generateUniqueFileName(String fileNameOrFileExtension) {
-        String uniqueName = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd_HH-mm-ss_SSS"));
+        String uniqueName = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd_HH-mm-ss_"));
 
         if (Objects.isNull(fileNameOrFileExtension))
-            return uniqueName + BaseCommonConstants.UPLOAD_RESOURCES.DEFAULT_IMAGE_FORMAT;
+            return uniqueName + UUID.randomUUID() + BaseCommonConstants.UPLOAD_RESOURCES.DEFAULT_IMAGE_FORMAT;
 
         String fileExtension = fileNameOrFileExtension.substring(fileNameOrFileExtension.lastIndexOf("."));
-        return uniqueName + fileExtension;
+        return uniqueName + UUID.randomUUID() + fileExtension;
     }
 
     public String save(ImageDTO imageDTO) {
@@ -94,7 +104,7 @@ public class FileUtils {
                     log.warn("Could not clean up temporary when save image: {}", fileToSaveImage.getAbsolutePath());
 
                 log.debug("Save new file to: {}", fileToSaveImage.getAbsolutePath());
-                return BaseCommonConstants.UPLOAD_RESOURCES.PREFIX_PATH + fileName;
+                return prefixPath + fileName;
             }
         } catch (IOException e) {
             log.error("Could not save file: {}", imageDTO.getImageParameterDTO().getOriginalImageFilename(), e);
@@ -120,7 +130,7 @@ public class FileUtils {
 
         try {
             file.transferTo(directory);
-            return BaseCommonConstants.UPLOAD_RESOURCES.PREFIX_PATH + fileName;
+            return prefixPath + fileName;
         } catch (IOException e) {
             log.error("Could not save this file to: {}", directory.getAbsolutePath(), e);
         }
@@ -182,8 +192,8 @@ public class FileUtils {
         if (!StringUtils.hasText(filePath))
             return false;
 
-        int positionPrefixPath = filePath.lastIndexOf(BaseCommonConstants.UPLOAD_RESOURCES.PREFIX_PATH);
-        int prefixSize = BaseCommonConstants.UPLOAD_RESOURCES.PREFIX_PATH.length();
+        int positionPrefixPath = filePath.lastIndexOf(prefixPath);
+        int prefixSize = prefixPath.length();
         String fileName = filePath.substring(positionPrefixPath + prefixSize);
         File file = getFileToSave(fileName, false);
 
@@ -194,7 +204,6 @@ public class FileUtils {
         return file.delete();
     }
 
-    @Async
     public void delete(Collection<String> filePaths) {
         if (Objects.isNull(filePaths) || filePaths.isEmpty())
             return;
