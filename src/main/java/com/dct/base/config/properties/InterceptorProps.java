@@ -1,6 +1,5 @@
 package com.dct.base.config.properties;
 
-import com.dct.base.constants.ActivateStatus;
 import com.dct.base.constants.BasePropertiesConstants;
 
 import org.springframework.beans.factory.annotation.Value;
@@ -25,7 +24,6 @@ import java.util.List;
 public class InterceptorProps {
 
     private String[] excludedPatterns;
-    private ResponseConfig responses;
     private CorsConfig cors;
 
     public String[] getExcludedPatterns() {
@@ -36,32 +34,12 @@ public class InterceptorProps {
         this.excludedPatterns = excludedPatterns;
     }
 
-    public ResponseConfig getResponses() {
-        return responses;
-    }
-
-    public void setResponses(ResponseConfig responses) {
-        this.responses = responses;
-    }
-
     public CorsConfig getCors() {
         return cors;
     }
 
     public void setCors(CorsConfig cors) {
         this.cors = cors;
-    }
-
-    public static class ResponseConfig {
-        private ActivateStatus translation;
-
-        public ActivateStatus getTranslation() {
-            return translation;
-        }
-
-        public void setTranslation(ActivateStatus translation) {
-            this.translation = translation;
-        }
     }
 
     public static class CorsConfig {

@@ -24,7 +24,6 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
 
 @AutoConfiguration
-@ConditionalOnProperty(name = BasePropertiesConstants.ENABLED_INTERCEPTOR, havingValue = ActivateStatus.ENABLED_VALUE)
 @EnableConfigurationProperties(InterceptorProps.class)
 public class InterceptorAutoConfiguration {
 

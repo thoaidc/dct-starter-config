@@ -20,27 +20,38 @@ import org.springframework.security.web.servlet.util.matcher.MvcRequestMatcher;
 import org.springframework.web.filter.CorsFilter;
 
 import java.util.Arrays;
+import java.util.Objects;
 
 public abstract class BaseSecurityFilterChainConfig {
 
     private static final Logger log = LoggerFactory.getLogger(BaseSecurityFilterChainConfig.class);
     private static final String ENTITY_NAME = "BaseSecurityFilterChainConfig";
+    private final BaseSecurityAuthorizeRequestConfig securityAuthorizeRequestConfig;
     private final CorsFilter corsFilter;
-    private final BaseJwtFilter jwtFilter;
     private final AccessDeniedHandler accessDeniedHandler;
     private final AuthenticationEntryPoint authenticationEntryPoint;
-    private final BaseSecurityAuthorizeRequestConfig securityAuthorizeRequestConfig;
+    private BaseJwtFilter jwtFilter;
 
-    protected BaseSecurityFilterChainConfig(CorsFilter corsFilter,
-                                            BaseJwtFilter jwtFilter,
-                                            AccessDeniedHandler accessDeniedHandler,
-                                            AuthenticationEntryPoint authenticationEntryPoint,
-                                            BaseSecurityAuthorizeRequestConfig securityAuthorizeRequestConfig) {
+    public BaseSecurityFilterChainConfig(CorsFilter corsFilter,
+                                         BaseSecurityAuthorizeRequestConfig securityAuthorizeRequestConfig,
+                                         AccessDeniedHandler accessDeniedHandler,
+                                         AuthenticationEntryPoint authenticationEntryPoint) {
+        this.securityAuthorizeRequestConfig = securityAuthorizeRequestConfig;
         this.corsFilter = corsFilter;
-        this.jwtFilter = jwtFilter;
         this.accessDeniedHandler = accessDeniedHandler;
         this.authenticationEntryPoint = authenticationEntryPoint;
+    }
+
+    protected BaseSecurityFilterChainConfig(CorsFilter corsFilter,
+                                            BaseSecurityAuthorizeRequestConfig securityAuthorizeRequestConfig,
+                                            AccessDeniedHandler accessDeniedHandler,
+                                            AuthenticationEntryPoint authenticationEntryPoint,
+                                            BaseJwtFilter jwtFilter) {
+        this.corsFilter = corsFilter;
         this.securityAuthorizeRequestConfig = securityAuthorizeRequestConfig;
+        this.accessDeniedHandler = accessDeniedHandler;
+        this.authenticationEntryPoint = authenticationEntryPoint;
+        this.jwtFilter = jwtFilter;
     }
 
     public void cors(HttpSecurity http) throws Exception {
@@ -51,8 +62,11 @@ public abstract class BaseSecurityFilterChainConfig {
 
     public void addFilters(HttpSecurity http) {
         log.debug("[{}] - Use default filters orders configuration", ENTITY_NAME);
-        http.addFilterAfter(corsFilter, HeaderWriterFilter.class)
-            .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
+        http.addFilterAfter(corsFilter, HeaderWriterFilter.class);
+
+        if (Objects.nonNull(jwtFilter)) {
+            http.addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
+        }
     }
 
     public void exceptionHandlers(HttpSecurity http) throws Exception {
@@ -67,7 +81,8 @@ public abstract class BaseSecurityFilterChainConfig {
         log.debug("[{}] - Use default headers security configuration", ENTITY_NAME);
         http.headers(header -> header
             .frameOptions(HeadersConfigurer.FrameOptionsConfig::sameOrigin)
-            .referrerPolicy(config -> config.policy(ReferrerPolicyHeaderWriter.ReferrerPolicy.STRICT_ORIGIN_WHEN_CROSS_ORIGIN))
+            .referrerPolicy(config ->
+                config.policy(ReferrerPolicyHeaderWriter.ReferrerPolicy.STRICT_ORIGIN_WHEN_CROSS_ORIGIN))
         );
     }
 

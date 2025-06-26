@@ -21,19 +21,9 @@
       "description": "Description for dct.base.features.default-rest-template."
     },
     {
-      "name": "dct.base.features.default-exception-handler",
-      "type": "com.dct.base.constants.ActivateStatus",
-      "description": "Description for dct.base.features.default-exception-handler."
-    },
-    {
       "name": "dct.base.features.default-object-mapper",
       "type": "com.dct.base.constants.ActivateStatus",
       "description": "Description for dct.base.features.default-object-mapper."
-    },
-    {
-      "name": "dct.base.features.interceptors",
-      "type": "com.dct.base.constants.ActivateStatus",
-      "description": "Description for dct.base.features.interceptors."
     },
     {
       "name": "dct.base.features.resources",

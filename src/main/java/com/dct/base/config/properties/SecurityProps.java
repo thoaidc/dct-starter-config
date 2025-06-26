@@ -1,6 +1,5 @@
 package com.dct.base.config.properties;
 
-import com.dct.base.constants.ActivateStatus;
 import com.dct.base.constants.BasePropertiesConstants;
 import com.dct.base.constants.BaseSecurityConstants;
 
@@ -27,8 +26,6 @@ import java.util.Optional;
 public class SecurityProps {
 
     private boolean enabledTls;
-    private ActivateStatus defaultAccessDeniedHandler;
-    private ActivateStatus defaultAuthenticationEntrypoint;
     private Integer passwordEncryptFactor;
     private String[] publicRequestPatterns;
 
@@ -38,22 +35,6 @@ public class SecurityProps {
 
     public void setEnabledTls(boolean enabledTls) {
         this.enabledTls = enabledTls;
-    }
-
-    public ActivateStatus getDefaultAccessDeniedHandler() {
-        return defaultAccessDeniedHandler;
-    }
-
-    public void setDefaultAccessDeniedHandler(ActivateStatus defaultAccessDeniedHandler) {
-        this.defaultAccessDeniedHandler = defaultAccessDeniedHandler;
-    }
-
-    public ActivateStatus getDefaultAuthenticationEntrypoint() {
-        return defaultAuthenticationEntrypoint;
-    }
-
-    public void setDefaultAuthenticationEntrypoint(ActivateStatus defaultAuthenticationEntrypoint) {
-        this.defaultAuthenticationEntrypoint = defaultAuthenticationEntrypoint;
     }
 
     public Integer getPasswordEncryptFactor() {

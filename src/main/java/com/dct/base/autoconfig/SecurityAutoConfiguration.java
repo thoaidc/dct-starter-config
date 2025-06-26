@@ -15,7 +15,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.core.env.Environment;
@@ -51,7 +50,6 @@ public class SecurityAutoConfiguration {
 
     @Bean
     @ConditionalOnMissingBean(AccessDeniedHandler.class)
-    @ConditionalOnProperty(name = BasePropertiesConstants.ENABLED_DEFAULT_ACCESS_DENIED_HANDLER, havingValue = ENABLED_VALUE)
     public AccessDeniedHandler defaultAccessDeniedHandler(
         @Autowired(required = false) MessageTranslationUtils messageTranslationUtils,
         Environment env
@@ -68,7 +66,6 @@ public class SecurityAutoConfiguration {
 
     @Bean
     @ConditionalOnMissingBean(AuthenticationEntryPoint.class)
-    @ConditionalOnProperty(name = BasePropertiesConstants.ENABLED_DEFAULT_AUTH_ENTRYPOINT, havingValue = ENABLED_VALUE)
     public AuthenticationEntryPoint defaultAuthenticationEntryPoint(
         @Autowired(required = false) MessageTranslationUtils messageTranslationUtils,
         Environment env

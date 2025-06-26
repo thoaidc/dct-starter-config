@@ -74,9 +74,7 @@ dct:
       datasource: disabled
       jpa-auditing: disabled
       default-rest-template: enabled
-      default-exception-handler: enabled
       default-object-mapper: enabled
-      interceptors: enabled
       resources: enabled
       socket: disabled
       i18n: enabled
@@ -120,8 +118,6 @@ dct:
           - D:\\Downloads
 
     interceptor:
-      responses:
-        translation: enabled
       excluded-patterns:
         - /**.html
         - /**.js
@@ -164,8 +160,6 @@ dct:
 
     security:
       enabled-tls: false
-      default-access-denied-handler: enabled
-      default-authentication-entrypoint: enabled
       password-encrypt-factor: 12
       public-request-patterns:
         - /

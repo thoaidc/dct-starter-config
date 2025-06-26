@@ -24,12 +24,8 @@ public interface BasePropertiesConstants {
     String ENABLED_DATASOURCE = "dct.base.features.datasource";
     String ENABLED_AUDITING = "dct.base.features.jpa-auditing";
     String ENABLED_REST_TEMPLATE = "dct.base.features.default-rest-template";
-    String ENABLED_EXCEPTION_HANDLER = "dct.base.features.default-exception-handler";
     String ENABLED_OBJECT_MAPPER = "dct.base.features.default-object-mapper";
-    String ENABLED_INTERCEPTOR = "dct.base.features.interceptors";
     String ENABLED_RESOURCE = "dct.base.features.resources";
     String ENABLED_SOCKET = "dct.base.features.socket";
     String ENABLED_I18N = "dct.base.features.i18n";
-    String ENABLED_DEFAULT_ACCESS_DENIED_HANDLER = "dct.base.security.default-access-denied-handler";
-    String ENABLED_DEFAULT_AUTH_ENTRYPOINT = "dct.base.security.default-authentication-entrypoint";
 }
