@@ -1,6 +1,7 @@
 package com.dct.base.autoconfig;
 
 import com.dct.base.common.MessageTranslationUtils;
+import com.dct.base.config.properties.SecurityProps;
 import com.dct.base.constants.BaseSecurityConstants;
 import com.dct.base.security.config.BaseSecurityAuthorizeRequestConfig;
 import com.dct.base.security.config.DefaultBaseSecurityAuthorizeRequestConfig;
@@ -13,6 +14,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -28,6 +30,7 @@ import org.springframework.security.web.servlet.util.matcher.MvcRequestMatcher;
 import org.springframework.web.servlet.handler.HandlerMappingIntrospector;
 
 @AutoConfiguration
+@EnableConfigurationProperties(SecurityProps.class)
 public class SecurityAutoConfiguration {
 
     private static final Logger log = LoggerFactory.getLogger(SecurityAutoConfiguration.class);

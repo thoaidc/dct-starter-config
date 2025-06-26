@@ -1,13 +1,18 @@
 package com.dct.base.autoconfig;
 
+import com.dct.base.constants.BasePropertiesConstants;
 import com.fasterxml.jackson.databind.ObjectMapper;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.web.client.RestTemplate;
+
+import static com.dct.base.constants.ActivateStatus.ENABLED_VALUE;
 
 /**
  * Helps the application use functions related to sending and receiving HTTP requests/responses, similar to a client
@@ -30,6 +35,7 @@ public class HttpClientAutoConfiguration {
      */
     @Bean
     @ConditionalOnMissingBean(RestTemplate.class)
+    @ConditionalOnProperty(name = BasePropertiesConstants.ENABLED_REST_TEMPLATE, havingValue = ENABLED_VALUE)
     public RestTemplate defaultRestTemplate() {
         log.debug("[{}] - Auto configure default RestTemplate for send HTTP request/response in spring", ENTITY_NAME);
         RestTemplate restTemplate = new RestTemplate();

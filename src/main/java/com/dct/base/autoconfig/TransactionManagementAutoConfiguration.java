@@ -1,5 +1,8 @@
 package com.dct.base.autoconfig;
 
+import com.dct.base.constants.ActivateStatus;
+import com.dct.base.constants.BasePropertiesConstants;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
@@ -30,7 +33,7 @@ import org.springframework.transaction.support.TransactionTemplate;
  */
 @AutoConfiguration
 @AutoConfigureAfter({DataSourceAutoConfiguration.class, HibernateJpaAutoConfiguration.class})
-@ConditionalOnProperty(name = "spring.datasource.url")
+@ConditionalOnProperty(name = BasePropertiesConstants.ENABLED_DATASOURCE, havingValue = ActivateStatus.ENABLED_VALUE)
 @EnableTransactionManagement // Enable annotations-based transaction management (@Transactional) in Spring application
 public class TransactionManagementAutoConfiguration {
 

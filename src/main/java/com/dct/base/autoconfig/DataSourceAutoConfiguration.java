@@ -3,7 +3,9 @@ package com.dct.base.autoconfig;
 import com.dct.base.config.properties.DataSourceProps;
 import com.dct.base.config.properties.HikariDataSourceProps;
 import com.dct.base.config.properties.HikariProps;
+import com.dct.base.constants.ActivateStatus;
 import com.dct.base.constants.BaseExceptionConstants;
+import com.dct.base.constants.BasePropertiesConstants;
 import com.dct.base.exception.BaseIllegalArgumentException;
 
 import com.zaxxer.hikari.HikariConfig;
@@ -14,6 +16,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 
 import javax.sql.DataSource;
@@ -22,7 +25,12 @@ import java.util.Objects;
 import java.util.Properties;
 
 @AutoConfiguration
-@ConditionalOnProperty(name = "spring.datasource.url")
+@ConditionalOnProperty(name = BasePropertiesConstants.ENABLED_DATASOURCE, havingValue = ActivateStatus.ENABLED_VALUE)
+@EnableConfigurationProperties({
+    DataSourceProps.class,
+    HikariProps.class,
+    HikariDataSourceProps.class
+})
 public class DataSourceAutoConfiguration {
 
     private static final Logger log = LoggerFactory.getLogger(DataSourceAutoConfiguration.class);

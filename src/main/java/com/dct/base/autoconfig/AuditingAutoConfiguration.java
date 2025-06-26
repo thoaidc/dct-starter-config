@@ -1,7 +1,9 @@
 package com.dct.base.autoconfig;
 
+import com.dct.base.constants.ActivateStatus;
 import com.dct.base.constants.BaseCommonConstants;
 
+import com.dct.base.constants.BasePropertiesConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
@@ -29,7 +31,7 @@ import java.util.Optional;
  */
 @AutoConfiguration
 @AutoConfigureAfter({DataSourceAutoConfiguration.class, HibernateJpaAutoConfiguration.class})
-@ConditionalOnProperty(name = "spring.jpa.auditing", havingValue = "true")
+@ConditionalOnProperty(name = BasePropertiesConstants.ENABLED_AUDITING, havingValue = ActivateStatus.ENABLED_VALUE)
 @EnableJpaAuditing(auditorAwareRef = "auditorProvider")
 public class AuditingAutoConfiguration {
 

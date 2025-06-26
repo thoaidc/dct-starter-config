@@ -11,12 +11,6 @@
 # https://docs.spring.io/spring-boot/reference/features/profiles.html
 # ===================================================================
 
-spring:
-  autoconfigure:
-    exclude:
-      - org.springframework.boot.autoconfigure.orm.jpa.HibernateJpaAutoConfiguration
-      - org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration
-
 logging:
   level:
     root: debug
@@ -28,21 +22,177 @@ logging:
   # Custom properties to define logs file paths according to different profiles
   file-path: mnt/logs
 
+spring:
+  autoconfigure:
+    exclude:
+      - org.springframework.boot.autoconfigure.orm.jpa.HibernateJpaAutoConfiguration
+      - org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration
+  sql:
+    init:
+      mode: never
+  jpa:
+    # Avoid causing LazyInitializationException if querying outside the scope of EntityManager or causing poor performance
+    open-in-view: false
+    hibernate:
+      # Hibernate only checks if the current schema matches the entity
+      # If it does not match, the application will not start
+      # Do not make any changes to the schema
+      ddl-auto: validate
+    properties:
+      hibernate:
+        show_sql: true
+        format_sql: false
+        jdbc:
+          time_zone: UTC
+          ddl-auto: validate
+  jackson:
+    time-zone: UTC
+  servlet:
+    multipart:
+      enabled: true
+      # Maximum size of the entire HTTP request when uploading multipart data (including files and other parameters)
+      max-request-size: 30MB
+      # Maximum size for each file that a user can upload
+      max-file-size: 10MB
+
+server:
+  servlet:
+    session:
+      cookie:
+        # The session cookie that Spring Boot creates will have the HttpOnly attribute
+        # Setting HttpOnly helps protect cookies from Cross-Site Scripting (XSS) attacks
+        # Cookies will still be sent with each HTTP request (and can therefore be used for session authentication)
+        # But Cookies cannot be accessed from the client side using JavaScript (e.g. via document.cookie)
+        http-only: true
+  port: 8080
+
 dct:
   base:
     domain: http://localhost:${server.port}
-    socket:
-      enabled: false
+
+    features:
+      datasource: disabled
+      jpa-auditing: disabled
+      default-rest-template: enabled
+      default-exception-handler: enabled
+      default-object-mapper: enabled
+      interceptors: enabled
+      resources: enabled
+      socket: disabled
+      i18n: enabled
+
+    i18n:
+      base-names:
+        - classpath:i18n/messages
+      encoding: UTF-8
+
+    resources:
+      static-resource:
+        patterns:
+          - /**.html
+          - /**.js
+          - /**.css
+          - /**.webp
+          - /**.jpg
+          - /**.jpeg
+          - /**.gif
+          - /**.svg
+          - /**.png
+          - /**.ico
+          - /uploads/**
+          - /file/**
+          - /i18n/**
+        locations:
+          - classpath:/static/
+          - classpath:/static/i18n/
+      upload-resource:
+        accept-formats:
+          - .png
+          - .jpg
+          - .jpeg
+          - .gif
+          - .svg
+          - .webp
+          - .webm
+        patterns:
+          - /uploads/
+        locations:
+          - D:\\Downloads
+
+    interceptor:
+      responses:
+        translation: enabled
+      excluded-patterns:
+        - /**.html
+        - /**.js
+        - /**.css
+        - /**.webp
+        - /**.jpg
+        - /**.jpeg
+        - /**.gif
+        - /**.svg
+        - /**.png
+        - /**.ico
+        - /uploads/**
+        - /file/**
+        - /login
+        - /error**
+        - /i18n/**
+      cors:
+        apply-for:
+          - /**
+        allowed-origin-patterns:
+          - "*"
+        allowed-headers:
+          - Content-Type
+          - Authorization
+          - Accept
+          - Origin
+          - X-CSRF-Token
+          - X-Requested-With
+          - Access-Control-Allow-Origin
+          - X-App-Version
+          - X-Device-ID
+        allowed-methods:
+          - GET
+          - PUT
+          - POST
+          - PATCH
+          - DELETE
+          - OPTIONS
+        allowed-credentials: true
+
     security:
-      auth:
-        enabled-tls: false
+      enabled-tls: false
+      default-access-denied-handler: enabled
+      default-authentication-entrypoint-handler: enabled
+      password-encrypt-factor: 12
+      public-request-patterns:
+        - /
+        - /**.html
+        - /**.css
+        - /**.js
+        - /**.ico
+        - /i18n/**
+        - /uploads/**
+        - /register
+        - /login
+        - /p/**
+        - /api/p/**
+        - /login/oauth2/**
+
+      jwt:
+        enabled: true
         base64-secret-key: ZGN0LWJhc2Utc2VjcmV0LWtleS10b2tlbi12YWxpZGl0eS04NjQwMDAwMG1zLWZvci1yZW1lbWJlci1tZS04NjQwMDAwMG1z
-        # Token is valid default in 1 hour and 7 days for remember me
-        token-validity: 3600000 # milliseconds
-        token-validity-for-remember-me: 604800000 # milliseconds
+        access-token:
+          validity: 300000
+        refresh-token:
+          validity: 3600000  # milliseconds
+          validity-for-remember: 604800000
+
       oauth2:
         enabled: false
-        base-authorize-uri: /api/p/v1/auth/oauth2/authorize # Add /{registrationId} (eg: /google) when calling from clients
+        base-authorize-uri: /api/p/v1/oauth2/authorize # Add /{registrationId} (eg: /google) when calling from clients
         clients:
           - provider: google
             client-name: Demo Starter Google

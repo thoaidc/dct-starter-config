@@ -1,5 +1,6 @@
 package com.dct.base.autoconfig;
 
+import com.dct.base.constants.ActivateStatus;
 import com.dct.base.constants.BasePropertiesConstants;
 import com.dct.base.security.config.BaseCorsRequestMatchersConfig;
 
@@ -13,7 +14,7 @@ import org.springframework.web.socket.config.annotation.StompEndpointRegistry;
 import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerConfigurer;
 
 @AutoConfiguration
-@ConditionalOnProperty(name = BasePropertiesConstants.ENABLED_SOCKET, havingValue = "true")
+@ConditionalOnProperty(name = BasePropertiesConstants.ENABLED_SOCKET, havingValue = ActivateStatus.ENABLED_VALUE)
 @EnableWebSocketMessageBroker
 public class WebSocketAutoConfiguration implements WebSocketMessageBrokerConfigurer {
 

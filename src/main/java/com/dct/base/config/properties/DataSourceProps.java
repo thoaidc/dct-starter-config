@@ -5,7 +5,6 @@ import com.dct.base.exception.BaseIllegalArgumentException;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.util.StringUtils;
 
 /**
@@ -22,7 +21,6 @@ import org.springframework.util.StringUtils;
  *
  * @author thoaidc
  */
-@Configuration
 @ConfigurationProperties(prefix = BasePropertiesConstants.DATASOURCE_CONFIG)
 public class DataSourceProps {
 

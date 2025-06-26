@@ -3,7 +3,6 @@ package com.dct.base.config.properties;
 import com.dct.base.constants.BasePropertiesConstants;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.context.annotation.Configuration;
 
 /**
  * Contains configuration properties related to optimizing database connections<p>
@@ -19,7 +18,6 @@ import org.springframework.context.annotation.Configuration;
  *
  * @author thoaidc
  */
-@Configuration
 @ConfigurationProperties(prefix = BasePropertiesConstants.HIKARI_DATASOURCE_CONFIG)
 public class HikariDataSourceProps {
 

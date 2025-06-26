@@ -1,9 +1,12 @@
 package com.dct.base.config.properties;
 
+import com.dct.base.constants.ActivateStatus;
 import com.dct.base.constants.BasePropertiesConstants;
+
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.context.annotation.Configuration;
+
+import java.util.List;
 
 /**
  * Contains security configurations such as the secret key<p>
@@ -19,14 +22,14 @@ import org.springframework.context.annotation.Configuration;
  *
  * @author thoaidc
  */
-@Configuration
 @ConfigurationProperties(prefix = BasePropertiesConstants.SECURITY_CONFIG)
 public class SecurityProps {
 
     private boolean enabledTls;
-    private String base64SecretKey;
-    private Long tokenValidity;
-    private Long tokenValidityForRememberMe;
+    private ActivateStatus defaultAccessDeniedHandler;
+    private ActivateStatus defaultAuthenticationEntrypointHandler;
+    private Integer passwordEncryptFactor;
+    private List<String> publicRequestPatterns;
 
     public boolean isEnabledTls() {
         return enabledTls;
@@ -36,27 +39,35 @@ public class SecurityProps {
         this.enabledTls = enabledTls;
     }
 
-    public String getBase64SecretKey() {
-        return base64SecretKey;
+    public ActivateStatus getDefaultAccessDeniedHandler() {
+        return defaultAccessDeniedHandler;
     }
 
-    public void setBase64SecretKey(String base64SecretKey) {
-        this.base64SecretKey = base64SecretKey;
+    public void setDefaultAccessDeniedHandler(ActivateStatus defaultAccessDeniedHandler) {
+        this.defaultAccessDeniedHandler = defaultAccessDeniedHandler;
     }
 
-    public Long getTokenValidity() {
-        return tokenValidity;
+    public ActivateStatus getDefaultAuthenticationEntrypointHandler() {
+        return defaultAuthenticationEntrypointHandler;
     }
 
-    public void setTokenValidity(Long tokenValidity) {
-        this.tokenValidity = tokenValidity;
+    public void setDefaultAuthenticationEntrypointHandler(ActivateStatus defaultAuthenticationEntrypointHandler) {
+        this.defaultAuthenticationEntrypointHandler = defaultAuthenticationEntrypointHandler;
     }
 
-    public Long getTokenValidityForRememberMe() {
-        return tokenValidityForRememberMe;
+    public Integer getPasswordEncryptFactor() {
+        return passwordEncryptFactor;
     }
 
-    public void setTokenValidityForRememberMe(Long tokenValidityForRememberMe) {
-        this.tokenValidityForRememberMe = tokenValidityForRememberMe;
+    public void setPasswordEncryptFactor(Integer passwordEncryptFactor) {
+        this.passwordEncryptFactor = passwordEncryptFactor;
+    }
+
+    public List<String> getPublicRequestPatterns() {
+        return publicRequestPatterns;
+    }
+
+    public void setPublicRequestPatterns(List<String> publicRequestPatterns) {
+        this.publicRequestPatterns = publicRequestPatterns;
     }
 }

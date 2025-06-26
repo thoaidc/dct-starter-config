@@ -1,12 +1,17 @@
 package com.dct.base.autoconfig;
 
 import com.dct.base.common.MessageTranslationUtils;
+import com.dct.base.config.properties.I18nProps;
+import com.dct.base.constants.ActivateStatus;
 import com.dct.base.constants.BaseCommonConstants;
+import com.dct.base.constants.BasePropertiesConstants;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.support.ReloadableResourceBundleMessageSource;
@@ -26,6 +31,8 @@ import java.util.Locale;
  * @author thoaidc
  */
 @AutoConfiguration
+@ConditionalOnProperty(name = BasePropertiesConstants.ENABLED_I18N, havingValue = ActivateStatus.ENABLED_VALUE)
+@EnableConfigurationProperties(I18nProps.class)
 public class LocaleAutoConfiguration {
 
     private static final Logger log = LoggerFactory.getLogger(LocaleAutoConfiguration.class);

@@ -1,10 +1,10 @@
 package com.dct.base.config.properties;
 
 import com.dct.base.constants.BasePropertiesConstants;
+
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.context.annotation.Configuration;
 
 import java.util.List;
 
@@ -15,7 +15,7 @@ import java.util.List;
  *
  * {@link ConfigurationProperties} helps Spring map config properties to fields,
  * instead of using @{@link Value} for each property individually <p>
- * {@link BasePropertiesConstants#OAUTH2_CONFIG} decides the prefix for the configurations that will be mapped<p>
+ * {@link BasePropertiesConstants#SECURITY_OAUTH2_CONFIG} decides the prefix for the configurations that will be mapped<p>
  *
  * {@link ConditionalOnProperty} mark this class to be initialized only if the property OAUTH2_ACTIVE_STATUS is "true"<p>
  *
@@ -23,8 +23,7 @@ import java.util.List;
  *
  * @author thoaidc
  */
-@Configuration
-@ConfigurationProperties(prefix = BasePropertiesConstants.OAUTH2_CONFIG)
+@ConfigurationProperties(prefix = BasePropertiesConstants.SECURITY_OAUTH2_CONFIG)
 public class OAuth2Props {
 
     private boolean enabled;
