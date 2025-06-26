@@ -42,16 +42,24 @@ public interface BaseCommonConstants {
         String WEBP = "webp";
         String JPG = "jpg";
         String JPEG = "jpeg";
+
+        String[] DEFAULT_PATTERNS = {
+            "/uploads/**"
+        };
+
+        String[] DEFAULT_LOCATIONS = {
+            "/uploads/"
+        };
     }
 
     /**
      * Configures the handling of static resources <p>
-     * Static resource requests listed in the {@link STATIC_RESOURCES#PATHS} section will be automatically searched for
-     * and mapped to the directories listed in the {@link STATIC_RESOURCES#LOCATIONS} section
+     * Static resource requests listed in the {@link STATIC_RESOURCES#DEFAULT_PATTERNS} section will be automatically searched for
+     * and mapped to the directories listed in the {@link STATIC_RESOURCES#DEFAULT_LOCATIONS} section
      */
     interface STATIC_RESOURCES {
 
-        String[] PATHS = {
+        String[] DEFAULT_PATTERNS = {
             "/**.html",
             "/**.js",
             "/**.css",
@@ -67,7 +75,7 @@ public interface BaseCommonConstants {
             "/i18n/**"
         };
 
-        String[] LOCATIONS = {
+        String[] DEFAULT_LOCATIONS = {
             "classpath:/static/",
             "classpath:/static/i18n/"
         };

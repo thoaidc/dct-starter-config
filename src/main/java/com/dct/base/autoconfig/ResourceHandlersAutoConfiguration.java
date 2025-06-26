@@ -1,5 +1,7 @@
 package com.dct.base.autoconfig;
 
+import com.dct.base.config.properties.ResourceProps.UploadResource;
+import com.dct.base.config.properties.ResourceProps.StaticResource;
 import com.dct.base.config.properties.ResourceProps;
 import com.dct.base.constants.ActivateStatus;
 import com.dct.base.constants.BaseCommonConstants;
@@ -13,6 +15,8 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistration;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+
+import java.util.Optional;
 
 @AutoConfiguration
 @ConditionalOnProperty(name = BasePropertiesConstants.ENABLED_RESOURCE, havingValue = ActivateStatus.ENABLED_VALUE)
@@ -30,16 +34,32 @@ public class ResourceHandlersAutoConfiguration implements WebMvcConfigurer {
     /**
      * The class configures Spring to serve static resources
      * from directories on the classpath (e.g. static, content, i18n)<p>
-     * The static resource paths defined in {@link BaseCommonConstants.STATIC_RESOURCES#PATHS}
-     * will be mapped to the directories listed in {@link BaseCommonConstants.STATIC_RESOURCES#LOCATIONS} <p>
+     * The static resource paths defined in PATTERNS
+     * will be mapped to the directories listed in LOCATIONS <p>
      * When a request comes in for static resources such as .js, .css, .svg, etc.,
      * Spring will look for the files in the configured directories and return the corresponding content
      */
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
-        log.debug("[{}] - Auto configure resources handler", ENTITY_NAME);
-        String[] STATIC_RESOURCE_PATHS = BaseCommonConstants.STATIC_RESOURCES.PATHS;
-        ResourceHandlerRegistration resourceHandler = registry.addResourceHandler(STATIC_RESOURCE_PATHS);
-        resourceHandler.addResourceLocations(BaseCommonConstants.STATIC_RESOURCES.LOCATIONS); // For static files
+        log.debug("[{}] - Auto configure default resources handler", ENTITY_NAME);
+        StaticResource staticConfig = Optional.ofNullable(resourceProps.getStaticResource()).orElse(new StaticResource());
+        UploadResource uploadConfig = Optional.ofNullable(resourceProps.getUploadResource()).orElse(new UploadResource());
+
+        final String[] STATIC_PATTERNS = Optional.ofNullable(staticConfig.getPatterns())
+                .orElse(BaseCommonConstants.STATIC_RESOURCES.DEFAULT_PATTERNS);
+
+        final String[] STATIC_LOCATIONS = Optional.ofNullable(staticConfig.getLocations())
+                .orElse(BaseCommonConstants.STATIC_RESOURCES.DEFAULT_LOCATIONS);
+
+        final String[] UPLOAD_PATTERNS = Optional.ofNullable(uploadConfig.getPatterns())
+                .orElse(BaseCommonConstants.UPLOAD_RESOURCES.DEFAULT_PATTERNS);
+
+        final String[] UPLOAD_LOCATIONS = Optional.ofNullable(uploadConfig.getLocations())
+                .orElse(BaseCommonConstants.UPLOAD_RESOURCES.DEFAULT_LOCATIONS);
+
+        ResourceHandlerRegistration staticResourcesHandler = registry.addResourceHandler(STATIC_PATTERNS);
+        ResourceHandlerRegistration uploadResourcesHandler = registry.addResourceHandler(UPLOAD_PATTERNS);
+        staticResourcesHandler.addResourceLocations(STATIC_LOCATIONS);
+        uploadResourcesHandler.addResourceLocations(UPLOAD_LOCATIONS);
     }
 }

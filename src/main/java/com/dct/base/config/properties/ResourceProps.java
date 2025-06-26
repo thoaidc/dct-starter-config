@@ -1,10 +1,9 @@
 package com.dct.base.config.properties;
 
 import com.dct.base.constants.BasePropertiesConstants;
+
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.properties.ConfigurationProperties;
-
-import java.util.List;
 
 /**
  * When the application starts, Spring will automatically create an instance of this class
@@ -43,52 +42,52 @@ public class ResourceProps {
 
     public static class StaticResource {
 
-        private List<String> patterns;
-        private List<String> locations;
+        private String[] patterns;
+        private String[] locations;
 
-        public List<String> getPatterns() {
+        public String[] getPatterns() {
             return patterns;
         }
 
-        public void setPatterns(List<String> patterns) {
+        public void setPatterns(String[] patterns) {
             this.patterns = patterns;
         }
 
-        public List<String> getLocations() {
+        public String[] getLocations() {
             return locations;
         }
 
-        public void setLocations(List<String> locations) {
+        public void setLocations(String[] locations) {
             this.locations = locations;
         }
     }
 
     public static class UploadResource {
-        private List<String> acceptFormats;
-        private List<String> patterns;
-        private List<String> locations;
+        private String[] acceptFormats;
+        private String[] patterns;
+        private String[] locations;
 
-        public List<String> getAcceptFormats() {
+        public String[] getAcceptFormats() {
             return acceptFormats;
         }
 
-        public void setAcceptFormats(List<String> acceptFormats) {
+        public void setAcceptFormats(String[] acceptFormats) {
             this.acceptFormats = acceptFormats;
         }
 
-        public List<String> getPatterns() {
+        public String[] getPatterns() {
             return patterns;
         }
 
-        public void setPatterns(List<String> patterns) {
+        public void setPatterns(String[] patterns) {
             this.patterns = patterns;
         }
 
-        public List<String> getLocations() {
+        public String[] getLocations() {
             return locations;
         }
 
-        public void setLocations(List<String> locations) {
+        public void setLocations(String[] locations) {
             this.locations = locations;
         }
     }
