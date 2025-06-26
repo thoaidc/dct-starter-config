@@ -24,15 +24,15 @@ import java.util.List;
 @ConfigurationProperties(prefix = BasePropertiesConstants.INTERCEPTOR_CONFIG)
 public class InterceptorProps {
 
-    private List<String> excludedPatterns;
+    private String[] excludedPatterns;
     private ResponseConfig responses;
     private CorsConfig cors;
 
-    public List<String> getExcludedPatterns() {
+    public String[] getExcludedPatterns() {
         return excludedPatterns;
     }
 
-    public void setExcludedPatterns(List<String> excludedPatterns) {
+    public void setExcludedPatterns(String[] excludedPatterns) {
         this.excludedPatterns = excludedPatterns;
     }
 
@@ -69,7 +69,7 @@ public class InterceptorProps {
         private List<String> allowedOriginPatterns;
         private List<String> allowedHeaders;
         private List<String> allowedMethods;
-        private boolean allowedCredentials;
+        private Boolean allowedCredentials;
 
         public List<String> getApplyFor() {
             return applyFor;
@@ -103,11 +103,11 @@ public class InterceptorProps {
             this.allowedMethods = allowedMethods;
         }
 
-        public boolean isAllowedCredentials() {
+        public Boolean isAllowedCredentials() {
             return allowedCredentials;
         }
 
-        public void setAllowedCredentials(boolean allowedCredentials) {
+        public void setAllowedCredentials(Boolean allowedCredentials) {
             this.allowedCredentials = allowedCredentials;
         }
     }

@@ -33,6 +33,7 @@ public class InterceptorAutoConfiguration {
 
     @Bean
     @ConditionalOnMissingBean(BaseResponseFilter.class)
+    @ConditionalOnProperty(name = BasePropertiesConstants.ENABLED_I18N, havingValue = ActivateStatus.ENABLED_VALUE)
     public BaseResponseFilter defaultBaseResponseFilter(MessageTranslationUtils messageTranslationUtils) {
         log.debug("[{}] - Auto configure default base response filter", ENTITY_NAME);
         return new DefaultBaseResponseFilter(messageTranslationUtils);
@@ -40,16 +41,16 @@ public class InterceptorAutoConfiguration {
 
     @Bean
     @ConditionalOnMissingBean(BaseCorsRequestMatchersConfig.class)
-    public BaseCorsRequestMatchersConfig defaultBaseCorsRequestMatchersConfig() {
+    public BaseCorsRequestMatchersConfig defaultBaseCorsRequestMatchersConfig(InterceptorProps interceptorProps) {
         log.debug("[{}] - Use default CORS request matchers configuration", ENTITY_NAME);
-        return new DefaultBaseCorsRequestMatchersConfig();
+        return new DefaultBaseCorsRequestMatchersConfig(interceptorProps);
     }
 
     @Bean
     @ConditionalOnMissingBean(InterceptorPatternsConfig.class)
-    public InterceptorPatternsConfig defaultInterceptorPatternsConfig() {
+    public InterceptorPatternsConfig defaultInterceptorPatternsConfig(InterceptorProps interceptorProps) {
         log.debug("[{}] - Use default excluded interceptor patterns", ENTITY_NAME);
-        return new DefaultInterceptorPatternsConfig();
+        return new DefaultInterceptorPatternsConfig(interceptorProps);
     }
 
     /**

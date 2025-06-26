@@ -2,8 +2,8 @@ package com.dct.base.autoconfig;
 
 import com.dct.base.constants.ActivateStatus;
 import com.dct.base.constants.BaseCommonConstants;
-
 import com.dct.base.constants.BasePropertiesConstants;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.autoconfigure.AutoConfiguration;

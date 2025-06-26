@@ -42,18 +42,18 @@ public interface BaseSecurityConstants {
      */
     interface REQUEST_MATCHERS {
         String[] DEFAULT_PUBLIC_API_PATTERNS = {
-                "/",
-                "/**.html",
-                "/**.css",
-                "/**.js",
-                "/**.ico",
-                "/i18n/**",
-                "/uploads/**",
-                "/register",
-                "/login",
-                "/p/**",
-                "/api/p/**",
-                "/login/oauth2/**"
+            "/",
+            "/**.html",
+            "/**.css",
+            "/**.js",
+            "/**.ico",
+            "/i18n/**",
+            "/uploads/**",
+            "/register",
+            "/login",
+            "/p/**",
+            "/api/p/**",
+            "/login/oauth2/**"
         };
     }
 
@@ -63,15 +63,15 @@ public interface BaseSecurityConstants {
     interface CORS {
         String DEFAULT_APPLY_FOR = "/**"; // CORS filter is applied to all requests
         String[] DEFAULT_ALLOWED_HEADERS = {
-                "Content-Type",     // Content format
-                "Authorization",    // Authentication token
-                "Accept",           // Client-expected content
-                "Origin",           // Origin of the request
-                "X-CSRF-Token",     // Anti-CSRF token
-                "X-Requested-With", // Ajax request markup
-                "Access-Control-Allow-Origin", // Server response header
-                "X-App-Version",    // Application version (optional)
-                "X-Device-ID"       // Device ID (optional)
+            "Content-Type",     // Content format
+            "Authorization",    // Authentication token
+            "Accept",           // Client-expected content
+            "Origin",           // Origin of the request
+            "X-CSRF-Token",     // Anti-CSRF token
+            "X-Requested-With", // Ajax request markup
+            "Access-Control-Allow-Origin", // Server response header
+            "X-App-Version",    // Application version (optional)
+            "X-Device-ID"       // Device ID (optional)
         };
 
         String[] DEFAULT_ALLOWED_REQUEST_METHODS = {
