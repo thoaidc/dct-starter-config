@@ -2,7 +2,7 @@ package com.dct.base.autoconfig;
 
 import com.dct.base.common.MessageTranslationUtils;
 import com.dct.base.config.properties.SecurityProps;
-import com.dct.base.constants.BaseSecurityConstants;
+import com.dct.base.constants.BasePropertiesConstants;
 import com.dct.base.security.config.BaseSecurityAuthorizeRequestConfig;
 import com.dct.base.security.config.DefaultBaseSecurityAuthorizeRequestConfig;
 import com.dct.base.security.handler.DefaultBaseAccessDeniedHandler;
@@ -11,11 +11,14 @@ import com.dct.base.exception.handler.BaseExceptionHandler;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
+import org.springframework.core.env.Environment;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
@@ -29,25 +32,55 @@ import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.security.web.servlet.util.matcher.MvcRequestMatcher;
 import org.springframework.web.servlet.handler.HandlerMappingIntrospector;
 
+import java.util.Objects;
+import java.util.Optional;
+
+import static com.dct.base.constants.ActivateStatus.ENABLED_VALUE;
+
 @AutoConfiguration
 @EnableConfigurationProperties(SecurityProps.class)
 public class SecurityAutoConfiguration {
 
     private static final Logger log = LoggerFactory.getLogger(SecurityAutoConfiguration.class);
     private static final String ENTITY_NAME = "SecurityAutoConfiguration";
+    private final SecurityProps securityProps;
+
+    public SecurityAutoConfiguration(SecurityProps securityProps) {
+        this.securityProps = securityProps;
+    }
 
     @Bean
     @ConditionalOnMissingBean(AccessDeniedHandler.class)
-    public AccessDeniedHandler defaultAccessDeniedHandler(MessageTranslationUtils messageTranslationUtils) {
+    @ConditionalOnProperty(name = BasePropertiesConstants.ENABLED_DEFAULT_ACCESS_DENIED_HANDLER, havingValue = ENABLED_VALUE)
+    public AccessDeniedHandler defaultAccessDeniedHandler(
+        @Autowired(required = false) MessageTranslationUtils messageTranslationUtils,
+        Environment env
+    ) {
         log.debug("[{}] - Auto configure default access denied handler", ENTITY_NAME);
-        return new DefaultBaseAccessDeniedHandler(messageTranslationUtils);
+        String isI18nEnabled = env.getProperty(BasePropertiesConstants.ENABLED_I18N);
+
+        if (ENABLED_VALUE.equals(isI18nEnabled) && Objects.nonNull(messageTranslationUtils)) {
+            return new DefaultBaseAccessDeniedHandler(messageTranslationUtils);
+        }
+
+        return new DefaultBaseAccessDeniedHandler();
     }
 
     @Bean
     @ConditionalOnMissingBean(AuthenticationEntryPoint.class)
-    public AuthenticationEntryPoint defaultAuthenticationEntryPoint(MessageTranslationUtils messageTranslationUtils) {
+    @ConditionalOnProperty(name = BasePropertiesConstants.ENABLED_DEFAULT_AUTH_ENTRYPOINT, havingValue = ENABLED_VALUE)
+    public AuthenticationEntryPoint defaultAuthenticationEntryPoint(
+        @Autowired(required = false) MessageTranslationUtils messageTranslationUtils,
+        Environment env
+    ) {
         log.debug("[{}] - Auto configure default authentication entry point", ENTITY_NAME);
-        return new DefaultBaseAuthenticationEntryPoint(messageTranslationUtils);
+        String isI18nEnabled = env.getProperty(BasePropertiesConstants.ENABLED_I18N);
+
+        if (ENABLED_VALUE.equals(isI18nEnabled) && Objects.nonNull(messageTranslationUtils)) {
+            return new DefaultBaseAuthenticationEntryPoint(messageTranslationUtils);
+        }
+
+        return new DefaultBaseAuthenticationEntryPoint();
     }
 
     @Bean
@@ -61,7 +94,8 @@ public class SecurityAutoConfiguration {
     @ConditionalOnMissingBean(PasswordEncoder.class)
     public PasswordEncoder passwordEncoder() {
         log.debug("[{}] - Auto configure default password encoder", ENTITY_NAME);
-        return new BCryptPasswordEncoder(BaseSecurityConstants.BCRYPT_COST_FACTOR);
+        int costFactor = Optional.ofNullable(securityProps).orElse(new SecurityProps()).getPasswordEncryptFactor();
+        return new BCryptPasswordEncoder(costFactor);
     }
 
     /**
@@ -97,6 +131,6 @@ public class SecurityAutoConfiguration {
     @ConditionalOnMissingBean(BaseSecurityAuthorizeRequestConfig.class)
     public BaseSecurityAuthorizeRequestConfig defaultBaseSecurityAuthorizeRequestConfig() {
         log.debug("[{}] - Auto configure default security authorize request matchers", ENTITY_NAME);
-        return new DefaultBaseSecurityAuthorizeRequestConfig();
+        return new DefaultBaseSecurityAuthorizeRequestConfig(securityProps);
     }
 }

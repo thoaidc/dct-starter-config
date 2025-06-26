@@ -1,6 +1,6 @@
 package com.dct.base.security.jwt;
 
-import com.dct.base.config.properties.SecurityProps;
+import com.dct.base.config.properties.JwtProps;
 import com.dct.base.constants.BaseExceptionConstants;
 import com.dct.base.constants.BaseSecurityConstants;
 import com.dct.base.dto.auth.BaseAuthTokenDTO;
@@ -35,35 +35,48 @@ public class DefaultJwtProvider extends BaseJwtProvider {
     private static final Logger log = LoggerFactory.getLogger(DefaultJwtProvider.class);
     private static final String ENTITY_NAME = "DefaultJwtProvider";
 
-    public DefaultJwtProvider(SecurityProps securityProps) {
-        super(securityProps);
+    public DefaultJwtProvider(JwtProps jwtProps) {
+        super(jwtProps);
     }
 
-    @Override
-    public String generateToken(BaseAuthTokenDTO authTokenDTO) {
-        log.debug("[{}] - Generate token by default config", ENTITY_NAME);
-        Authentication authentication = authTokenDTO.getAuthentication();
+    private String generateToken(BaseAuthTokenDTO tokenDTO, long tokenValidity) {
+        Authentication authentication = tokenDTO.getAuthentication();
         Set<String> userAuthorities = authentication.getAuthorities()
                 .stream()
                 .map(GrantedAuthority::getAuthority)
                 .collect(Collectors.toSet());
 
-        long validityInMilliseconds = Instant.now().toEpochMilli();
-
-        if (authTokenDTO.isRememberMe())
-            validityInMilliseconds += this.TOKEN_VALIDITY_FOR_REMEMBER_ME;
-        else
-            validityInMilliseconds += this.TOKEN_VALIDITY;
+        long validityInMilliseconds = Instant.now().toEpochMilli() + tokenValidity;
 
         return Jwts.builder()
-                .subject(authTokenDTO.getAuthentication().getName())
-                .claim(BaseSecurityConstants.TOKEN_PAYLOAD.USER_ID, authTokenDTO.getUserId())
-                .claim(BaseSecurityConstants.TOKEN_PAYLOAD.USERNAME, authTokenDTO.getUsername())
+                .subject(authentication.getName())
+                .claim(BaseSecurityConstants.TOKEN_PAYLOAD.USER_ID, tokenDTO.getUserId())
+                .claim(BaseSecurityConstants.TOKEN_PAYLOAD.USERNAME, tokenDTO.getUsername())
                 .claim(BaseSecurityConstants.TOKEN_PAYLOAD.AUTHORITIES, String.join(",", userAuthorities))
                 .signWith(secretKey)
                 .issuedAt(new Date())
                 .expiration(new Date(validityInMilliseconds))
                 .compact();
+    }
+
+    @Override
+    public String generateAccessToken(BaseAuthTokenDTO authTokenDTO) {
+        log.debug("[{}] - Generate access token by default config", ENTITY_NAME);
+        long tokenValidityInMilliseconds = Instant.now().toEpochMilli() + ACCESS_TOKEN_VALIDITY;
+        return generateToken(authTokenDTO, tokenValidityInMilliseconds);
+    }
+
+    @Override
+    public String generateRefreshToken(BaseAuthTokenDTO authTokenDTO) {
+        log.debug("[{}] - Generate refresh token by default config", ENTITY_NAME);
+        long tokenValidityInMilliseconds = Instant.now().toEpochMilli();
+
+        if (authTokenDTO.isRememberMe())
+            tokenValidityInMilliseconds += this.REFRESH_TOKEN_VALIDITY_FOR_REMEMBER;
+        else
+            tokenValidityInMilliseconds += this.REFRESH_TOKEN_VALIDITY;
+
+        return generateToken(authTokenDTO, tokenValidityInMilliseconds);
     }
 
     @Override

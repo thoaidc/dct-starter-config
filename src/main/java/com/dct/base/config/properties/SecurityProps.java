@@ -2,11 +2,12 @@ package com.dct.base.config.properties;
 
 import com.dct.base.constants.ActivateStatus;
 import com.dct.base.constants.BasePropertiesConstants;
+import com.dct.base.constants.BaseSecurityConstants;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
-import java.util.List;
+import java.util.Optional;
 
 /**
  * Contains security configurations such as the secret key<p>
@@ -27,9 +28,9 @@ public class SecurityProps {
 
     private boolean enabledTls;
     private ActivateStatus defaultAccessDeniedHandler;
-    private ActivateStatus defaultAuthenticationEntrypointHandler;
+    private ActivateStatus defaultAuthenticationEntrypoint;
     private Integer passwordEncryptFactor;
-    private List<String> publicRequestPatterns;
+    private String[] publicRequestPatterns;
 
     public boolean isEnabledTls() {
         return enabledTls;
@@ -47,27 +48,28 @@ public class SecurityProps {
         this.defaultAccessDeniedHandler = defaultAccessDeniedHandler;
     }
 
-    public ActivateStatus getDefaultAuthenticationEntrypointHandler() {
-        return defaultAuthenticationEntrypointHandler;
+    public ActivateStatus getDefaultAuthenticationEntrypoint() {
+        return defaultAuthenticationEntrypoint;
     }
 
-    public void setDefaultAuthenticationEntrypointHandler(ActivateStatus defaultAuthenticationEntrypointHandler) {
-        this.defaultAuthenticationEntrypointHandler = defaultAuthenticationEntrypointHandler;
+    public void setDefaultAuthenticationEntrypoint(ActivateStatus defaultAuthenticationEntrypoint) {
+        this.defaultAuthenticationEntrypoint = defaultAuthenticationEntrypoint;
     }
 
     public Integer getPasswordEncryptFactor() {
-        return passwordEncryptFactor;
+        return Optional.ofNullable(passwordEncryptFactor).orElse(BaseSecurityConstants.BCRYPT_COST_FACTOR);
     }
 
     public void setPasswordEncryptFactor(Integer passwordEncryptFactor) {
         this.passwordEncryptFactor = passwordEncryptFactor;
     }
 
-    public List<String> getPublicRequestPatterns() {
-        return publicRequestPatterns;
+    public String[] getPublicRequestPatterns() {
+        return Optional.ofNullable(publicRequestPatterns)
+                .orElse(BaseSecurityConstants.REQUEST_MATCHERS.DEFAULT_PUBLIC_API_PATTERNS);
     }
 
-    public void setPublicRequestPatterns(List<String> publicRequestPatterns) {
+    public void setPublicRequestPatterns(String[] publicRequestPatterns) {
         this.publicRequestPatterns = publicRequestPatterns;
     }
 }

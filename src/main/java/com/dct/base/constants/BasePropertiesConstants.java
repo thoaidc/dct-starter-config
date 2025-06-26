@@ -12,9 +12,6 @@ public interface BasePropertiesConstants {
     String HIKARI_CONFIG = "spring.datasource.hikari";
     String HIKARI_DATASOURCE_CONFIG = "spring.datasource.hikari.data-source-properties";
 
-    String SECRET_KEY_PROPERTY = "base64-secret-key";
-    String UPLOAD_CONFIG = "dct.base.upload";
-    String FEATURE_CONFIG = "dct.base.features";
     String I18N_CONFIG = "dct.base.i18n";
     String RESOURCE_CONFIG = "dct.base.resources";
     String INTERCEPTOR_CONFIG = "dct.base.interceptor";
@@ -33,4 +30,6 @@ public interface BasePropertiesConstants {
     String ENABLED_RESOURCE = "dct.base.features.resources";
     String ENABLED_SOCKET = "dct.base.features.socket";
     String ENABLED_I18N = "dct.base.features.i18n";
+    String ENABLED_DEFAULT_ACCESS_DENIED_HANDLER = "dct.base.security.default-access-denied-handler";
+    String ENABLED_DEFAULT_AUTH_ENTRYPOINT = "dct.base.security.default-authentication-entrypoint";
 }

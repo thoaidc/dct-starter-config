@@ -165,7 +165,7 @@ dct:
     security:
       enabled-tls: false
       default-access-denied-handler: enabled
-      default-authentication-entrypoint-handler: enabled
+      default-authentication-entrypoint: enabled
       password-encrypt-factor: 12
       public-request-patterns:
         - /

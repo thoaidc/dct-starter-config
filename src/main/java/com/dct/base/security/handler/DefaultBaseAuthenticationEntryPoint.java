@@ -5,21 +5,27 @@ import com.dct.base.common.MessageTranslationUtils;
 import com.dct.base.constants.BaseExceptionConstants;
 import com.dct.base.constants.BaseHttpStatusConstants;
 import com.dct.base.dto.response.BaseResponseDTO;
+
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.AuthenticationEntryPoint;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.util.Objects;
 
 public class DefaultBaseAuthenticationEntryPoint implements AuthenticationEntryPoint {
 
     private static final Logger log = LoggerFactory.getLogger(DefaultBaseAuthenticationEntryPoint.class);
-    private final MessageTranslationUtils messageTranslationUtils;
+    private MessageTranslationUtils messageTranslationUtils;
+
+    public DefaultBaseAuthenticationEntryPoint() {}
 
     public DefaultBaseAuthenticationEntryPoint(MessageTranslationUtils messageTranslationUtils) {
         this.messageTranslationUtils = messageTranslationUtils;
@@ -42,11 +48,14 @@ public class DefaultBaseAuthenticationEntryPoint implements AuthenticationEntryP
         response.setContentType(MediaType.APPLICATION_JSON_VALUE); // Convert response body to JSON
         response.setCharacterEncoding(StandardCharsets.UTF_8.name());
         response.setStatus(BaseHttpStatusConstants.UNAUTHORIZED);
+        String message = Objects.nonNull(messageTranslationUtils)
+                ? messageTranslationUtils.getMessageI18n(BaseExceptionConstants.UNAUTHORIZED)
+                : HttpStatus.UNAUTHORIZED.name();
 
         BaseResponseDTO responseDTO = BaseResponseDTO.builder()
                 .code(BaseHttpStatusConstants.UNAUTHORIZED)
                 .success(BaseHttpStatusConstants.STATUS.FAILED)
-                .message(messageTranslationUtils.getMessageI18n(BaseExceptionConstants.UNAUTHORIZED))
+                .message(message)
                 .build();
 
         response.getWriter().write(JsonUtils.toJsonString(responseDTO));

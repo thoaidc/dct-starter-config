@@ -1,6 +1,6 @@
 package com.dct.base.constants;
 
-import com.dct.base.dto.auth.BaseAuthTokenDTO;
+import com.dct.base.security.jwt.BaseJwtProvider;
 import com.dct.base.security.config.BaseSecurityFilterChainConfig;
 import com.dct.base.autoconfig.InterceptorAutoConfiguration;
 import org.springframework.http.HttpMethod;
@@ -11,9 +11,15 @@ public interface BaseSecurityConstants {
     // Higher values mean the password is harder to attack, but too high will reduce performance
     int BCRYPT_COST_FACTOR = 12;
 
+    interface JWT {
+        long DEFAULT_ACCESS_TOKEN_VALIDITY = 5 * 60 * 1000L; // 5 minutes
+        long DEFAULT_REFRESH_TOKEN_VALIDITY = 3 * 60 * 60 * 1000L; // 3 hours
+        long DEFAULT_REFRESH_TOKEN_VALIDITY_FOR_REMEMBER = 7 * 24 * 60 * 60 * 1000L; // 7 days
+    }
+
     /**
      * The corresponding keys to store information in the payload of a JWT token <p>
-     * See {@link com.dct.base.security.jwt.BaseJwtProvider#generateToken(BaseAuthTokenDTO)} for details
+     * See {@link BaseJwtProvider} for details
      */
     interface TOKEN_PAYLOAD {
         String USER_ID = "userId";
@@ -28,7 +34,6 @@ public interface BaseSecurityConstants {
     }
 
     interface HEADER {
-
         // The request header storing the JWT token, used in cases where the token is not found in the HTTP-only cookies
         String AUTHORIZATION_HEADER = "Authorization";
         String AUTHORIZATION_GATEWAY_HEADER = "Authorization-Gateway";
@@ -53,7 +58,7 @@ public interface BaseSecurityConstants {
             "/login",
             "/p/**",
             "/api/p/**",
-            "/login/oauth2/**"
+            "/login/**"
         };
     }
 

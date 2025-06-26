@@ -2,6 +2,7 @@ package com.dct.base.autoconfig;
 
 import com.dct.base.common.MessageTranslationUtils;
 import com.dct.base.config.properties.OAuth2Props;
+import com.dct.base.constants.ActivateStatus;
 import com.dct.base.constants.BasePropertiesConstants;
 import com.dct.base.exception.BaseIllegalArgumentException;
 import com.dct.base.security.handler.BaseOAuth2AuthenticationFailureHandler;
@@ -12,11 +13,13 @@ import com.dct.base.security.handler.DefaultOAuth2AuthRequestResolver;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
+import org.springframework.core.env.Environment;
 import org.springframework.security.oauth2.client.registration.ClientRegistration;
 import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository;
 import org.springframework.security.oauth2.client.registration.InMemoryClientRegistrationRepository;
@@ -60,9 +63,18 @@ public class OAuth2AutoConfiguration {
 
     @Bean
     @ConditionalOnMissingBean(BaseOAuth2AuthenticationFailureHandler.class)
-    public BaseOAuth2AuthenticationFailureHandler defaultOAuth2FailureHandler(MessageTranslationUtils messageUtils) {
+    public BaseOAuth2AuthenticationFailureHandler defaultOAuth2FailureHandler(
+        @Autowired(required = false) MessageTranslationUtils messageTranslationUtils,
+        Environment env
+    ) {
         log.debug("[{}] - Auto configure default OAuth2AuthenticationFailureHandler", ENTITY_NAME);
-        return new DefaultBaseOAuth2AuthenticationFailureHandler(messageUtils);
+        String isI18nEnabled = env.getProperty(BasePropertiesConstants.ENABLED_I18N);
+
+        if (ActivateStatus.ENABLED_VALUE.equals(isI18nEnabled) && Objects.nonNull(messageTranslationUtils)) {
+            return new DefaultBaseOAuth2AuthenticationFailureHandler(messageTranslationUtils);
+        }
+
+        return new DefaultBaseOAuth2AuthenticationFailureHandler();
     }
 
     /**

@@ -1,8 +1,12 @@
 package com.dct.base.config.properties;
 
 import com.dct.base.constants.BasePropertiesConstants;
+import com.dct.base.constants.BaseSecurityConstants;
+
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.properties.ConfigurationProperties;
+
+import java.util.Optional;
 
 /**
  * When the application starts, Spring will automatically create an instance of this class
@@ -41,7 +45,7 @@ public class JwtProps {
     }
 
     public AccessTokenConfig getAccessToken() {
-        return accessToken;
+        return Optional.ofNullable(accessToken).orElse(new AccessTokenConfig());
     }
 
     public void setAccessToken(AccessTokenConfig accessToken) {
@@ -49,7 +53,7 @@ public class JwtProps {
     }
 
     public RefreshTokenConfig getRefreshToken() {
-        return refreshToken;
+        return Optional.ofNullable(refreshToken).orElse(new RefreshTokenConfig());
     }
 
     public void setRefreshToken(RefreshTokenConfig refreshToken) {
@@ -60,7 +64,7 @@ public class JwtProps {
         private Long validity;
 
         public Long getValidity() {
-            return validity;
+            return Optional.ofNullable(validity).orElse(BaseSecurityConstants.JWT.DEFAULT_ACCESS_TOKEN_VALIDITY);
         }
 
         public void setValidity(Long validity) {
@@ -73,7 +77,7 @@ public class JwtProps {
         private Long validityForRemember;
 
         public Long getValidity() {
-            return validity;
+            return Optional.ofNullable(validity).orElse(BaseSecurityConstants.JWT.DEFAULT_REFRESH_TOKEN_VALIDITY);
         }
 
         public void setValidity(Long validity) {
@@ -81,7 +85,8 @@ public class JwtProps {
         }
 
         public Long getValidityForRemember() {
-            return validityForRemember;
+            return Optional.ofNullable(validityForRemember)
+                    .orElse(BaseSecurityConstants.JWT.DEFAULT_REFRESH_TOKEN_VALIDITY_FOR_REMEMBER);
         }
 
         public void setValidityForRemember(Long validityForRemember) {

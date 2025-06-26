@@ -4,7 +4,6 @@ import com.dct.base.aop.BaseCheckAuthorizeAspect;
 import com.dct.base.aop.DefaultCheckAuthorizeAspect;
 import com.dct.base.common.MessageTranslationUtils;
 import com.dct.base.config.properties.JwtProps;
-import com.dct.base.config.properties.SecurityProps;
 import com.dct.base.constants.BasePropertiesConstants;
 import com.dct.base.security.config.BaseSecurityAuthorizeRequestConfig;
 import com.dct.base.security.jwt.BaseJwtFilter;
@@ -14,11 +13,17 @@ import com.dct.base.security.jwt.DefaultJwtProvider;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
+import org.springframework.core.env.Environment;
+
+import java.util.Objects;
+
+import static com.dct.base.constants.ActivateStatus.ENABLED_VALUE;
 
 @AutoConfiguration
 @ConditionalOnProperty(name = BasePropertiesConstants.ENABLED_JWT, havingValue = "true")
@@ -30,18 +35,25 @@ public class JwtAutoConfiguration {
 
     @Bean
     @ConditionalOnMissingBean(BaseJwtProvider.class)
-    protected BaseJwtProvider defaultJwtProvider(SecurityProps securityProps) {
+    protected BaseJwtProvider defaultJwtProvider(JwtProps jwtProps) {
         log.debug("[{}] - Auto configure default JWT provider", ENTITY_NAME);
-        return new DefaultJwtProvider(securityProps);
+        return new DefaultJwtProvider(jwtProps);
     }
 
     @Bean
     @ConditionalOnMissingBean(BaseJwtFilter.class)
     protected BaseJwtFilter defaultJwtFilter(BaseSecurityAuthorizeRequestConfig authorizeRequestConfig,
                                              BaseJwtProvider jwtProvider,
-                                             MessageTranslationUtils messageUtils) {
+                                             @Autowired(required = false) MessageTranslationUtils messageUtils,
+                                             Environment env) {
         log.debug("[{}] - Auto configure default JWT Filter", ENTITY_NAME);
-        return new DefaultJwtFilter(authorizeRequestConfig, jwtProvider, messageUtils);
+        String isI18nEnabled = env.getProperty(BasePropertiesConstants.ENABLED_I18N);
+
+        if (ENABLED_VALUE.equals(isI18nEnabled) && Objects.nonNull(messageUtils)) {
+            return new DefaultJwtFilter(authorizeRequestConfig, jwtProvider, messageUtils);
+        }
+
+        return new DefaultJwtFilter(authorizeRequestConfig, jwtProvider);
     }
 
     @Bean

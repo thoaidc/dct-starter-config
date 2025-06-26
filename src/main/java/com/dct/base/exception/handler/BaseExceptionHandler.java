@@ -39,7 +39,9 @@ import java.util.Objects;
 public abstract class BaseExceptionHandler extends ResponseEntityExceptionHandler {
 
     private static final Logger log = LoggerFactory.getLogger(BaseExceptionHandler.class);
-    private final MessageTranslationUtils messageUtils;
+    private MessageTranslationUtils messageUtils;
+
+    public BaseExceptionHandler() {}
 
     public BaseExceptionHandler(MessageTranslationUtils messageUtils) {
         this.messageUtils = messageUtils;
@@ -90,7 +92,7 @@ public abstract class BaseExceptionHandler extends ResponseEntityExceptionHandle
         if (Objects.nonNull(fieldError))
             errorKey = fieldError.getDefaultMessage(); // If the field with an error includes a custom message key
 
-        String reason = messageUtils.getMessageI18n(errorKey);
+        String reason = Objects.nonNull(messageUtils) ? messageUtils.getMessageI18n(errorKey) : errorKey;
         log.error("Handle validate request data exception: {}. {}", reason, exception.getMessage());
 
         BaseResponseDTO responseDTO = BaseResponseDTO.builder()
@@ -104,7 +106,9 @@ public abstract class BaseExceptionHandler extends ResponseEntityExceptionHandle
 
     @ExceptionHandler({ BaseAuthenticationException.class })
     public ResponseEntity<BaseResponseDTO> handleBaseAuthenticationException(BaseAuthenticationException exception) {
-        String reason = messageUtils.getMessageI18n(exception.getErrorKey(), exception.getArgs());
+        String reason = Objects.nonNull(messageUtils)
+                ? messageUtils.getMessageI18n(exception.getErrorKey(), exception.getArgs())
+                : exception.getErrorKey();
         log.error("[{}] Handle authentication exception: {}", exception.getEntityName(), reason);
 
         BaseResponseDTO responseDTO = BaseResponseDTO.builder()
@@ -118,7 +122,9 @@ public abstract class BaseExceptionHandler extends ResponseEntityExceptionHandle
 
     @ExceptionHandler({ BaseBadRequestException.class })
     public ResponseEntity<BaseResponseDTO> handleBaseBadRequestException(BaseBadRequestException exception) {
-        String reason = messageUtils.getMessageI18n(exception.getErrorKey(), exception.getArgs());
+        String reason = Objects.nonNull(messageUtils)
+                ? messageUtils.getMessageI18n(exception.getErrorKey(), exception.getArgs())
+                : exception.getErrorKey();
         log.error("[{}] Handle bad request alert exception: {}", exception.getEntityName(), reason);
 
         BaseResponseDTO responseDTO = BaseResponseDTO.builder()
@@ -132,7 +138,9 @@ public abstract class BaseExceptionHandler extends ResponseEntityExceptionHandle
 
     @ExceptionHandler({ BaseException.class })
     public ResponseEntity<BaseResponseDTO> handleBaseException(BaseException exception) {
-        String reason = messageUtils.getMessageI18n(exception.getErrorKey(), exception.getArgs());
+        String reason = Objects.nonNull(messageUtils)
+                ? messageUtils.getMessageI18n(exception.getErrorKey(), exception.getArgs())
+                : exception.getErrorKey();
         log.error("[{}] Handle exception: {}", exception.getEntityName(), reason, exception.getError());
 
         BaseResponseDTO responseDTO = BaseResponseDTO.builder()
