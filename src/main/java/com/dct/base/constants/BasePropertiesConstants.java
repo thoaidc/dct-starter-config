@@ -18,6 +18,7 @@ public interface BasePropertiesConstants {
     String SECURITY_CONFIG = "dct.base.security";
     String SECURITY_JWT_CONFIG = "dct.base.security.jwt";
     String SECURITY_OAUTH2_CONFIG = "dct.base.security.oauth2";
+    String SOCKET_CONFIG = "dct.base.socket";
 
     String ENABLED_JWT = "dct.base.security.jwt.enabled";
     String ENABLED_OAUTH2 = "dct.base.security.oauth2.enabled";

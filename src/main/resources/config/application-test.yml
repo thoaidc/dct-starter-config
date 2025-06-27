@@ -76,13 +76,21 @@ dct:
       default-rest-template: enabled
       default-object-mapper: enabled
       resources: enabled
-      socket: disabled
+      socket: enabled
       i18n: enabled
 
     i18n:
       base-names:
         - classpath:i18n/messages
       encoding: UTF-8
+
+    socket:
+      endpoints:
+        - /ws
+      broker-prefixes:
+        - /topics
+      application-prefixes:
+        - /api/ws
 
     resources:
       static-resource:

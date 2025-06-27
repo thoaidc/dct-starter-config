@@ -80,4 +80,10 @@ public interface BaseCommonConstants {
             "classpath:/static/i18n/"
         };
     }
+
+    interface Socket {
+        String[] DEFAULT_BROKER_PREFIXES = { "/topic" };
+        String[] DEFAULT_APPLICATION_PREFIXES = { "/api/ws" };
+        String[] DEFAULT_ENDPOINTS = { "/ws" };
+    }
 }
