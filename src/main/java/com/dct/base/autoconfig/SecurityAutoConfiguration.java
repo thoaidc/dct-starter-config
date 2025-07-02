@@ -1,13 +1,13 @@
 package com.dct.base.autoconfig;
 
-import com.dct.base.common.MessageTranslationUtils;
-import com.dct.base.config.properties.SecurityProps;
-import com.dct.base.constants.BasePropertiesConstants;
+import com.dct.model.common.MessageTranslationUtils;
 import com.dct.base.security.config.BaseSecurityAuthorizeRequestConfig;
 import com.dct.base.security.config.DefaultBaseSecurityAuthorizeRequestConfig;
 import com.dct.base.security.handler.DefaultBaseAccessDeniedHandler;
 import com.dct.base.security.handler.DefaultBaseAuthenticationEntryPoint;
-import com.dct.base.exception.handler.BaseExceptionHandler;
+import com.dct.base.exception.BaseExceptionHandler;
+import com.dct.model.config.properties.SecurityProps;
+import com.dct.model.constants.BasePropertiesConstants;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,7 +34,7 @@ import org.springframework.web.servlet.handler.HandlerMappingIntrospector;
 import java.util.Objects;
 import java.util.Optional;
 
-import static com.dct.base.constants.ActivateStatus.ENABLED_VALUE;
+import static com.dct.model.constants.ActivateStatus.ENABLED_VALUE;
 
 @AutoConfiguration
 @EnableConfigurationProperties(SecurityProps.class)

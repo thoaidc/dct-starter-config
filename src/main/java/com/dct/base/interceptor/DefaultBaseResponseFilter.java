@@ -1,7 +1,7 @@
 package com.dct.base.interceptor;
 
-import com.dct.base.common.MessageTranslationUtils;
-import com.dct.base.dto.response.BaseResponseDTO;
+import com.dct.model.common.MessageTranslationUtils;
+import com.dct.model.dto.response.BaseResponseDTO;
 
 import org.springframework.core.MethodParameter;
 import org.springframework.http.ResponseEntity;

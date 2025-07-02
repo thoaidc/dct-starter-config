@@ -1,12 +1,12 @@
 package com.dct.base.autoconfig;
 
-import com.dct.base.config.properties.DataSourceProps;
-import com.dct.base.config.properties.HikariDataSourceProps;
-import com.dct.base.config.properties.HikariProps;
-import com.dct.base.constants.ActivateStatus;
-import com.dct.base.constants.BaseExceptionConstants;
-import com.dct.base.constants.BasePropertiesConstants;
-import com.dct.base.exception.BaseIllegalArgumentException;
+import com.dct.base.constants.ExceptionConstants;
+import com.dct.model.config.properties.DataSourceProps;
+import com.dct.model.config.properties.HikariDataSourceProps;
+import com.dct.model.config.properties.HikariProps;
+import com.dct.model.constants.ActivateStatus;
+import com.dct.model.constants.BasePropertiesConstants;
+import com.dct.model.exception.BaseIllegalArgumentException;
 
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
@@ -55,7 +55,7 @@ public class DataSourceAutoConfiguration {
         Properties properties = new Properties();
 
         if (Objects.isNull(dataSourceProps)) {
-            throw new BaseIllegalArgumentException(ENTITY_NAME, BaseExceptionConstants.DATASOURCE_CONFIG_NOT_NULL);
+            throw new BaseIllegalArgumentException(ENTITY_NAME, ExceptionConstants.DATASOURCE_CONFIG_NOT_NULL);
         }
 
         hikariConfig.setDriverClassName(dataSourceProps.getDriverClassName());

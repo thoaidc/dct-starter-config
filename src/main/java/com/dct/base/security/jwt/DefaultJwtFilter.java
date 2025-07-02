@@ -1,11 +1,12 @@
 package com.dct.base.security.jwt;
 
-import com.dct.base.common.JsonUtils;
-import com.dct.base.common.MessageTranslationUtils;
-import com.dct.base.constants.BaseHttpStatusConstants;
-import com.dct.base.dto.response.BaseResponseDTO;
-import com.dct.base.exception.BaseException;
 import com.dct.base.security.config.BaseSecurityAuthorizeRequestConfig;
+import com.dct.model.common.JsonUtils;
+import com.dct.model.common.MessageTranslationUtils;
+import com.dct.model.constants.BaseHttpStatusConstants;
+import com.dct.model.dto.response.BaseResponseDTO;
+import com.dct.model.exception.BaseException;
+import com.dct.model.security.BaseJwtProvider;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;

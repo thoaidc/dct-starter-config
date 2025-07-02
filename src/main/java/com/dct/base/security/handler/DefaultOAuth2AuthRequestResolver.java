@@ -1,6 +1,6 @@
 package com.dct.base.security.handler;
 
-import com.dct.base.config.properties.OAuth2Props;
+import com.dct.model.config.properties.OAuth2Props;
 import jakarta.servlet.http.HttpServletRequest;
 
 import org.slf4j.Logger;

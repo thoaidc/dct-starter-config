@@ -1,7 +1,8 @@
 package com.dct.base.common;
 
-import com.dct.base.constants.BaseCommonConstants;
-import com.dct.base.dto.upload.ImageDTO;
+import com.dct.model.constants.BaseCommonConstants;
+import com.dct.model.dto.image.ImageDTO;
+import com.dct.model.common.ImageConverter;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

@@ -1,12 +1,12 @@
 package com.dct.base.autoconfig;
 
-import com.dct.base.constants.BasePropertiesConstants;
 import com.dct.base.security.config.BaseSecurityAuthorizeRequestConfig;
 import com.dct.base.security.config.BaseSecurityFilterChainConfig;
 import com.dct.base.security.config.DefaultBaseSecurityFilterChainConfig;
 import com.dct.base.security.handler.BaseOAuth2AuthenticationFailureHandler;
 import com.dct.base.security.handler.BaseOAuth2AuthenticationSuccessHandler;
 import com.dct.base.security.jwt.BaseJwtFilter;
+import com.dct.model.constants.BasePropertiesConstants;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

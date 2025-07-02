@@ -1,9 +1,9 @@
 package com.dct.base.autoconfig;
 
-import com.dct.base.common.MessageTranslationUtils;
-import com.dct.base.constants.BasePropertiesConstants;
-import com.dct.base.exception.handler.BaseExceptionHandler;
-import com.dct.base.exception.handler.DefaultBaseExceptionHandler;
+import com.dct.base.exception.BaseExceptionHandler;
+import com.dct.base.exception.DefaultBaseExceptionHandler;
+import com.dct.model.common.MessageTranslationUtils;
+import com.dct.model.constants.BasePropertiesConstants;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,7 +15,7 @@ import org.springframework.core.env.Environment;
 
 import java.util.Objects;
 
-import static com.dct.base.constants.ActivateStatus.ENABLED_VALUE;
+import static com.dct.model.constants.ActivateStatus.ENABLED_VALUE;
 
 @AutoConfiguration
 public class GlobalExceptionHandlerAutoConfiguration {

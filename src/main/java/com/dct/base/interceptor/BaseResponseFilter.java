@@ -1,6 +1,6 @@
 package com.dct.base.interceptor;
 
-import com.dct.base.dto.response.BaseResponseDTO;
+import com.dct.model.dto.response.BaseResponseDTO;
 
 import jakarta.annotation.Nonnull;
 import jakarta.annotation.Nullable;

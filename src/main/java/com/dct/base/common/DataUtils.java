@@ -1,6 +1,6 @@
 package com.dct.base.common;
 
-import com.dct.base.exception.BaseIllegalArgumentException;
+import com.dct.model.exception.BaseIllegalArgumentException;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.NoResultException;

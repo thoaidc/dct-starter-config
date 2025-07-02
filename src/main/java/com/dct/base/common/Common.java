@@ -1,31 +1,18 @@
 package com.dct.base.common;
 
-import com.dct.base.constants.BaseDatetimeConstants;
-import com.dct.base.dto.response.AuditingEntityDTO;
+import com.dct.model.constants.BaseDatetimeConstants;
+import com.dct.model.dto.response.AuditingEntityDTO;
+import com.dct.model.common.DateUtils;
 import com.dct.base.entity.AbstractAuditingEntity;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.lang.reflect.Field;
-import java.util.HashMap;
-import java.util.Map;
 
 @SuppressWarnings("unused")
 public class Common {
 
     private static final Logger log = LoggerFactory.getLogger(Common.class);
     private static final String ENTITY_NAME = "Common";
-
-    public static <T> Map<String, Class<?>> getObjectFields(Class<T> mappingClass) {
-        Map<String, Class<?>> fieldMap = new HashMap<>();
-
-        for (Field field : mappingClass.getDeclaredFields()) {
-            fieldMap.put(field.getName(), field.getType());
-        }
-
-        return fieldMap;
-    }
 
     public static void setAuditingInfo(AbstractAuditingEntity entity, AuditingEntityDTO auditingDTO) {
         auditingDTO.setCreatedByStr(entity.getCreatedBy());

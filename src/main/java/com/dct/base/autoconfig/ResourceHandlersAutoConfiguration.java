@@ -1,11 +1,11 @@
 package com.dct.base.autoconfig;
 
-import com.dct.base.config.properties.ResourceProps.UploadResource;
-import com.dct.base.config.properties.ResourceProps.StaticResource;
-import com.dct.base.config.properties.ResourceProps;
-import com.dct.base.constants.ActivateStatus;
-import com.dct.base.constants.BaseCommonConstants;
-import com.dct.base.constants.BasePropertiesConstants;
+import com.dct.model.config.properties.ResourceProps;
+import com.dct.model.config.properties.ResourceProps.StaticResource;
+import com.dct.model.config.properties.ResourceProps.UploadResource;
+import com.dct.model.constants.ActivateStatus;
+import com.dct.model.constants.BaseCommonConstants;
+import com.dct.model.constants.BasePropertiesConstants;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

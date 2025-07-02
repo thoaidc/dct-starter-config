@@ -1,8 +1,7 @@
 package com.dct.base.security.config;
 
-import com.dct.base.config.properties.InterceptorProps;
-import com.dct.base.config.properties.InterceptorProps.CorsConfig;
-import com.dct.base.constants.BaseSecurityConstants;
+import com.dct.model.config.properties.InterceptorProps;
+import com.dct.model.constants.BaseSecurityConstants;
 
 import java.util.List;
 import java.util.Optional;
@@ -13,7 +12,7 @@ public class DefaultBaseCorsRequestMatchersConfig implements BaseCorsRequestMatc
 
     public DefaultBaseCorsRequestMatchersConfig(InterceptorProps interceptorProps) {
         InterceptorProps interceptorConfig = Optional.ofNullable(interceptorProps).orElse(new InterceptorProps());
-        this.corsConfig = Optional.ofNullable(interceptorConfig.getCors()).orElse(new CorsConfig());
+        this.corsConfig = Optional.ofNullable(interceptorConfig.getCors()).orElse(new InterceptorProps.CorsConfig());
     }
 
     @Override

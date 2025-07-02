@@ -1,12 +1,12 @@
-package com.dct.base.exception.handler;
+package com.dct.base.exception;
 
-import com.dct.base.common.MessageTranslationUtils;
-import com.dct.base.constants.BaseExceptionConstants;
-import com.dct.base.constants.BaseHttpStatusConstants;
-import com.dct.base.dto.response.BaseResponseDTO;
-import com.dct.base.exception.BaseAuthenticationException;
-import com.dct.base.exception.BaseBadRequestException;
-import com.dct.base.exception.BaseException;
+import com.dct.model.constants.BaseExceptionConstants;
+import com.dct.model.common.MessageTranslationUtils;
+import com.dct.model.constants.BaseHttpStatusConstants;
+import com.dct.model.dto.response.BaseResponseDTO;
+import com.dct.model.exception.BaseAuthenticationException;
+import com.dct.model.exception.BaseBadRequestException;
+import com.dct.model.exception.BaseException;
 
 import jakarta.annotation.Nullable;
 import jakarta.validation.Valid;

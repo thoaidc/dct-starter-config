@@ -1,6 +1,6 @@
-package com.dct.base.exception.handler;
+package com.dct.base.exception;
 
-import com.dct.base.common.MessageTranslationUtils;
+import com.dct.model.common.MessageTranslationUtils;
 
 public class DefaultBaseExceptionHandler extends BaseExceptionHandler {
 

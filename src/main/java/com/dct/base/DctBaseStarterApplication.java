@@ -1,6 +1,6 @@
 package com.dct.base;
 
-import com.dct.base.config.CRLFLogConverter;
+import com.dct.model.config.CRLFLogConverter;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

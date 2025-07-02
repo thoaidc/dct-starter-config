@@ -5,7 +5,7 @@
     <!-- Patterns based on https://github.com/spring-projects/spring-boot/blob/v2.7.2/spring-boot-project/spring-boot/src/main/resources/org/springframework/boot/logging/logback/defaults.xml -->
     <!-- Defines the keyword "crlf" that can be used in log patterns.-->
     <!-- Bind the "crlf" keyword to the CRLFLogConverter class, which handles the removal of unsafe characters like \n, \r, and \t -->
-    <conversionRule conversionWord="crlf" converterClass="com.dct.base.config.CRLFLogConverter" />
+    <conversionRule conversionWord="crlf" converterClass="com.dct.model.config.CRLFLogConverter" />
 
     <!-- Define log pattern for log console -->
     <property name="CONSOLE_LOG_PATTERN" value="${CONSOLE_LOG_PATTERN:-%clr(%d{${LOG_DATEFORMAT_PATTERN:-yyyy-MM-dd HH:mm:ss.SSS}}){faint} %clr(${LOG_LEVEL_PATTERN:-%5p}){} %clr(${PID:-}){magenta} %clr(%-40.40logger{39}){cyan} %clr(:){faint} %crlf%n${LOG_EXCEPTION_CONVERSION_WORD:-%wEx}}"/>

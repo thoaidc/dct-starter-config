@@ -205,3 +205,4 @@ Desktop.ini
 /.env
 /.nx/
 dist/
+/mnt/logs/

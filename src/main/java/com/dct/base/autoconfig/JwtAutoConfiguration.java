@@ -2,14 +2,14 @@ package com.dct.base.autoconfig;
 
 import com.dct.base.aop.BaseCheckAuthorizeAspect;
 import com.dct.base.aop.DefaultCheckAuthorizeAspect;
-import com.dct.base.common.MessageTranslationUtils;
-import com.dct.base.config.properties.JwtProps;
-import com.dct.base.constants.BasePropertiesConstants;
 import com.dct.base.security.config.BaseSecurityAuthorizeRequestConfig;
 import com.dct.base.security.jwt.BaseJwtFilter;
-import com.dct.base.security.jwt.BaseJwtProvider;
 import com.dct.base.security.jwt.DefaultJwtFilter;
-import com.dct.base.security.jwt.DefaultJwtProvider;
+import com.dct.model.constants.BasePropertiesConstants;
+import com.dct.model.common.MessageTranslationUtils;
+import com.dct.model.config.properties.JwtProps;
+import com.dct.model.security.BaseJwtProvider;
+import com.dct.model.security.DefaultJwtProvider;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,7 +23,7 @@ import org.springframework.core.env.Environment;
 
 import java.util.Objects;
 
-import static com.dct.base.constants.ActivateStatus.ENABLED_VALUE;
+import static com.dct.model.constants.ActivateStatus.ENABLED_VALUE;
 
 @AutoConfiguration
 @ConditionalOnProperty(name = BasePropertiesConstants.ENABLED_JWT, havingValue = "true")

@@ -1,10 +1,10 @@
 package com.dct.base.security.jwt;
 
-import com.dct.base.common.JsonUtils;
-import com.dct.base.constants.BaseHttpStatusConstants;
-import com.dct.base.constants.BaseSecurityConstants;
-import com.dct.base.dto.response.BaseResponseDTO;
-import com.dct.base.exception.BaseException;
+import com.dct.model.common.JsonUtils;
+import com.dct.model.constants.BaseHttpStatusConstants;
+import com.dct.model.constants.BaseSecurityConstants;
+import com.dct.model.dto.response.BaseResponseDTO;
+import com.dct.model.exception.BaseException;
 
 import jakarta.annotation.Nonnull;
 import jakarta.servlet.FilterChain;

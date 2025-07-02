@@ -1,10 +1,11 @@
 package com.dct.base.aop;
 
 import com.dct.base.aop.annotation.CheckAuthorize;
-import com.dct.base.constants.BaseExceptionConstants;
-import com.dct.base.exception.BaseAuthenticationException;
+import com.dct.model.constants.BaseExceptionConstants;
+import com.dct.model.exception.BaseAuthenticationException;
 
 import jakarta.servlet.http.HttpServletRequest;
+
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.After;
 import org.aspectj.lang.annotation.Around;

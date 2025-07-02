@@ -1,6 +1,6 @@
 package com.dct.base.security.config;
 
-import com.dct.base.config.properties.SecurityProps;
+import com.dct.model.config.properties.SecurityProps;
 
 import java.util.Optional;
 

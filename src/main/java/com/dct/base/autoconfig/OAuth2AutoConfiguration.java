@@ -1,10 +1,10 @@
 package com.dct.base.autoconfig;
 
-import com.dct.base.common.MessageTranslationUtils;
-import com.dct.base.config.properties.OAuth2Props;
-import com.dct.base.constants.ActivateStatus;
-import com.dct.base.constants.BasePropertiesConstants;
-import com.dct.base.exception.BaseIllegalArgumentException;
+import com.dct.model.common.MessageTranslationUtils;
+import com.dct.model.config.properties.OAuth2Props;
+import com.dct.model.constants.ActivateStatus;
+import com.dct.model.constants.BasePropertiesConstants;
+import com.dct.model.exception.BaseIllegalArgumentException;
 import com.dct.base.security.handler.BaseOAuth2AuthenticationFailureHandler;
 import com.dct.base.security.handler.BaseOAuth2AuthenticationSuccessHandler;
 import com.dct.base.security.handler.DefaultBaseOAuth2AuthenticationFailureHandler;

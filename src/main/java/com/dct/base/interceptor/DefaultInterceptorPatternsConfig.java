@@ -1,7 +1,7 @@
 package com.dct.base.interceptor;
 
-import com.dct.base.config.properties.InterceptorProps;
-import com.dct.base.constants.BaseCommonConstants;
+import com.dct.model.config.properties.InterceptorProps;
+import com.dct.model.constants.BaseCommonConstants;
 
 import java.util.Optional;
 

@@ -1,6 +1,6 @@
 package com.dct.base.autoconfig;
 
-import com.dct.base.constants.BasePropertiesConstants;
+import com.dct.model.constants.BasePropertiesConstants;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import org.slf4j.Logger;
@@ -12,7 +12,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.web.client.RestTemplate;
 
-import static com.dct.base.constants.ActivateStatus.ENABLED_VALUE;
+import static com.dct.model.constants.ActivateStatus.ENABLED_VALUE;
 
 /**
  * Helps the application use functions related to sending and receiving HTTP requests/responses, similar to a client
