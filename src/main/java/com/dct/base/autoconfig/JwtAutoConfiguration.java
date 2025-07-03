@@ -4,12 +4,12 @@ import com.dct.base.aop.BaseCheckAuthorizeAspect;
 import com.dct.base.aop.DefaultCheckAuthorizeAspect;
 import com.dct.base.security.config.BaseSecurityAuthorizeRequestConfig;
 import com.dct.base.security.jwt.BaseJwtFilter;
+import com.dct.base.security.jwt.BaseJwtProvider;
 import com.dct.base.security.jwt.DefaultJwtFilter;
+import com.dct.base.security.jwt.DefaultJwtProvider;
 import com.dct.model.constants.BasePropertiesConstants;
 import com.dct.model.common.MessageTranslationUtils;
 import com.dct.model.config.properties.JwtProps;
-import com.dct.model.security.BaseJwtProvider;
-import com.dct.model.security.DefaultJwtProvider;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
