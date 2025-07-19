@@ -7,37 +7,32 @@
     },
     {
       "name": "dct.base.features.datasource",
-      "type": "com.dct.base.constants.ActivateStatus",
+      "type": "com.dct.model.constants.ActivateStatus",
       "description": "Description for dct.base.features.datasource."
     },
     {
       "name": "dct.base.features.jpa-auditing",
-      "type": "com.dct.base.constants.ActivateStatus",
+      "type": "com.dct.model.constants.ActivateStatus",
       "description": "Description for dct.base.features.jpa-auditing."
     },
     {
-      "name": "dct.base.features.default-rest-template",
-      "type": "com.dct.base.constants.ActivateStatus",
-      "description": "Description for dct.base.features.default-rest-template."
-    },
-    {
-      "name": "dct.base.features.default-object-mapper",
-      "type": "com.dct.base.constants.ActivateStatus",
-      "description": "Description for dct.base.features.default-object-mapper."
+      "name": "dct.base.features.rest-template",
+      "type": "com.dct.model.constants.ActivateStatus",
+      "description": "Description for dct.base.features.rest-template."
     },
     {
       "name": "dct.base.features.resources",
-      "type": "com.dct.base.constants.ActivateStatus",
+      "type": "com.dct.model.constants.ActivateStatus",
       "description": "Description for dct.base.features.resources."
     },
     {
       "name": "dct.base.features.socket",
-      "type": "com.dct.base.constants.ActivateStatus",
+      "type": "com.dct.model.constants.ActivateStatus",
       "description": "Description for dct.base.features.socket."
     },
     {
       "name": "dct.base.features.i18n",
-      "type": "com.dct.base.constants.ActivateStatus",
+      "type": "com.dct.model.constants.ActivateStatus",
       "description": "Description for dct.base.features.i18n."
     }
   ]

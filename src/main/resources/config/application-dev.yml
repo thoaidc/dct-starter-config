@@ -14,7 +14,9 @@
 logging:
   level:
     root: debug
-    com.dct.base: debug
+    com.dct: debug
+    com.dct.model: debug
+    com.dct.config: debug
     org.springframework.security: debug
   charset:
     console: UTF-8

@@ -14,7 +14,9 @@
 logging:
   level:
     root: info
-    com.dct.base: info
+    com.dct: info
+    com.dct.model: info
+    com.dct.config: info
     org.springframework.security: info
     org.hibernate.sql: info
   charset:

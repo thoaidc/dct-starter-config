@@ -14,7 +14,8 @@
 logging:
   level:
     root: debug
-    com.dct.base: debug
+    com.dct.model: debug
+    com.dct.config: debug
     org.springframework.security: debug
   charset:
     console: UTF-8
@@ -73,8 +74,7 @@ dct:
     features:
       datasource: disabled
       jpa-auditing: disabled
-      default-rest-template: enabled
-      default-object-mapper: enabled
+      rest-template: enabled
       resources: enabled
       socket: enabled
       i18n: enabled
@@ -123,7 +123,7 @@ dct:
         patterns:
           - /uploads/
         locations:
-          - D:\\Downloads
+          - D:\\Downloads\
 
     interceptor:
       excluded-patterns:
