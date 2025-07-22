@@ -23,7 +23,7 @@
     <dependencies>
         <dependency>
             <groupId>com.dct</groupId>
-            <artifactId>base-model</artifactId>
+            <artifactId>starter-model</artifactId>
             <version>1.0.0</version>
         </dependency>
 
