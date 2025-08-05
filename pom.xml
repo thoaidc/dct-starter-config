@@ -112,27 +112,11 @@
         <finalName>${project.artifactId}-${project.version}</finalName>
         <defaultGoal>spring-boot:run</defaultGoal>
 
-        <!-- Allows Maven to process and replace variables (placeholders) in resource files (e.g. application.yml, etc.) when building -->
-        <resources>
-            <resource>
-                <directory>src/main/resources</directory>
-                <filtering>true</filtering>
-            </resource>
-        </resources>
-
         <plugins>
             <!-- Build JAR -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>
-                <configuration>
-                    <archive>
-                        <manifest>
-                            <addClasspath>true</addClasspath>
-                            <mainClass>${main-start-class}</mainClass>
-                        </manifest>
-                    </archive>
-                </configuration>
             </plugin>
 
             <!-- Clean old target build -->
