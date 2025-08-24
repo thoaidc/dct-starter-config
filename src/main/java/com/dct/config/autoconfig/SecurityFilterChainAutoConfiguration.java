@@ -13,6 +13,7 @@ import com.dct.model.constants.BasePropertiesConstants;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
@@ -31,7 +32,6 @@ import org.springframework.web.filter.CorsFilter;
 @AutoConfiguration
 @ConditionalOnClass({SecurityFilterChain.class, HttpSecurity.class})
 @ConditionalOnBean({
-    CorsFilter.class,
     AccessDeniedHandler.class,
     AuthenticationEntryPoint.class,
     SecurityProps.class
@@ -74,7 +74,7 @@ public class SecurityFilterChainAutoConfiguration {
     @ConditionalOnMissingBean(BaseSecurityFilterChainConfig.class)
     public BaseSecurityFilterChainConfig baseSecurityFilterChainConfig(
         SecurityProps securityProps,
-        CorsFilter corsFilter,
+        @Autowired(required = false) CorsFilter corsFilter,
         BaseAuthenticationFilter baseAuthenticationFilter,
         AuthenticationEntryPoint authenticationEntryPoint,
         AccessDeniedHandler accessDeniedHandler

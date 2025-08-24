@@ -95,7 +95,7 @@ app:
   security:
     enabled-tls: disabled
     password-encrypt-factor: 12
-    authentication-type: mix_jwt_oauth2
+    authentication-type: header_forwarded
     jwt:
       base64-secret-key: ZGN0LWJhc2Utc2VjcmV0LWtleS10b2tlbi12YWxpZGl0eS04NjQwMDAwMG1zLWZvci1yZW1lbWJlci1tZS04NjQwMDAwMG1z
       access-token:
