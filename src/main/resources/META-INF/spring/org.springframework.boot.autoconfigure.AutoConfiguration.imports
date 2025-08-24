@@ -1,12 +1,13 @@
 com.dct.config.autoconfig.AuditingAutoConfiguration
+com.dct.config.autoconfig.CircuitBreakerAutoConfiguration
 com.dct.config.autoconfig.DataSourceAutoConfiguration
+com.dct.config.autoconfig.FeignAuthenticationRequestAutoConfiguration
 com.dct.config.autoconfig.GlobalExceptionHandlerAutoConfiguration
 com.dct.config.autoconfig.HttpClientAutoConfiguration
 com.dct.config.autoconfig.InterceptorAutoConfiguration
-com.dct.config.autoconfig.JwtAutoConfiguration
 com.dct.config.autoconfig.LocaleAutoConfiguration
-com.dct.config.autoconfig.OAuth2AutoConfiguration
 com.dct.config.autoconfig.ResourceHandlersAutoConfiguration
+com.dct.config.autoconfig.ResponseTranslationAutoConfiguration
 com.dct.config.autoconfig.SecurityAutoConfiguration
 com.dct.config.autoconfig.SecurityFilterChainAutoConfiguration
 com.dct.config.autoconfig.TransactionManagementAutoConfiguration

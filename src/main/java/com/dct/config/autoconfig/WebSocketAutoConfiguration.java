@@ -1,6 +1,5 @@
 package com.dct.config.autoconfig;
 
-import com.dct.config.security.config.BaseCorsRequestMatchersConfig;
 import com.dct.model.config.properties.SocketProps;
 import com.dct.model.constants.ActivateStatus;
 import com.dct.model.constants.BasePropertiesConstants;
@@ -22,18 +21,15 @@ import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerCo
 public class WebSocketAutoConfiguration implements WebSocketMessageBrokerConfigurer {
 
     private static final Logger log = LoggerFactory.getLogger(WebSocketAutoConfiguration.class);
-    private static final String ENTITY_NAME = "WebSocketAutoConfiguration";
-    private final BaseCorsRequestMatchersConfig corsRequestMatchersConfig;
     private final SocketProps socketProps;
 
-    public WebSocketAutoConfiguration(BaseCorsRequestMatchersConfig corsRequestMatchersConfig, SocketProps socketProps) {
-        this.corsRequestMatchersConfig = corsRequestMatchersConfig;
+    public WebSocketAutoConfiguration(SocketProps socketProps) {
         this.socketProps = socketProps;
     }
 
     @Override
     public void configureMessageBroker(MessageBrokerRegistry config) {
-        log.debug("[{}] - Socket is available to subscribe in: {}", ENTITY_NAME, socketProps.getBrokerPrefixes());
+        log.debug("[SOCKET_AUTO_CONFIG] - Socket is available to subscribe in: {}", (Object) socketProps.getBrokerPrefixes());
         // Allow clients to subscribe to topics
         config.enableSimpleBroker(socketProps.getBrokerPrefixes());
         // Client sends message to server using this prefix
@@ -42,8 +38,8 @@ public class WebSocketAutoConfiguration implements WebSocketMessageBrokerConfigu
 
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
-        String[] ALLOWED_ORIGIN_PATTERNS = corsRequestMatchersConfig.getAllowedOriginPatterns().toArray(new String[0]);
-        log.debug("[{}] - Web socket allowed origins: {}", ENTITY_NAME, ALLOWED_ORIGIN_PATTERNS);
-        registry.addEndpoint(socketProps.getEndpoints()).setAllowedOriginPatterns(ALLOWED_ORIGIN_PATTERNS);
+//        String[] ALLOWED_ORIGIN_PATTERNS = corsRequestMatchersConfig.getAllowedOriginPatterns().toArray(new String[0]);
+//        log.debug("[{}] - Web socket allowed origins: {}", ENTITY_NAME, ALLOWED_ORIGIN_PATTERNS);
+//        registry.addEndpoint(socketProps.getEndpoints()).setAllowedOriginPatterns(ALLOWED_ORIGIN_PATTERNS);
     }
 }

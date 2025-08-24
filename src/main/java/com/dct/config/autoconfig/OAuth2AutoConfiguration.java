@@ -6,20 +6,16 @@ import com.dct.config.security.handler.DefaultBaseOAuth2AuthenticationFailureHan
 import com.dct.config.security.handler.DefaultBaseOAuth2AuthenticationSuccessHandler;
 import com.dct.config.security.handler.DefaultOAuth2AuthRequestResolver;
 import com.dct.model.common.MessageTranslationUtils;
-import com.dct.model.config.properties.OAuth2Props;
-import com.dct.model.constants.ActivateStatus;
+import com.dct.model.config.properties.SecurityProps;
 import com.dct.model.constants.BasePropertiesConstants;
 import com.dct.model.exception.BaseIllegalArgumentException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
-import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
-import org.springframework.core.env.Environment;
 import org.springframework.security.oauth2.client.registration.ClientRegistration;
 import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository;
 import org.springframework.security.oauth2.client.registration.InMemoryClientRegistrationRepository;
@@ -32,15 +28,14 @@ import java.util.Objects;
 
 @AutoConfiguration
 @ConditionalOnProperty(name = BasePropertiesConstants.ENABLED_OAUTH2, havingValue = "true")
-@EnableConfigurationProperties(OAuth2Props.class)
 public class OAuth2AutoConfiguration {
 
     private static final Logger log = LoggerFactory.getLogger(OAuth2AutoConfiguration.class);
-    private static final String ENTITY_NAME = "OAuth2AutoConfiguration";
-    private final OAuth2Props oAuth2Props;
+    private static final String ENTITY_NAME = "com.dct.config.autoconfig.OAuth2AutoConfiguration";
+    private final SecurityProps securityProps;
 
-    public OAuth2AutoConfiguration(OAuth2Props oAuth2Props) {
-        this.oAuth2Props = oAuth2Props;
+    public OAuth2AutoConfiguration(SecurityProps securityProps) {
+        this.securityProps = securityProps;
     }
 
     /**
@@ -51,7 +46,7 @@ public class OAuth2AutoConfiguration {
     @ConditionalOnMissingBean(OAuth2AuthorizationRequestResolver.class)
     public OAuth2AuthorizationRequestResolver defaultOAuth2AuthRequestResolver(ClientRegistrationRepository registry) {
         log.debug("[{}] - Auto configure default OAuth2AuthorizationRequestResolver", ENTITY_NAME);
-        return new DefaultOAuth2AuthRequestResolver(registry, oAuth2Props);
+        return new DefaultOAuth2AuthRequestResolver(registry, securityProps.getOauth2());
     }
 
     @Bean
@@ -63,18 +58,9 @@ public class OAuth2AutoConfiguration {
 
     @Bean
     @ConditionalOnMissingBean(BaseOAuth2AuthenticationFailureHandler.class)
-    public BaseOAuth2AuthenticationFailureHandler defaultOAuth2FailureHandler(
-        @Autowired(required = false) MessageTranslationUtils messageTranslationUtils,
-        Environment env
-    ) {
+    public BaseOAuth2AuthenticationFailureHandler defaultOAuth2FailureHandler(MessageTranslationUtils messageTranslationUtils) {
         log.debug("[{}] - Auto configure default OAuth2AuthenticationFailureHandler", ENTITY_NAME);
-        String isI18nEnabled = env.getProperty(BasePropertiesConstants.ENABLED_I18N);
-
-        if (ActivateStatus.ENABLED_VALUE.equals(isI18nEnabled) && Objects.nonNull(messageTranslationUtils)) {
-            return new DefaultBaseOAuth2AuthenticationFailureHandler(messageTranslationUtils);
-        }
-
-        return new DefaultBaseOAuth2AuthenticationFailureHandler();
+        return new DefaultBaseOAuth2AuthenticationFailureHandler(messageTranslationUtils);
     }
 
     /**
@@ -89,7 +75,7 @@ public class OAuth2AutoConfiguration {
     }
 
     private ClientRegistration[] clientRegistrations() {
-        List<OAuth2Props.ClientProps> clientProps = oAuth2Props.getClients();
+        List<SecurityProps.OAuth2Config.ClientProps> clientProps = securityProps.getOauth2().getClients();
 
         if (Objects.isNull(clientProps) || clientProps.isEmpty()) {
             throw new BaseIllegalArgumentException(ENTITY_NAME, "Not found client to register OAuth2 config");

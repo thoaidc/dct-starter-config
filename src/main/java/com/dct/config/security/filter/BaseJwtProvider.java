@@ -1,7 +1,8 @@
-package com.dct.config.security.jwt;
+package com.dct.config.security.filter;
 
-import com.dct.model.config.properties.JwtProps;
-import com.dct.model.dto.auth.BaseAuthTokenDTO;
+import com.dct.model.config.properties.SecurityProps;
+import com.dct.model.dto.auth.BaseTokenDTO;
+import com.dct.model.exception.BaseIllegalArgumentException;
 
 import io.jsonwebtoken.JwtParser;
 import io.jsonwebtoken.Jwts;
@@ -14,39 +15,44 @@ import org.springframework.util.StringUtils;
 
 import javax.crypto.SecretKey;
 import java.util.Base64;
+import java.util.Objects;
 import java.util.Optional;
 
 @SuppressWarnings("unused")
 public abstract class BaseJwtProvider {
 
     private static final Logger log = LoggerFactory.getLogger(BaseJwtProvider.class);
-    private static final String ENTITY_NAME = "BaseJwtProvider";
+    private static final String ENTITY_NAME = "sds.ec.security.filter.BaseJwtProvider";
     protected final SecretKey secretKey;
     protected final JwtParser jwtParser;
     protected final long ACCESS_TOKEN_VALIDITY;
     protected final long REFRESH_TOKEN_VALIDITY;
     protected final long REFRESH_TOKEN_VALIDITY_FOR_REMEMBER;
 
-    public BaseJwtProvider(JwtProps jwtProps) {
-        JwtProps jwtConfig = Optional.ofNullable(jwtProps).orElse(new JwtProps());
+    public BaseJwtProvider(SecurityProps securityProps) {
+        SecurityProps.JwtConfig jwtConfig = Optional.ofNullable(securityProps).orElse(new SecurityProps()).getJwt();
+
+        if (Objects.isNull(jwtConfig)) {
+            log.warn("[JWT_CONFIG_NOT_FOUND_ERROR] - JWT config is null! Fallback to default config");
+        }
+
         String base64SecretKey = jwtConfig.getBase64SecretKey();
         ACCESS_TOKEN_VALIDITY = jwtConfig.getAccessToken().getValidity();
         REFRESH_TOKEN_VALIDITY = jwtConfig.getRefreshToken().getValidity();
         REFRESH_TOKEN_VALIDITY_FOR_REMEMBER = jwtConfig.getRefreshToken().getValidityForRemember();
 
         if (!StringUtils.hasText(base64SecretKey)) {
-            throw new RuntimeException("Could not found secret key to sign JWT");
+            throw new BaseIllegalArgumentException(ENTITY_NAME, "Could not found secret key to sign JWT");
         }
 
-        log.debug("Using a Base64-encoded JWT secret key");
+        log.debug("[JWT_SIGNATURE_AUTO_CONFIG] - Using a Base64-encoded JWT secret key");
         byte[] keyBytes = Base64.getUrlDecoder().decode(base64SecretKey);
         secretKey = Keys.hmacShaKeyFor(keyBytes);
         jwtParser = Jwts.parser().verifyWith(secretKey).build();
-        log.debug("Sign JWT with algorithm: {}", secretKey.getAlgorithm());
+        log.debug("[JWT_SIGNATURE_AUTO_CONFIG] - Sign JWT with algorithm: {}", secretKey.getAlgorithm());
     }
 
-    public abstract String generateAccessToken(BaseAuthTokenDTO authTokenDTO);
-    public abstract String generateRefreshToken(BaseAuthTokenDTO authTokenDTO);
+    public abstract String generateAccessToken(BaseTokenDTO authTokenDTO);
+    public abstract String generateRefreshToken(BaseTokenDTO authTokenDTO);
     public abstract Authentication validateToken(String token);
-    public abstract Authentication getAuthentication(String token);
 }

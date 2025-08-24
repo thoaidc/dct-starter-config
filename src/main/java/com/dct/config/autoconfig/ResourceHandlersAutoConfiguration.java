@@ -24,7 +24,6 @@ import java.util.Optional;
 public class ResourceHandlersAutoConfiguration implements WebMvcConfigurer {
 
     private static final Logger log = LoggerFactory.getLogger(ResourceHandlersAutoConfiguration.class);
-    private static final String ENTITY_NAME = "ResourceHandlersAutoConfiguration";
     private final ResourceProps resourceProps;
 
     public ResourceHandlersAutoConfiguration(ResourceProps resourceProps) {
@@ -41,7 +40,7 @@ public class ResourceHandlersAutoConfiguration implements WebMvcConfigurer {
      */
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
-        log.debug("[{}] - Auto configure default resources handler", ENTITY_NAME);
+        log.debug("[RESOURCES_AUTO_CONFIG] - Use default resources handler");
         StaticResource staticConfig = Optional.ofNullable(resourceProps.getStaticResource()).orElse(new StaticResource());
         UploadResource uploadConfig = Optional.ofNullable(resourceProps.getUploadResource()).orElse(new UploadResource());
 

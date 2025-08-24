@@ -1,12 +1,14 @@
 package com.dct.config.exception;
 
 import com.dct.model.constants.BaseExceptionConstants;
-import com.dct.model.common.MessageTranslationUtils;
 import com.dct.model.constants.BaseHttpStatusConstants;
 import com.dct.model.dto.response.BaseResponseDTO;
 import com.dct.model.exception.BaseAuthenticationException;
+import com.dct.model.exception.BaseBadRequestAlertException;
 import com.dct.model.exception.BaseBadRequestException;
 import com.dct.model.exception.BaseException;
+import com.dct.model.exception.BaseIllegalArgumentException;
+import com.dct.model.exception.BaseInternalServerException;
 
 import jakarta.annotation.Nullable;
 import jakarta.validation.Valid;
@@ -17,6 +19,9 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.http.converter.HttpMessageNotWritableException;
+import org.springframework.util.StringUtils;
 import org.springframework.validation.FieldError;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -39,13 +44,6 @@ import java.util.Objects;
 public abstract class BaseExceptionHandler extends ResponseEntityExceptionHandler {
 
     private static final Logger log = LoggerFactory.getLogger(BaseExceptionHandler.class);
-    private MessageTranslationUtils messageUtils;
-
-    public BaseExceptionHandler() {}
-
-    public BaseExceptionHandler(MessageTranslationUtils messageUtils) {
-        this.messageUtils = messageUtils;
-    }
 
     /**
      * Handle exceptions when an HTTP method is not supported (ex: calling POST on an endpoint that only supports GET)
@@ -60,14 +58,11 @@ public abstract class BaseExceptionHandler extends ResponseEntityExceptionHandle
                                                                       @Nullable HttpHeaders headers,
                                                                       @Nullable HttpStatusCode status,
                                                                       @Nullable WebRequest request) {
-        log.error("Handle method not allow exception. {}", Objects.nonNull(e) ? e.getMessage() : "");
-
-        BaseResponseDTO responseDTO = BaseResponseDTO.builder()
-                .code(BaseHttpStatusConstants.METHOD_NOT_ALLOWED)
-                .success(BaseHttpStatusConstants.STATUS.FAILED)
-                .message(BaseExceptionConstants.METHOD_NOT_ALLOW)
-                .build();
-
+        log.error("[METHOD_NOT_ALLOWED_EXCEPTION] - message: {}", Objects.nonNull(e) ? e.getMessage() : "");
+        BaseResponseDTO responseDTO = convertResponse(
+            BaseHttpStatusConstants.METHOD_NOT_ALLOWED,
+            BaseExceptionConstants.METHOD_NOT_ALLOW
+        );
         return new ResponseEntity<>(responseDTO, HttpStatus.METHOD_NOT_ALLOWED);
     }
 
@@ -89,18 +84,12 @@ public abstract class BaseExceptionHandler extends ResponseEntityExceptionHandle
         FieldError fieldError = exception.getBindingResult().getFieldError();
         String errorKey = BaseExceptionConstants.INVALID_REQUEST_DATA; // Default message
 
-        if (Objects.nonNull(fieldError))
+        if (Objects.nonNull(fieldError)) {
             errorKey = fieldError.getDefaultMessage(); // If the field with an error includes a custom message key
+        }
 
-        String reason = Objects.nonNull(messageUtils) ? messageUtils.getMessageI18n(errorKey) : errorKey;
-        log.error("Handle validate request data exception: {}. {}", reason, exception.getMessage());
-
-        BaseResponseDTO responseDTO = BaseResponseDTO.builder()
-                .code(BaseHttpStatusConstants.BAD_REQUEST)
-                .success(BaseHttpStatusConstants.STATUS.FAILED)
-                .message(errorKey)
-                .build();
-
+        log.error("[INVALID_REQUEST_DATA_EXCEPTION] - message: {}", exception.getMessage());
+        BaseResponseDTO responseDTO = convertResponse(BaseHttpStatusConstants.BAD_REQUEST, errorKey);
         return new ResponseEntity<>(responseDTO, HttpStatus.BAD_REQUEST);
     }
 
@@ -109,102 +98,122 @@ public abstract class BaseExceptionHandler extends ResponseEntityExceptionHandle
                                                                        @Nullable HttpHeaders headers,
                                                                        @Nullable HttpStatusCode status,
                                                                        WebRequest request) {
-        log.error("[{}] Maximum upload size exceeded: {}", request.getClass().getName(), e.getMessage());
-
-        BaseResponseDTO responseDTO = BaseResponseDTO.builder()
-                .code(BaseHttpStatusConstants.BAD_REQUEST)
-                .success(BaseHttpStatusConstants.STATUS.FAILED)
-                .message(BaseExceptionConstants.MAXIMUM_UPLOAD_SIZE_EXCEEDED)
-                .build();
-
+        log.error("[MAXIMUM_UPLOAD_EXCEPTION] at: {} - {}", request.getClass().getName(), e.getMessage());
+        BaseResponseDTO responseDTO = convertResponse(
+            BaseHttpStatusConstants.BAD_REQUEST,
+            BaseExceptionConstants.MAXIMUM_UPLOAD_SIZE_EXCEEDED
+        );
         return new ResponseEntity<>(responseDTO, HttpStatus.BAD_REQUEST);
+    }
+
+    @Override
+    protected ResponseEntity<Object> handleHttpMessageNotReadable(@Nullable HttpMessageNotReadableException ex,
+                                                                  @Nullable HttpHeaders headers,
+                                                                  @Nullable HttpStatusCode status,
+                                                                  @Nullable WebRequest request) {
+        log.error("[HTTP_MESSAGE_NOT_READABLE] - error: ", ex);
+        BaseResponseDTO responseDTO = convertResponse(
+            BaseHttpStatusConstants.UNPROCESSABLE_ENTITY,
+            BaseExceptionConstants.INVALID_REQUEST_DATA
+        );
+        return new ResponseEntity<>(responseDTO, HttpStatus.BAD_REQUEST);
+    }
+
+    @Override
+    protected ResponseEntity<Object> handleHttpMessageNotWritable(@Nullable HttpMessageNotWritableException ex,
+                                                                  @Nullable HttpHeaders headers,
+                                                                  @Nullable HttpStatusCode status,
+                                                                  @Nullable WebRequest request) {
+        log.error("[HTTP_MESSAGE_NOT_WRITABLE] - error: ", ex);
+        BaseResponseDTO responseDTO = convertResponse(
+            BaseHttpStatusConstants.UNPROCESSABLE_ENTITY,
+            BaseExceptionConstants.UNCERTAIN_ERROR
+        );
+        return new ResponseEntity<>(responseDTO, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     @ExceptionHandler({ BaseAuthenticationException.class })
     public ResponseEntity<BaseResponseDTO> handleBaseAuthenticationException(BaseAuthenticationException exception) {
-        String reason = Objects.nonNull(messageUtils)
-                ? messageUtils.getMessageI18n(exception.getErrorKey(), exception.getArgs())
+        log.error("[AUTHENTICATION_EXCEPTION] - at: {} ", exception.getEntityName(), exception.getError());
+        String errorMessage = StringUtils.hasText(exception.getOriginalMessage())
+                ? exception.getOriginalMessage()
                 : exception.getErrorKey();
-        log.error("[{}] Handle authentication exception: {}", exception.getEntityName(), reason);
-
-        BaseResponseDTO responseDTO = BaseResponseDTO.builder()
-                .code(BaseHttpStatusConstants.UNAUTHORIZED)
-                .success(BaseHttpStatusConstants.STATUS.FAILED)
-                .message(exception.getErrorKey())
-                .build();
-
+        BaseResponseDTO responseDTO = convertResponse(BaseHttpStatusConstants.UNAUTHORIZED, errorMessage);
         return new ResponseEntity<>(responseDTO, HttpStatus.UNAUTHORIZED);
     }
 
-    @ExceptionHandler({ BaseBadRequestException.class })
-    public ResponseEntity<BaseResponseDTO> handleBaseBadRequestException(BaseBadRequestException exception) {
-        String reason = Objects.nonNull(messageUtils)
-                ? messageUtils.getMessageI18n(exception.getErrorKey(), exception.getArgs())
+    @ExceptionHandler({ BaseBadRequestException.class, BaseBadRequestAlertException.class })
+    public ResponseEntity<BaseResponseDTO> handleBaseBadRequestException(BaseException exception) {
+        log.error("[BAD_REQUEST_EXCEPTION] - at: {}", exception.getEntityName(), exception.getError());
+        String errorMessage = StringUtils.hasText(exception.getOriginalMessage())
+                ? exception.getOriginalMessage()
                 : exception.getErrorKey();
-        log.error("[{}] Handle bad request alert exception: {}", exception.getEntityName(), reason);
-
-        BaseResponseDTO responseDTO = BaseResponseDTO.builder()
-                .code(BaseHttpStatusConstants.BAD_REQUEST)
-                .success(BaseHttpStatusConstants.STATUS.FAILED)
-                .message(exception.getErrorKey())
-                .build();
-
+        BaseResponseDTO responseDTO = convertResponse(BaseHttpStatusConstants.BAD_REQUEST, errorMessage);
         return new ResponseEntity<>(responseDTO, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler({ BaseIllegalArgumentException.class })
+    public ResponseEntity<BaseResponseDTO> handleBaseIllegalArgumentException(BaseIllegalArgumentException exception) {
+        log.error("[ILLEGAL_ARGUMENT_EXCEPTION] - at: {}", exception.getEntityName(), exception.getError());
+        String errorMessage = StringUtils.hasText(exception.getOriginalMessage())
+                ? exception.getOriginalMessage()
+                : exception.getErrorKey();
+        BaseResponseDTO responseDTO = convertResponse(BaseHttpStatusConstants.UNPROCESSABLE_ENTITY, errorMessage);
+        return new ResponseEntity<>(responseDTO, HttpStatus.UNPROCESSABLE_ENTITY);
+    }
+
+    @ExceptionHandler({ BaseInternalServerException.class })
+    public ResponseEntity<BaseResponseDTO> handleBaseInternalServerException(BaseInternalServerException exception) {
+        log.error("[INTERNAL_SERVER_EXCEPTION] - at: {}", exception.getEntityName(), exception.getError());
+        String errorMessage = StringUtils.hasText(exception.getOriginalMessage())
+                ? exception.getOriginalMessage()
+                : exception.getErrorKey();
+        BaseResponseDTO responseDTO = convertResponse(BaseHttpStatusConstants.INTERNAL_SERVER_ERROR, errorMessage);
+        return new ResponseEntity<>(responseDTO, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     @ExceptionHandler({ BaseException.class })
     public ResponseEntity<BaseResponseDTO> handleBaseException(BaseException exception) {
-        String reason = Objects.nonNull(messageUtils)
-                ? messageUtils.getMessageI18n(exception.getErrorKey(), exception.getArgs())
+        log.error("[BASE_EXCEPTION] - at: {}", exception.getEntityName(), exception.getError());
+        String errorMessage = StringUtils.hasText(exception.getOriginalMessage())
+                ? exception.getOriginalMessage()
                 : exception.getErrorKey();
-        log.error("[{}] Handle exception: {}", exception.getEntityName(), reason, exception.getError());
-
-        BaseResponseDTO responseDTO = BaseResponseDTO.builder()
-                .code(BaseHttpStatusConstants.BAD_REQUEST)
-                .success(BaseHttpStatusConstants.STATUS.FAILED)
-                .message(exception.getErrorKey())
-                .build();
-
-        return new ResponseEntity<>(responseDTO, HttpStatus.BAD_REQUEST);
+        BaseResponseDTO responseDTO = convertResponse(BaseHttpStatusConstants.INTERNAL_SERVER_ERROR, errorMessage);
+        return new ResponseEntity<>(responseDTO, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     @ExceptionHandler({ NullPointerException.class })
     public ResponseEntity<Object> handleNullPointerException(NullPointerException exception, WebRequest request) {
         // Handle NullPointerException (include of Objects.requireNonNull())
-        log.error("[{}] Null pointer exception occurred: {}", request.getClass().getName(), exception.getMessage());
-
-        BaseResponseDTO responseDTO = BaseResponseDTO.builder()
-                .code(BaseHttpStatusConstants.INTERNAL_SERVER_ERROR)
-                .success(BaseHttpStatusConstants.STATUS.FAILED)
-                .message(BaseExceptionConstants.NULL_EXCEPTION)
-                .build();
-
+        log.error("[NULL_POINTER_EXCEPTION] - at: {}, message: {}", request.getClass().getName(), exception.getMessage());
+        BaseResponseDTO responseDTO = convertResponse(
+            BaseHttpStatusConstants.INTERNAL_SERVER_ERROR,
+            BaseExceptionConstants.NULL_EXCEPTION
+        );
         return new ResponseEntity<>(responseDTO, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     @ExceptionHandler({ RuntimeException.class })
     public ResponseEntity<BaseResponseDTO> handleRuntimeException(RuntimeException exception) {
-        log.error("Handle runtime exception", exception);
-
-        BaseResponseDTO responseDTO = BaseResponseDTO.builder()
-                .code(BaseHttpStatusConstants.INTERNAL_SERVER_ERROR)
-                .success(BaseHttpStatusConstants.STATUS.FAILED)
-                .message(BaseExceptionConstants.UNCERTAIN_ERROR)
-                .build();
-
+        log.error("[RUNTIME_EXCEPTION] - error: ", exception);
+        BaseResponseDTO responseDTO = convertResponse(
+            BaseHttpStatusConstants.INTERNAL_SERVER_ERROR,
+            BaseExceptionConstants.UNCERTAIN_ERROR
+        );
         return new ResponseEntity<>(responseDTO, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     @ExceptionHandler({ Exception.class })
     public ResponseEntity<BaseResponseDTO> handleException(Exception exception) {
-        log.error("Handle unexpected exception", exception);
-
-        BaseResponseDTO responseDTO = BaseResponseDTO.builder()
-                .code(BaseHttpStatusConstants.INTERNAL_SERVER_ERROR)
-                .success(BaseHttpStatusConstants.STATUS.FAILED)
-                .message(BaseExceptionConstants.UNCERTAIN_ERROR)
-                .build();
-
+        log.error("[GENERAL_EXCEPTION] - error: ", exception);
+        BaseResponseDTO responseDTO = convertResponse(
+            BaseHttpStatusConstants.INTERNAL_SERVER_ERROR,
+            BaseExceptionConstants.UNCERTAIN_ERROR
+        );
         return new ResponseEntity<>(responseDTO, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    private BaseResponseDTO convertResponse(int code, String message) {
+        return BaseResponseDTO.builder().code(code).success(Boolean.FALSE).message(message).build();
     }
 }

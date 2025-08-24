@@ -1,78 +1,71 @@
 package com.dct.config.autoconfig;
 
-import com.dct.config.interceptor.BaseResponseFilter;
-import com.dct.config.interceptor.DefaultBaseResponseFilter;
-import com.dct.config.interceptor.DefaultInterceptorPatternsConfig;
-import com.dct.config.interceptor.InterceptorPatternsConfig;
-import com.dct.config.security.config.BaseCorsRequestMatchersConfig;
-import com.dct.config.security.config.DefaultBaseCorsRequestMatchersConfig;
 import com.dct.model.config.properties.InterceptorProps;
-import com.dct.model.common.MessageTranslationUtils;
-import com.dct.model.constants.ActivateStatus;
 import com.dct.model.constants.BasePropertiesConstants;
-import com.dct.model.constants.BaseSecurityConstants;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
-import org.springframework.context.annotation.Bean;
-import org.springframework.web.cors.CorsConfiguration;
-import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
-import org.springframework.web.filter.CorsFilter;
+import org.springframework.context.ApplicationContext;
+import org.springframework.lang.NonNull;
+import org.springframework.web.servlet.HandlerInterceptor;
+import org.springframework.web.servlet.config.annotation.InterceptorRegistration;
+import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+
+import java.util.Map;
+import java.util.Objects;
+
+import static com.dct.model.constants.ActivateStatus.ENABLED_VALUE;
 
 @AutoConfiguration
 @EnableConfigurationProperties(InterceptorProps.class)
-public class InterceptorAutoConfiguration {
+@ConditionalOnProperty(name = BasePropertiesConstants.ENABLED_INTERCEPTOR_CONFIG, havingValue = ENABLED_VALUE)
+public class InterceptorAutoConfiguration implements WebMvcConfigurer {
 
     private static final Logger log = LoggerFactory.getLogger(InterceptorAutoConfiguration.class);
-    private static final String ENTITY_NAME = "InterceptorAutoConfiguration";
+    private final ApplicationContext applicationContext;
+    private final InterceptorProps interceptorProps;
 
-    @Bean
-    @ConditionalOnMissingBean(BaseResponseFilter.class)
-    @ConditionalOnProperty(name = BasePropertiesConstants.ENABLED_I18N, havingValue = ActivateStatus.ENABLED_VALUE)
-    public BaseResponseFilter defaultBaseResponseFilter(MessageTranslationUtils messageTranslationUtils) {
-        log.debug("[{}] - Auto configure default base response filter", ENTITY_NAME);
-        return new DefaultBaseResponseFilter(messageTranslationUtils);
+    public InterceptorAutoConfiguration(ApplicationContext applicationContext, InterceptorProps interceptorProps) {
+        this.applicationContext = applicationContext;
+        this.interceptorProps = interceptorProps;
     }
 
-    @Bean
-    @ConditionalOnMissingBean(BaseCorsRequestMatchersConfig.class)
-    public BaseCorsRequestMatchersConfig defaultBaseCorsRequestMatchersConfig(InterceptorProps interceptorProps) {
-        log.debug("[{}] - Use default CORS request matchers configuration", ENTITY_NAME);
-        return new DefaultBaseCorsRequestMatchersConfig(interceptorProps);
+    @Override
+    public void addInterceptors(@NonNull InterceptorRegistry registry) {
+        log.debug("[INTERCEPTOR_AUTO_CONFIG] - Registering handler interceptors");
+
+        interceptorProps.getChain().forEach(interceptorConfig -> {
+            log.debug("[INTERCEPTOR_AUTO_CONFIG] - Add interceptor: {}", interceptorConfig.getName().getName());
+            HandlerInterceptor interceptor = getInterceptorInstance(interceptorConfig.getName());
+            InterceptorRegistration interceptorRegistration = registry.addInterceptor(interceptor);
+
+            if (Objects.nonNull(interceptorConfig.getIncludedPatterns())) {
+                interceptorRegistration.addPathPatterns(interceptorConfig.getIncludedPatterns());
+            }
+
+            if (Objects.nonNull(interceptorConfig.getExcludedPatterns())) {
+                interceptorRegistration.excludePathPatterns(interceptorConfig.getExcludedPatterns());
+            }
+        });
     }
 
-    @Bean
-    @ConditionalOnMissingBean(InterceptorPatternsConfig.class)
-    public InterceptorPatternsConfig defaultInterceptorPatternsConfig(InterceptorProps interceptorProps) {
-        log.debug("[{}] - Use default excluded interceptor patterns", ENTITY_NAME);
-        return new DefaultInterceptorPatternsConfig(interceptorProps);
-    }
+    private HandlerInterceptor getInterceptorInstance(Class<?> clazz) {
+        // If the interceptor is a Spring bean, get it from the context
+        Map<String, ?> beans = applicationContext.getBeansOfType(clazz);
 
-    /**
-     * Configures the CORS (Cross-Origin Resource Sharing) filter in the application <p>
-     * CORS is a security mechanism that allows or denies requests between different origins <p>
-     * View the details of the permissions or restrictions in {@link BaseSecurityConstants.CORS}
-     */
-    @Bean
-    @ConditionalOnMissingBean(CorsFilter.class)
-    public CorsFilter defaultCorsFilter(BaseCorsRequestMatchersConfig corsRequestMatchersConfig) {
-        log.debug("[{}] - Auto configure default CORS filter", ENTITY_NAME);
-        CorsConfiguration config = new CorsConfiguration();
-        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-
-        config.setAllowedOriginPatterns(corsRequestMatchersConfig.getAllowedOriginPatterns());
-        config.setAllowedHeaders(corsRequestMatchersConfig.getAllowedHeaders());
-        config.setAllowedMethods(corsRequestMatchersConfig.getAllowedMethods());
-        config.setAllowCredentials(corsRequestMatchersConfig.isAllowCredentials());
-
-        for (String pattern : corsRequestMatchersConfig.applyFor()) {
-            source.registerCorsConfiguration(pattern, config);
+        if (!beans.isEmpty()) {
+            return (HandlerInterceptor) beans.values().iterator().next();
         }
 
-        return new CorsFilter(source);
+        // If it is not Spring bean, create instance yourself
+        try {
+            return (HandlerInterceptor) clazz.getDeclaredConstructor().newInstance();
+        } catch (Exception e) {
+            throw new IllegalStateException("Unable to initialize interceptor: " + clazz.getName(), e);
+        }
     }
 }

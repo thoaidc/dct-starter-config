@@ -1,6 +1,6 @@
 package com.dct.config.security.handler;
 
-import com.dct.model.config.properties.OAuth2Props;
+import com.dct.model.config.properties.SecurityProps;
 import jakarta.servlet.http.HttpServletRequest;
 
 import org.slf4j.Logger;
@@ -15,11 +15,10 @@ import java.util.Objects;
 public class DefaultOAuth2AuthRequestResolver implements OAuth2AuthorizationRequestResolver {
 
     private static final Logger log = LoggerFactory.getLogger(DefaultOAuth2AuthRequestResolver.class);
-    private static final String ENTITY_NAME = "DefaultOAuth2AuthRequestResolver";
     private final DefaultOAuth2AuthorizationRequestResolver delegate;
 
-    public DefaultOAuth2AuthRequestResolver(ClientRegistrationRepository client, OAuth2Props oAuth2Props) {
-        this.delegate = new DefaultOAuth2AuthorizationRequestResolver(client, oAuth2Props.getBaseAuthorizeUri());
+    public DefaultOAuth2AuthRequestResolver(ClientRegistrationRepository client, SecurityProps.OAuth2Config oAuth2Config) {
+        this.delegate = new DefaultOAuth2AuthorizationRequestResolver(client, oAuth2Config.getBaseAuthorizeUri());
     }
 
     @Override
@@ -35,7 +34,7 @@ public class DefaultOAuth2AuthRequestResolver implements OAuth2AuthorizationRequ
     }
 
     private OAuth2AuthorizationRequest customizeAuthorizationRequest(OAuth2AuthorizationRequest authorizationRequest) {
-        log.debug("[{}] - Custom resolver: Modifying oauth2 authorization request", ENTITY_NAME);
+        log.debug("[OAUTH2_REQUEST_RESOLVER] - Custom resolver: Modifying oauth2 authorization request");
 
         if (Objects.isNull(authorizationRequest))
             return null;

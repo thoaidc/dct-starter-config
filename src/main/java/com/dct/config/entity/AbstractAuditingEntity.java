@@ -1,6 +1,8 @@
 package com.dct.config.entity;
 
 import com.dct.config.autoconfig.AuditingAutoConfiguration;
+import com.dct.model.constants.BaseDatetimeConstants;
+import com.fasterxml.jackson.annotation.JsonFormat;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.EntityListeners;
@@ -58,6 +60,7 @@ public abstract class AbstractAuditingEntity implements Serializable {
     // Automatically saves the time the record was created (usually using system time)
     @CreatedDate
     @Column(name = "created_date", updatable = false)
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = BaseDatetimeConstants.Formatter.DD_MM_YYYY_HH_MM_SS_SLASH)
     private Instant createdDate;
 
     /**
@@ -72,6 +75,7 @@ public abstract class AbstractAuditingEntity implements Serializable {
     // Automatically saves the time of the last edit (usually using system time)
     @LastModifiedDate
     @Column(name = "last_modified_date")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = BaseDatetimeConstants.Formatter.DD_MM_YYYY_HH_MM_SS_SLASH)
     private Instant lastModifiedDate;
 
     public Integer getId() {

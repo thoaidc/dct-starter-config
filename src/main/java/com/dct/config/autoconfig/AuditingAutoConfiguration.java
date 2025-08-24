@@ -15,12 +15,14 @@ import org.springframework.boot.autoconfigure.orm.jpa.HibernateJpaAutoConfigurat
 import org.springframework.context.annotation.Bean;
 import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.LastModifiedBy;
+import org.springframework.data.auditing.DateTimeProvider;
 import org.springframework.data.domain.AuditorAware;
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 
+import java.time.Instant;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -32,11 +34,10 @@ import java.util.Optional;
 @AutoConfiguration
 @AutoConfigureAfter({DataSourceAutoConfiguration.class, HibernateJpaAutoConfiguration.class})
 @ConditionalOnProperty(name = BasePropertiesConstants.ENABLED_AUDITING, havingValue = ActivateStatus.ENABLED_VALUE)
-@EnableJpaAuditing(auditorAwareRef = "auditorProvider")
+@EnableJpaAuditing(auditorAwareRef = "auditorProvider", dateTimeProviderRef = "auditingDateTimeProvider")
 public class AuditingAutoConfiguration {
 
     private static final Logger log = LoggerFactory.getLogger(AuditingAutoConfiguration.class);
-    private static final String ENTITY_NAME = "AuditingAutoConfiguration";
 
     /**
      * Helps JPA automatically handle annotations like @{@link CreatedBy}, @{@link LastModifiedBy},... in entities
@@ -45,7 +46,7 @@ public class AuditingAutoConfiguration {
     @Bean(name = "auditorProvider")
     @ConditionalOnMissingBean(AuditorAware.class)
     public AuditorAware<String> auditorProvider() {
-        log.debug("[{}] - AuditorProvider initialized successful", ENTITY_NAME);
+        log.debug("[AUDITING_AUTO_CONFIG] - Default AuditorProvider initialized successful");
 
         return () -> {
             // Get the current username from the SecurityContext, using a default value if no user is authenticated
@@ -54,5 +55,10 @@ public class AuditingAutoConfiguration {
             String credential = Objects.nonNull(authentication) ? authentication.getName() : null;
             return Optional.of(Optional.ofNullable(credential).orElse(BaseCommonConstants.DEFAULT_CREATOR));
         };
+    }
+
+    @Bean // Makes ZonedDateTime compatible with auditing fields
+    public DateTimeProvider auditingDateTimeProvider() {
+        return () -> Optional.of(Instant.now());
     }
 }

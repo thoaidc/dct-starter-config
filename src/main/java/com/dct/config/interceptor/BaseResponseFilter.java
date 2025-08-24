@@ -27,7 +27,6 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseBodyAdvice;
 public abstract class BaseResponseFilter implements ResponseBodyAdvice<Object> {
 
     private static final Logger log = LoggerFactory.getLogger(BaseResponseFilter.class);
-    private static final String ENTITY_NAME = "BaseResponseFilter";
 
     /**
      * Check if the response is a {@link BaseResponseDTO} or {@link ResponseEntity}<{@link BaseResponseDTO}> <p>
@@ -39,7 +38,7 @@ public abstract class BaseResponseFilter implements ResponseBodyAdvice<Object> {
      */
     @Override
     public boolean supports(@Nonnull MethodParameter returnType, Class<? extends HttpMessageConverter<?>> converter) {
-        log.debug("[{}] - Response will be processed by: {}", ENTITY_NAME, converter.getSimpleName());
+        log.debug("[RESPONSE_MESSAGE_CONVERTER_CONFIG] - Response will be processed by: {}", converter.getSimpleName());
         return isSupport(returnType, converter);
     }
 

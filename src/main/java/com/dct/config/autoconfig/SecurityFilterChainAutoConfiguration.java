@@ -1,25 +1,27 @@
 package com.dct.config.autoconfig;
 
-import com.dct.config.security.config.BaseSecurityAuthorizeRequestConfig;
 import com.dct.config.security.config.BaseSecurityFilterChainConfig;
 import com.dct.config.security.config.DefaultBaseSecurityFilterChainConfig;
-import com.dct.config.security.handler.BaseOAuth2AuthenticationFailureHandler;
-import com.dct.config.security.handler.BaseOAuth2AuthenticationSuccessHandler;
-import com.dct.config.security.jwt.BaseJwtFilter;
+import com.dct.config.security.filter.BaseAuthenticationFilter;
+import com.dct.config.security.filter.BaseHeaderSecurityFilter;
+import com.dct.config.security.filter.BaseJwtFilter;
+import com.dct.config.security.filter.BaseJwtProvider;
+import com.dct.config.security.filter.DefaultJwtProvider;
+import com.dct.model.config.properties.SecurityProps;
+import com.dct.model.constants.AuthenticationType;
 import com.dct.model.constants.BasePropertiesConstants;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
-import org.springframework.core.env.Environment;
+import org.springframework.context.annotation.Primary;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.oauth2.client.web.OAuth2AuthorizationRequestResolver;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.access.AccessDeniedHandler;
@@ -32,68 +34,67 @@ import org.springframework.web.filter.CorsFilter;
     CorsFilter.class,
     AccessDeniedHandler.class,
     AuthenticationEntryPoint.class,
-    BaseSecurityAuthorizeRequestConfig.class
+    SecurityProps.class
 })
 @EnableWebSecurity
 public class SecurityFilterChainAutoConfiguration {
 
     private static final Logger log = LoggerFactory.getLogger(SecurityFilterChainAutoConfiguration.class);
-    private static final String ENTITY_NAME = "SecurityFilterChainAutoConfiguration";
+
+    @Bean
+    @ConditionalOnMissingBean(BaseJwtProvider.class)
+    public BaseJwtProvider defaultJwtProvider(SecurityProps securityConfig) {
+        log.debug("[JWT_PROVIDER_AUTO_CONFIG] - Use default JWT provider");
+        return new DefaultJwtProvider(securityConfig);
+    }
+
+    @Bean
+    @ConditionalOnProperty(
+        name = BasePropertiesConstants.AUTHENTICATION_TYPE,
+        havingValue = AuthenticationType.JWT_VERIFY_VALUE
+    )
+    @ConditionalOnMissingBean(BaseAuthenticationFilter.class)
+    public BaseAuthenticationFilter defaultJwtFilter(SecurityProps securityProps, BaseJwtProvider jwtProvider) {
+        log.debug("[AUTHENTICATION_FILTER_AUTO_CONFIG] - Use `BaseJwtFilter` as default authenticate filter");
+        return new BaseJwtFilter(securityProps, jwtProvider);
+    }
+
+    @Bean
+    @ConditionalOnProperty(
+            name = BasePropertiesConstants.AUTHENTICATION_TYPE,
+            havingValue = AuthenticationType.HEADER_FORWARDED_VALUE
+    )
+    @ConditionalOnMissingBean(BaseAuthenticationFilter.class)
+    public BaseAuthenticationFilter defaultHeaderSecurityFilter(SecurityProps securityProps) {
+        log.debug("[AUTHENTICATION_FILTER_AUTO_CONFIG] - Use `BaseHeaderSecurityFilter` as default authenticate filter");
+        return new BaseHeaderSecurityFilter(securityProps);
+    }
 
     @Bean
     @ConditionalOnMissingBean(BaseSecurityFilterChainConfig.class)
-    public BaseSecurityFilterChainConfig defaultBaseSecurityFilterChainConfig(
+    public BaseSecurityFilterChainConfig baseSecurityFilterChainConfig(
+        SecurityProps securityProps,
         CorsFilter corsFilter,
-        AccessDeniedHandler accessDeniedHandler,
+        BaseAuthenticationFilter baseAuthenticationFilter,
         AuthenticationEntryPoint authenticationEntryPoint,
-        BaseSecurityAuthorizeRequestConfig securityAuthorizeRequestConfig,
-        @Autowired(required = false) BaseJwtFilter jwtFilter,
-        @Autowired(required = false) OAuth2AuthorizationRequestResolver oAuth2AuthorizationRequestResolver,
-        @Autowired(required = false) BaseOAuth2AuthenticationSuccessHandler oAuth2AuthenticationSuccessHandler,
-        @Autowired(required = false) BaseOAuth2AuthenticationFailureHandler oAuth2AuthenticationFailureHandler,
-        Environment env
+        AccessDeniedHandler accessDeniedHandler
     ) {
-        boolean jwtEnabled = Boolean.parseBoolean(env.getProperty(BasePropertiesConstants.ENABLED_JWT));
-        boolean oauth2Enabled = Boolean.parseBoolean(env.getProperty(BasePropertiesConstants.ENABLED_OAUTH2));
-
-        if (jwtEnabled && oauth2Enabled) {
-            log.debug("[{}] - Auto configure security filter chain with JWT + OAuth2", ENTITY_NAME);
-            return new DefaultBaseSecurityFilterChainConfig(
-                corsFilter,
-                securityAuthorizeRequestConfig,
-                accessDeniedHandler,
-                authenticationEntryPoint,
-                jwtFilter,
-                oAuth2AuthorizationRequestResolver,
-                oAuth2AuthenticationSuccessHandler,
-                oAuth2AuthenticationFailureHandler
-            );
-        } else if (jwtEnabled) {
-            log.debug("[{}] - Auto configure security filter chain with JWT only", ENTITY_NAME);
-            return new DefaultBaseSecurityFilterChainConfig(
-                corsFilter,
-                securityAuthorizeRequestConfig,
-                accessDeniedHandler,
-                authenticationEntryPoint,
-                jwtFilter
-            );
-        }
-
-        log.debug("[{}] - Auto configure default security filter chain", ENTITY_NAME);
+        log.debug("[SECURITY_FILTER_CHAIN_AUTO_CONFIG] - Use default security filter chain");
         return new DefaultBaseSecurityFilterChainConfig(
+            securityProps,
             corsFilter,
-            securityAuthorizeRequestConfig,
             accessDeniedHandler,
-            authenticationEntryPoint
+            authenticationEntryPoint,
+            baseAuthenticationFilter
         );
     }
 
     @Bean
-    @ConditionalOnMissingBean(SecurityFilterChain.class)
-    protected SecurityFilterChain defaulSecurityFilterChain(BaseSecurityFilterChainConfig securityFilterChainConfig,
-                                                            MvcRequestMatcher.Builder mvc,
-                                                            HttpSecurity http) throws Exception {
-        log.debug("[{}] - Using bean: `defaultSecurityFilterChain`", ENTITY_NAME);
+    @Primary
+    public SecurityFilterChain securityFilterChain(BaseSecurityFilterChainConfig securityFilterChainConfig,
+                                                   MvcRequestMatcher.Builder mvc,
+                                                   HttpSecurity http) throws Exception {
+        log.debug("[SECURITY_FILTER_CHAIN_AUTO_CONFIG] - Using bean: `securityFilterChain`");
         securityFilterChainConfig.cors(http);
         securityFilterChainConfig.addFilters(http);
         securityFilterChainConfig.exceptionHandlers(http);

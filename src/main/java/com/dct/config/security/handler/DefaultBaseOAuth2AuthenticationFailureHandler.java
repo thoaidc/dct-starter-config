@@ -1,8 +1,8 @@
 package com.dct.config.security.handler;
 
-import com.dct.config.constants.ExceptionConstants;
 import com.dct.model.common.JsonUtils;
 import com.dct.model.common.MessageTranslationUtils;
+import com.dct.model.constants.BaseExceptionConstants;
 import com.dct.model.constants.BaseHttpStatusConstants;
 import com.dct.model.dto.response.BaseResponseDTO;
 
@@ -23,9 +23,7 @@ public class DefaultBaseOAuth2AuthenticationFailureHandler extends BaseOAuth2Aut
 
     private static final Logger log = LoggerFactory.getLogger(DefaultBaseOAuth2AuthenticationFailureHandler.class);
     private static final String ENTITY_NAME = "DefaultBaseOAuth2AuthenticationFailureHandler";
-    private MessageTranslationUtils messageTranslationUtils;
-
-    public DefaultBaseOAuth2AuthenticationFailureHandler() {}
+    private final MessageTranslationUtils messageTranslationUtils;
 
     public DefaultBaseOAuth2AuthenticationFailureHandler(MessageTranslationUtils messageTranslationUtils) {
         this.messageTranslationUtils = messageTranslationUtils;
@@ -35,18 +33,15 @@ public class DefaultBaseOAuth2AuthenticationFailureHandler extends BaseOAuth2Aut
     public void handle(HttpServletRequest request,
                        HttpServletResponse response,
                        AuthenticationException e) throws IOException {
-        log.debug("[{}] - Authentication via OAuth2 failed. {}", ENTITY_NAME, e.getMessage());
+        log.debug("[OAUTH2_FAILURE_HANDLER] - Authentication via OAuth2 failed. {}", e.getMessage());
         response.setContentType(MediaType.APPLICATION_JSON_VALUE); // Convert response body to JSON
         response.setCharacterEncoding(StandardCharsets.UTF_8.name());
         response.setStatus(BaseHttpStatusConstants.UNAUTHORIZED);
-        String message = Objects.nonNull(messageTranslationUtils)
-                ? messageTranslationUtils.getMessageI18n(ExceptionConstants.OAUTH2_AUTHORIZATION_CODE_EXCEPTION)
-                : HttpStatus.UNAUTHORIZED.name();
 
         BaseResponseDTO responseDTO = BaseResponseDTO.builder()
             .code(BaseHttpStatusConstants.UNAUTHORIZED)
-            .success(BaseHttpStatusConstants.STATUS.FAILED)
-            .message(message)
+            .success(Boolean.FALSE)
+            .message(messageTranslationUtils.getMessageI18n(BaseExceptionConstants.OAUTH2_AUTHORIZATION_CODE_EXCEPTION))
             .build();
 
         response.getWriter().write(JsonUtils.toJsonString(responseDTO));
