@@ -32,7 +32,7 @@ import java.util.stream.Collectors;
 public class DefaultJwtProvider extends BaseJwtProvider {
 
     private static final Logger log = LoggerFactory.getLogger(DefaultJwtProvider.class);
-    private static final String ENTITY_NAME = "sds.ec.security.filter.DefaultJwtProvider";
+    private static final String ENTITY_NAME = "com.dct.config.security.filter.DefaultJwtProvider";
 
     public DefaultJwtProvider(SecurityProps securityProps) {
         super(securityProps);

@@ -104,16 +104,16 @@ public class CircuitBreakerAutoConfiguration {
         circuitBreaker.getEventPublisher()
                 .onStateTransition(event ->
                     log.warn(
-                        "RestTemplate Circuit Breaker state transition: {} -> {}",
+                        "[CIRCUIT_BREAKER_STATE] - RestTemplate state transition: {} -> {}",
                         event.getStateTransition().getFromState(),
                         event.getStateTransition().getToState()
                     )
                 )
                 .onCallNotPermitted(event ->
-                    log.warn("RestTemplate Circuit Breaker: Call not permitted")
+                    log.warn("[CIRCUIT_BREAKER_STATE] - RestTemplate: Call not permitted")
                 )
                 .onFailureRateExceeded(event ->
-                    log.warn("RestTemplate Circuit Breaker: Failure rate exceeded: {}%", event.getFailureRate())
+                    log.warn("[CIRCUIT_BREAKER_STATE] - RestTemplate: Failure rate exceeded: {}%", event.getFailureRate())
                 );
 
         return circuitBreaker;

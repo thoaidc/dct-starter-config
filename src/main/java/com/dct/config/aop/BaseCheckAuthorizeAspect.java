@@ -30,7 +30,7 @@ import java.util.Objects;
 public abstract class BaseCheckAuthorizeAspect {
 
     private static final Logger log = LoggerFactory.getLogger(BaseCheckAuthorizeAspect.class);
-    private static final String ENTITY_NAME = "BaseCheckAuthorizeAspect";
+    private static final String ENTITY_NAME = "com.dct.config.aop.BaseCheckAuthorizeAspect";
 
     /**
      * {@link Pointcut} specifies where (in which method, class, or annotation) AOP logic will be applied<p>

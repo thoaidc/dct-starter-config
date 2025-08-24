@@ -24,7 +24,7 @@ import java.util.stream.Collectors;
 public class DataUtils {
 
     private static final Logger log = LoggerFactory.getLogger(DataUtils.class);
-    private static final String ENTITY_NAME = "DataUtils";
+    private static final String ENTITY_NAME = "com.dct.config.common.DataUtils";
 
     public static QueryBuilder createQueryBuilder(EntityManager entityManager) {
         return new QueryBuilder(entityManager);
@@ -103,7 +103,7 @@ public class DataUtils {
                 Tuple tuple = (Tuple) query.getSingleResult();
                 return Optional.of(factory.apply(tuple));
             } catch (NoResultException e) {
-                log.warn("[{}] - No result found for query: {}", ENTITY_NAME, querySql);
+                log.warn("[QUERY_RESULT_SET_ERROR] - No result found for query: {}", querySql);
             }
 
             return Optional.empty();
@@ -121,7 +121,7 @@ public class DataUtils {
                 Object totalRecords = countQuery.getSingleResult();
                 return Objects.nonNull(totalRecords) ? ((Number) totalRecords).longValue() : 0;
             } catch (Exception e) {
-                log.error("[{}] - Could not execute count query. {}", ENTITY_NAME, e.getMessage());
+                log.error("[QUERY_COUNT_ERROR] - Could not execute count query: {}", e.getMessage());
             }
 
             return 0;

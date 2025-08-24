@@ -27,7 +27,7 @@ import java.util.stream.Collectors;
 public class BaseHeaderSecurityFilter extends BaseAuthenticationFilter{
 
     private static final Logger log = LoggerFactory.getLogger(BaseHeaderSecurityFilter.class);
-    private static final String ENTITY_NAME = "sds.ec.security.filter.BaseHeaderSecurityFilter";
+    private static final String ENTITY_NAME = "com.dct.config.security.filter.BaseHeaderSecurityFilter";
     private final SecurityProps securityProps;
 
     public BaseHeaderSecurityFilter(SecurityProps securityProps) {

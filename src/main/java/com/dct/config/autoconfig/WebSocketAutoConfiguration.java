@@ -39,7 +39,7 @@ public class WebSocketAutoConfiguration implements WebSocketMessageBrokerConfigu
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
 //        String[] ALLOWED_ORIGIN_PATTERNS = corsRequestMatchersConfig.getAllowedOriginPatterns().toArray(new String[0]);
-//        log.debug("[{}] - Web socket allowed origins: {}", ENTITY_NAME, ALLOWED_ORIGIN_PATTERNS);
+//        log.debug("[] - Web socket allowed origins: {}", ALLOWED_ORIGIN_PATTERNS);
 //        registry.addEndpoint(socketProps.getEndpoints()).setAllowedOriginPatterns(ALLOWED_ORIGIN_PATTERNS);
     }
 }

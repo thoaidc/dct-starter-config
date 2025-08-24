@@ -7,6 +7,7 @@ import com.dct.config.security.handler.DefaultBaseOAuth2AuthenticationSuccessHan
 import com.dct.config.security.handler.DefaultOAuth2AuthRequestResolver;
 import com.dct.model.common.MessageTranslationUtils;
 import com.dct.model.config.properties.SecurityProps;
+import com.dct.model.constants.ActivateStatus;
 import com.dct.model.constants.BasePropertiesConstants;
 import com.dct.model.exception.BaseIllegalArgumentException;
 
@@ -27,7 +28,7 @@ import java.util.List;
 import java.util.Objects;
 
 @AutoConfiguration
-@ConditionalOnProperty(name = BasePropertiesConstants.ENABLED_OAUTH2, havingValue = "true")
+@ConditionalOnProperty(name = BasePropertiesConstants.ENABLED_OAUTH2, havingValue = ActivateStatus.ENABLED_VALUE)
 public class OAuth2AutoConfiguration {
 
     private static final Logger log = LoggerFactory.getLogger(OAuth2AutoConfiguration.class);
@@ -45,21 +46,21 @@ public class OAuth2AutoConfiguration {
     @Bean
     @ConditionalOnMissingBean(OAuth2AuthorizationRequestResolver.class)
     public OAuth2AuthorizationRequestResolver defaultOAuth2AuthRequestResolver(ClientRegistrationRepository registry) {
-        log.debug("[{}] - Auto configure default OAuth2AuthorizationRequestResolver", ENTITY_NAME);
+        log.debug("[OAUTH2_REQUEST_RESOLVER_AUTO_CONFIG] - Using bean OAuth2AuthorizationRequestResolver as default");
         return new DefaultOAuth2AuthRequestResolver(registry, securityProps.getOauth2());
     }
 
     @Bean
     @ConditionalOnMissingBean(BaseOAuth2AuthenticationSuccessHandler.class)
     public BaseOAuth2AuthenticationSuccessHandler defaultOAuth2SuccessHandler() {
-        log.debug("[{}] - Auto configure default OAuth2AuthenticationSuccessHandler", ENTITY_NAME);
+        log.debug("[OAUTH2_SUCCESS_HANDLER_AUTO_CONFIG] - Using bean OAuth2AuthenticationSuccessHandler as default");
         return new DefaultBaseOAuth2AuthenticationSuccessHandler();
     }
 
     @Bean
     @ConditionalOnMissingBean(BaseOAuth2AuthenticationFailureHandler.class)
     public BaseOAuth2AuthenticationFailureHandler defaultOAuth2FailureHandler(MessageTranslationUtils messageTranslationUtils) {
-        log.debug("[{}] - Auto configure default OAuth2AuthenticationFailureHandler", ENTITY_NAME);
+        log.debug("[OAUTH2_FAILURE_HANDLER_AUTO_CONFIG] - Using bean OAuth2AuthenticationFailureHandler as default");
         return new DefaultBaseOAuth2AuthenticationFailureHandler(messageTranslationUtils);
     }
 
@@ -70,7 +71,7 @@ public class OAuth2AutoConfiguration {
     @Bean
     @ConditionalOnMissingBean(ClientRegistrationRepository.class)
     public ClientRegistrationRepository defaultClientRegistrationRepository() {
-        log.debug("[{}] - Registered OAuth2 clients successfully", ENTITY_NAME);
+        log.debug("[OAUTH2_CLIENT_REGISTRATION_AUTO_CONFIG] - Registered InMemoryClientRegistrationRepository as default");
         return new InMemoryClientRegistrationRepository(clientRegistrations());
     }
 

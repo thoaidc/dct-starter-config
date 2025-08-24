@@ -12,7 +12,6 @@ import org.slf4j.LoggerFactory;
 public class Common {
 
     private static final Logger log = LoggerFactory.getLogger(Common.class);
-    private static final String ENTITY_NAME = "Common";
 
     public static void setAuditingInfo(AbstractAuditingEntity entity, AuditingEntityDTO auditingDTO) {
         auditingDTO.setCreatedByStr(entity.getCreatedBy());
@@ -28,7 +27,7 @@ public class Common {
             auditingDTO.setCreatedDateStr(createdDate);
             auditingDTO.setLastModifiedDateStr(lastModifiedDate);
         } catch (Exception e) {
-            log.error("[{}] - Could not set entity auditing info. {}", ENTITY_NAME, e.getMessage());
+            log.error("[SET_AUDITING_INFO_ERROR] - Could not set entity auditing info. {}", e.getMessage());
         }
     }
 }

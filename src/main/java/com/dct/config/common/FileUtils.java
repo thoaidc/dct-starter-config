@@ -69,13 +69,13 @@ public class FileUtils {
             File parentDir = file.getParentFile();
 
             if (Objects.nonNull(parentDir) && !parentDir.exists() && !parentDir.mkdirs()) {
-                log.warn("Could not create parent directory: {}", parentDir.getAbsolutePath());
+                log.warn("[SAVE_FILE_ERROR] - Could not create parent directory: {}", parentDir.getAbsolutePath());
                 return null;
             }
 
             return file.createNewFile() ? file : null;
         } catch (Exception e) {
-            log.warn("Could not create new file at: {}", file.getAbsolutePath());
+            log.warn("[SAVE_FILE_ERROR] - Could not create new file at: {}", file.getAbsolutePath());
         }
 
         return null;
@@ -102,13 +102,13 @@ public class FileUtils {
                 Files.copy(sourcePath, targetPath, StandardCopyOption.REPLACE_EXISTING);
 
                 if (!imageDTO.getCompressedImage().delete())
-                    log.warn("Could not clean up temporary when save image: {}", fileToSaveImage.getAbsolutePath());
+                    log.warn("[CLEAN_UP_ERROR] - Could not clean up temporary for: {}", fileToSaveImage.getAbsolutePath());
 
-                log.debug("Save new file to: {}", fileToSaveImage.getAbsolutePath());
+                log.debug("[SAVE_FILE_SUCCESS] - Save new file to: {}", fileToSaveImage.getAbsolutePath());
                 return prefixPath + fileName;
             }
         } catch (IOException e) {
-            log.error("Could not save file: {}", imageDTO.getImageParameterDTO().getOriginalImageFilename(), e);
+            log.error("[SAVE_FILE_ERROR] - Could not save file: {}", imageDTO.getImageParameterDTO().getOriginalImageFilename(), e);
         }
 
         return null;
@@ -119,7 +119,7 @@ public class FileUtils {
             return null;
 
         if (Objects.isNull(file.getOriginalFilename())) {
-            log.warn("The uploaded file has an invalid name or is empty");
+            log.warn("[SAVE_FILE_ERROR] - The uploaded file has an invalid name or is empty");
             return null;
         }
 
@@ -133,7 +133,7 @@ public class FileUtils {
             file.transferTo(directory);
             return prefixPath + fileName;
         } catch (IOException e) {
-            log.error("Could not save this file to: {}", directory.getAbsolutePath(), e);
+            log.error("[SAVE_FILE_ERROR] - Could not save this file to: {}", directory.getAbsolutePath(), e);
         }
 
         return null;
@@ -169,7 +169,7 @@ public class FileUtils {
 
             return save(image);
         } catch (IOException e) {
-            log.error("Could not auto compress image and save: {}", image.getOriginalFilename(), e);
+            log.error("[SAVE_FILE_ERROR] - Could not auto compress image and save: {}", image.getOriginalFilename(), e);
         }
 
         return null;
@@ -201,7 +201,7 @@ public class FileUtils {
         if (Objects.isNull(file))
             return false;
 
-        log.debug("Deleting file: {}", file.getAbsolutePath());
+        log.debug("[DELETE_FILE] - Deleting file: {}", file.getAbsolutePath());
         return file.delete();
     }
 
@@ -211,7 +211,7 @@ public class FileUtils {
 
         for (String filePath : filePaths) {
             if (!delete(filePath)) {
-                log.error("Could not delete file: {}", filePath);
+                log.error("[DELETE_FILE_ERROR] - Could not delete file: {}", filePath);
             }
         }
     }

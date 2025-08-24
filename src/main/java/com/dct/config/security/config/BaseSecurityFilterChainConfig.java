@@ -46,7 +46,7 @@ public abstract class BaseSecurityFilterChainConfig {
 
     public void cors(HttpSecurity http) throws Exception {
         // Because of using JWT, CSRF is not required
-        log.debug("[COR_AND_CSRF_AUTO_CONFIG] - Use default cors and csrf configuration: CSRF is disabled");
+        log.debug("[CORS_AND_CSRF_AUTO_CONFIG] - Use default cors and csrf configuration: CSRF is disabled");
         http.csrf(AbstractHttpConfigurer::disable).cors(Customizer.withDefaults());
     }
 

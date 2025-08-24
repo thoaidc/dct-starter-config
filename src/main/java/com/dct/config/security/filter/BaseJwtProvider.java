@@ -22,7 +22,7 @@ import java.util.Optional;
 public abstract class BaseJwtProvider {
 
     private static final Logger log = LoggerFactory.getLogger(BaseJwtProvider.class);
-    private static final String ENTITY_NAME = "sds.ec.security.filter.BaseJwtProvider";
+    private static final String ENTITY_NAME = "com.dct.config.security.filter.BaseJwtProvider";
     protected final SecretKey secretKey;
     protected final JwtParser jwtParser;
     protected final long ACCESS_TOKEN_VALIDITY;

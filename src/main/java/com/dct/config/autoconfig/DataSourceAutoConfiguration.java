@@ -34,7 +34,7 @@ import java.util.Properties;
 public class DataSourceAutoConfiguration {
 
     private static final Logger log = LoggerFactory.getLogger(DataSourceAutoConfiguration.class);
-    private static final String ENTITY_NAME = "DataSourceAutoConfiguration";
+    private static final String ENTITY_NAME = "com.dct.config.autoconfig.DataSourceAutoConfiguration";
     private final DataSourceProps dataSourceProps;
     private final HikariProps hikariProps;
     private final HikariDataSourceProps hikariDataSourceProps;
@@ -50,7 +50,7 @@ public class DataSourceAutoConfiguration {
     @Bean
     @ConditionalOnMissingBean(DataSource.class)
     public DataSource defaultDataSource() {
-        log.debug("[{}] - Auto configure Hikari data source", ENTITY_NAME);
+        log.debug("[DATASOURCE_AUTO_CONFIG] - Use Hikari data source as default");
         HikariConfig hikariConfig = new HikariConfig();
         Properties properties = new Properties();
 
@@ -89,7 +89,7 @@ public class DataSourceAutoConfiguration {
         properties.setProperty("serverTimezone", "UTC"); // Uses the UTC standard for internationalized time
         hikariConfig.setDataSourceProperties(properties);
 
-        log.info("HikariCP DataSource configured successfully - Pool: {}, Max: {}, Min: {}",
+        log.info("[DATASOURCE_AUTO_CONFIG] - HikariCP DataSource configured successfully - Pool: {}, Max: {}, Min: {}",
                 hikariProps.getPoolName(),
                 hikariProps.getMaximumPoolSize(),
                 hikariProps.getMinimumIdle());

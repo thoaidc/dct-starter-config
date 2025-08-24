@@ -112,8 +112,8 @@ public class DefaultCircuitBreakerRestTemplateInterceptor extends BaseCircuitBre
                     timeLimiter,
                     () -> {
                         log.debug(
-                                "[CIRCUIT_BREAKER_TIME_LIMITER] - Starting async execution with timeout {}ms",
-                                timeLimiter.getTimeLimiterConfig().getTimeoutDuration().toMillis()
+                            "[CIRCUIT_BREAKER_TIME_LIMITER] - Starting async execution with timeout {}ms",
+                            timeLimiter.getTimeLimiterConfig().getTimeoutDuration().toMillis()
                         );
                         return CompletableFuture.supplyAsync(finalSupplier);
                     }

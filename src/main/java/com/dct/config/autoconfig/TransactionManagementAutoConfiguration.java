@@ -38,7 +38,6 @@ import org.springframework.transaction.support.TransactionTemplate;
 public class TransactionManagementAutoConfiguration {
 
     private static final Logger log = LoggerFactory.getLogger(TransactionManagementAutoConfiguration.class);
-    private static final String ENTITY_NAME = "TransactionManagementAutoConfiguration";
 
     /**
      * Provides a programmatic API to manage transactions explicitly (if not use @{@link Transactional})
@@ -47,7 +46,7 @@ public class TransactionManagementAutoConfiguration {
     @Bean
     @ConditionalOnMissingBean(TransactionTemplate.class)
     public TransactionTemplate defaultTransactionTemplate(PlatformTransactionManager platformTransactionManager) {
-        log.debug("[{}] - Auto configure default transaction template", ENTITY_NAME);
+        log.debug("[MANUAL_TRANSACTION_TEMPLATE_AUTO_CONFIG] - Use default transaction template");
         TransactionTemplate transactionTemplate = new TransactionTemplate(platformTransactionManager);
         // Set the transaction isolation level (e.g. ISOLATION_READ_COMMITTED prevents reading uncommitted data)
         transactionTemplate.setIsolationLevel(TransactionDefinition.ISOLATION_READ_COMMITTED);
