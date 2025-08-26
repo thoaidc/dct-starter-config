@@ -1,5 +1,7 @@
 package com.dct.config.autoconfig;
 
+import com.dct.model.config.properties.CorsProps;
+import com.dct.model.config.properties.CorsProps.CorsMapping;
 import com.dct.model.config.properties.SocketProps;
 import com.dct.model.constants.ActivateStatus;
 import com.dct.model.constants.BasePropertiesConstants;
@@ -14,6 +16,10 @@ import org.springframework.web.socket.config.annotation.EnableWebSocketMessageBr
 import org.springframework.web.socket.config.annotation.StompEndpointRegistry;
 import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerConfigurer;
 
+import java.util.Collection;
+import java.util.Map;
+import java.util.Optional;
+
 @AutoConfiguration
 @ConditionalOnProperty(name = BasePropertiesConstants.ENABLED_SOCKET, havingValue = ActivateStatus.ENABLED_VALUE)
 @EnableConfigurationProperties(SocketProps.class)
@@ -22,14 +28,16 @@ public class WebSocketAutoConfiguration implements WebSocketMessageBrokerConfigu
 
     private static final Logger log = LoggerFactory.getLogger(WebSocketAutoConfiguration.class);
     private final SocketProps socketProps;
+    private final CorsProps corsProps;
 
-    public WebSocketAutoConfiguration(SocketProps socketProps) {
+    public WebSocketAutoConfiguration(SocketProps socketProps, CorsProps corsProps) {
         this.socketProps = socketProps;
+        this.corsProps = corsProps;
     }
 
     @Override
     public void configureMessageBroker(MessageBrokerRegistry config) {
-        log.debug("[SOCKET_AUTO_CONFIG] - Socket is available to subscribe in: {}", (Object) socketProps.getBrokerPrefixes());
+        log.debug("[SOCKET_AUTO_CONFIG] - Socket subscribe prefixes: {}", (Object) socketProps.getBrokerPrefixes());
         // Allow clients to subscribe to topics
         config.enableSimpleBroker(socketProps.getBrokerPrefixes());
         // Client sends message to server using this prefix
@@ -38,8 +46,15 @@ public class WebSocketAutoConfiguration implements WebSocketMessageBrokerConfigu
 
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
-//        String[] ALLOWED_ORIGIN_PATTERNS = corsRequestMatchersConfig.getAllowedOriginPatterns().toArray(new String[0]);
-//        log.debug("[] - Web socket allowed origins: {}", ALLOWED_ORIGIN_PATTERNS);
-//        registry.addEndpoint(socketProps.getEndpoints()).setAllowedOriginPatterns(ALLOWED_ORIGIN_PATTERNS);
+        Map<String, CorsMapping> corsMappings = Optional.ofNullable(corsProps).orElseGet(CorsProps::new).getPatterns();
+        String[] ALLOWED_ORIGIN_PATTERNS = corsMappings.values()
+                .stream()
+                .map(CorsMapping::getAllowedOrigins)
+                .flatMap(Collection::stream)
+                .distinct() // Remove duplicates pattern
+                .toArray(String[]::new);
+
+        log.debug("[SOCKET_AUTO_CONFIG] - Web socket allowed origins: {}", (Object) ALLOWED_ORIGIN_PATTERNS);
+        registry.addEndpoint(socketProps.getEndpoints()).setAllowedOriginPatterns(ALLOWED_ORIGIN_PATTERNS);
     }
 }

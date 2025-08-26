@@ -1,6 +1,8 @@
 package com.dct.config.security.config;
 
 import com.dct.config.security.filter.BaseAuthenticationFilter;
+import com.dct.config.security.handler.BaseOAuth2AuthenticationFailureHandler;
+import com.dct.config.security.handler.BaseOAuth2AuthenticationSuccessHandler;
 import com.dct.model.common.SecurityUtils;
 import com.dct.model.config.properties.SecurityProps;
 
@@ -12,6 +14,7 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.annotation.web.configurers.HeadersConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.oauth2.client.web.OAuth2AuthorizationRequestResolver;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
@@ -31,17 +34,26 @@ public abstract class BaseSecurityFilterChainConfig {
     private final AccessDeniedHandler accessDeniedHandler;
     private final AuthenticationEntryPoint authenticationEntryPoint;
     private final BaseAuthenticationFilter authenticationFilter;
+    private final OAuth2AuthorizationRequestResolver oAuth2RequestResolver;
+    private final BaseOAuth2AuthenticationSuccessHandler oAuth2SuccessHandler;
+    private final BaseOAuth2AuthenticationFailureHandler oAuth2FailureHandler;
 
     protected BaseSecurityFilterChainConfig(SecurityProps securityProps,
                                             CorsFilter corsFilter,
                                             AccessDeniedHandler accessDeniedHandler,
                                             AuthenticationEntryPoint authenticationEntryPoint,
-                                            BaseAuthenticationFilter baseAuthenticationFilter) {
+                                            BaseAuthenticationFilter baseAuthenticationFilter,
+                                            OAuth2AuthorizationRequestResolver oAuth2RequestResolver,
+                                            BaseOAuth2AuthenticationSuccessHandler oAuth2SuccessHandler,
+                                            BaseOAuth2AuthenticationFailureHandler oAuth2FailureHandler) {
         this.securityProps = securityProps;
         this.corsFilter = corsFilter;
         this.accessDeniedHandler = accessDeniedHandler;
         this.authenticationEntryPoint = authenticationEntryPoint;
         this.authenticationFilter = baseAuthenticationFilter;
+        this.oAuth2RequestResolver = oAuth2RequestResolver;
+        this.oAuth2SuccessHandler = oAuth2SuccessHandler;
+        this.oAuth2FailureHandler = oAuth2FailureHandler;
     }
 
     public void cors(HttpSecurity http) throws Exception {
@@ -102,8 +114,12 @@ public abstract class BaseSecurityFilterChainConfig {
         .httpBasic(AbstractHttpConfigurer::disable);
     }
 
-    @SuppressWarnings("unused")
     public void oauth2(HttpSecurity http) throws Exception {
-        // Add logic Oauth2 config here
+        http.oauth2Login(oAuth2Config -> oAuth2Config
+            .successHandler(oAuth2SuccessHandler)
+            .failureHandler(oAuth2FailureHandler)
+            .authorizationEndpoint(config ->
+                config.authorizationRequestResolver(oAuth2RequestResolver))
+        );
     }
 }

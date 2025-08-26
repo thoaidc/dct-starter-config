@@ -195,3 +195,87 @@ app:
         - /uploads/
       locations:
         - opt/uploads/
+
+  interceptors:
+    activate: disabled
+    chain:
+      - name: com.dct.config.interceptor.DefaultBaseResponseFilter
+        included-patterns:
+          - /api/**
+          - /api/p/**
+        excluded-patterns:
+          - /file/**
+          - /static/**
+
+      - name: com.dct.config.interceptor.DefaultFeignAuthenticationRequestFilter
+        included-patterns:
+          - /api/**
+        excluded-patterns:
+          - /api/p/**
+
+  cors:
+    activate: disabled
+    patterns:
+      '[/api/**]':
+        allowedOrigins:
+          - "http://localhost:4200"
+          - "http://localhost:8080"
+        allowedMethods:
+          - GET
+          - POST
+          - PUT
+          - PATCH
+          - DELETE
+          - OPTIONS
+        allowedHeaders:
+          - Content-Type
+          - Authorization
+          - Accept
+          - Origin
+          - X-CSRF-Token
+          - X-Requested-With
+          - Access-Control-Allow-Origin
+          - X-App-Version
+          - X-Device-ID
+        allowCredentials: true
+        maxAge: 3600  # Cache preflight response in 1 hour
+      '[/ws/**]':
+        allowedOrigins: "*"
+        allowedMethods:
+          - GET
+          - OPTIONS
+        allowedHeaders: "*"
+        allowCredentials: false
+        maxAge: 1800
+
+  redis:
+    activate: enabled
+    auto-reconnect: true
+    command-timeout: 500
+    connection-timeout: 1600
+    host: localhost
+    port: 6792
+    username: redis
+    password: root
+    database: 0
+    shutdown-timeout: 100
+    ttl-minutes: 5
+
+  rate-limiter:
+    activate: enabled
+    ip-validation-enabled: true
+    excluded-ips:
+      - "127.0.0.1"
+      - "0.0.0.1"
+    excluded-ip-prefixes:
+      - "127.0"
+
+  socket:
+    activate: enabled
+    endpoints:
+      - "/ws"
+      - "/wss"
+    application-prefixes:
+      - "/api/ws"
+    broker-prefixes:
+      - "/api/topic"

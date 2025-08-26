@@ -4,6 +4,7 @@ import com.dct.config.security.handler.DefaultBaseAccessDeniedHandler;
 import com.dct.config.security.handler.DefaultBaseAuthenticationEntryPoint;
 import com.dct.config.exception.BaseExceptionHandler;
 import com.dct.model.common.MessageTranslationUtils;
+import com.dct.model.config.properties.CorsProps;
 import com.dct.model.config.properties.SecurityProps;
 
 import org.slf4j.Logger;
@@ -29,7 +30,7 @@ import org.springframework.web.servlet.handler.HandlerMappingIntrospector;
 import java.util.Optional;
 
 @AutoConfiguration
-@EnableConfigurationProperties(SecurityProps.class)
+@EnableConfigurationProperties({SecurityProps.class, CorsProps.class})
 public class SecurityAutoConfiguration {
 
     private static final Logger log = LoggerFactory.getLogger(SecurityAutoConfiguration.class);

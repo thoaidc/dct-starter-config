@@ -30,13 +30,16 @@ import java.util.Objects;
 @AutoConfiguration
 @ConditionalOnProperty(name = BasePropertiesConstants.ENABLED_OAUTH2, havingValue = ActivateStatus.ENABLED_VALUE)
 public class OAuth2AutoConfiguration {
-
     private static final Logger log = LoggerFactory.getLogger(OAuth2AutoConfiguration.class);
     private static final String ENTITY_NAME = "com.dct.config.autoconfig.OAuth2AutoConfiguration";
-    private final SecurityProps securityProps;
+    private final SecurityProps.OAuth2Config oAuth2Config;
 
     public OAuth2AutoConfiguration(SecurityProps securityProps) {
-        this.securityProps = securityProps;
+        this.oAuth2Config = securityProps.getOauth2();
+
+        if (Objects.isNull(oAuth2Config)) {
+            throw new BaseIllegalArgumentException(ENTITY_NAME, "OAuth2Config must not be null when enabled");
+        }
     }
 
     /**
@@ -47,7 +50,7 @@ public class OAuth2AutoConfiguration {
     @ConditionalOnMissingBean(OAuth2AuthorizationRequestResolver.class)
     public OAuth2AuthorizationRequestResolver defaultOAuth2AuthRequestResolver(ClientRegistrationRepository registry) {
         log.debug("[OAUTH2_REQUEST_RESOLVER_AUTO_CONFIG] - Using bean OAuth2AuthorizationRequestResolver as default");
-        return new DefaultOAuth2AuthRequestResolver(registry, securityProps.getOauth2());
+        return new DefaultOAuth2AuthRequestResolver(registry, oAuth2Config);
     }
 
     @Bean
@@ -59,9 +62,9 @@ public class OAuth2AutoConfiguration {
 
     @Bean
     @ConditionalOnMissingBean(BaseOAuth2AuthenticationFailureHandler.class)
-    public BaseOAuth2AuthenticationFailureHandler defaultOAuth2FailureHandler(MessageTranslationUtils messageTranslationUtils) {
+    public BaseOAuth2AuthenticationFailureHandler defaultOAuth2FailureHandler(MessageTranslationUtils messageUtils) {
         log.debug("[OAUTH2_FAILURE_HANDLER_AUTO_CONFIG] - Using bean OAuth2AuthenticationFailureHandler as default");
-        return new DefaultBaseOAuth2AuthenticationFailureHandler(messageTranslationUtils);
+        return new DefaultBaseOAuth2AuthenticationFailureHandler(messageUtils);
     }
 
     /**
@@ -71,12 +74,12 @@ public class OAuth2AutoConfiguration {
     @Bean
     @ConditionalOnMissingBean(ClientRegistrationRepository.class)
     public ClientRegistrationRepository defaultClientRegistrationRepository() {
-        log.debug("[OAUTH2_CLIENT_REGISTRATION_AUTO_CONFIG] - Registered InMemoryClientRegistrationRepository as default");
+        log.debug("[OAUTH2_CLIENT_REGISTRATION_AUTO_CONFIG] - Use InMemoryClientRegistrationRepository as default");
         return new InMemoryClientRegistrationRepository(clientRegistrations());
     }
 
     private ClientRegistration[] clientRegistrations() {
-        List<SecurityProps.OAuth2Config.ClientProps> clientProps = securityProps.getOauth2().getClients();
+        List<SecurityProps.OAuth2Config.ClientProps> clientProps = oAuth2Config.getClients();
 
         if (Objects.isNull(clientProps) || clientProps.isEmpty()) {
             throw new BaseIllegalArgumentException(ENTITY_NAME, "Not found client to register OAuth2 config");
