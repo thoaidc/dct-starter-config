@@ -3,6 +3,7 @@ package com.dct.config.security.filter;
 import com.dct.model.common.SecurityUtils;
 import com.dct.model.config.properties.SecurityProps;
 import com.dct.model.constants.BaseSecurityConstants;
+import com.dct.model.security.BaseJwtProvider;
 
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.http.Cookie;
@@ -40,7 +41,7 @@ public class BaseJwtFilter extends BaseAuthenticationFilter {
     @Override
     protected void authenticate(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) {
         String token = retrieveToken(request);
-        Authentication authentication = this.jwtProvider.validateToken(token);
+        Authentication authentication = this.jwtProvider.parseToken(token);
         SecurityContextHolder.getContext().setAuthentication(authentication);
     }
 

@@ -5,11 +5,11 @@ import com.dct.config.security.config.DefaultBaseSecurityFilterChainConfig;
 import com.dct.config.security.filter.BaseAuthenticationFilter;
 import com.dct.config.security.filter.BaseHeaderSecurityFilter;
 import com.dct.config.security.filter.BaseJwtFilter;
-import com.dct.config.security.filter.BaseJwtProvider;
 import com.dct.config.security.filter.DefaultJwtProvider;
 import com.dct.model.config.properties.SecurityProps;
 import com.dct.model.constants.AuthenticationType;
 import com.dct.model.constants.BasePropertiesConstants;
+import com.dct.model.security.BaseJwtProvider;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

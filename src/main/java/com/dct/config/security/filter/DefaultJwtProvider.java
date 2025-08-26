@@ -7,6 +7,7 @@ import com.dct.model.dto.auth.BaseTokenDTO;
 import com.dct.model.dto.auth.BaseUserDTO;
 import com.dct.model.exception.BaseAuthenticationException;
 import com.dct.model.exception.BaseBadRequestException;
+import com.dct.model.security.BaseJwtProvider;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
@@ -29,6 +30,7 @@ import java.util.Date;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+@SuppressWarnings("unused")
 public class DefaultJwtProvider extends BaseJwtProvider {
 
     private static final Logger log = LoggerFactory.getLogger(DefaultJwtProvider.class);
@@ -38,13 +40,11 @@ public class DefaultJwtProvider extends BaseJwtProvider {
         super(securityProps);
     }
 
-    @Override
     public String generateAccessToken(BaseTokenDTO tokenDTO) {
         long tokenValidityInMilliseconds = Instant.now().toEpochMilli() + ACCESS_TOKEN_VALIDITY;
         return generateToken(tokenDTO, tokenValidityInMilliseconds);
     }
 
-    @Override
     public String generateRefreshToken(BaseTokenDTO tokenDTO) {
         long tokenValidityInMilliseconds = Instant.now().toEpochMilli();
 
@@ -57,7 +57,7 @@ public class DefaultJwtProvider extends BaseJwtProvider {
     }
 
     @Override
-    public Authentication validateToken(String token) {
+    public Authentication parseToken(String token) {
         log.debug("[VALIDATE_TOKEN] - Validating token by default config");
 
         if (!StringUtils.hasText(token))
@@ -103,7 +103,7 @@ public class DefaultJwtProvider extends BaseJwtProvider {
     private Authentication getAuthentication(String token) {
         log.debug("[RETRIEVE_AUTHENTICATION] - Claim authentication info from token after authenticated");
         Claims claims = (Claims) jwtParser.parse(token).getPayload();
-        Long userId = (Long) claims.get(BaseSecurityConstants.TOKEN_PAYLOAD.USER_ID);
+        Integer userId = (Integer) claims.get(BaseSecurityConstants.TOKEN_PAYLOAD.USER_ID);
         String username = (String) claims.get(BaseSecurityConstants.TOKEN_PAYLOAD.USERNAME);
         String authorities = (String) claims.get(BaseSecurityConstants.TOKEN_PAYLOAD.AUTHORITIES);
 
