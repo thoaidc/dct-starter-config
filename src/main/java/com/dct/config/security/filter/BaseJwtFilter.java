@@ -2,11 +2,9 @@ package com.dct.config.security.filter;
 
 import com.dct.model.common.SecurityUtils;
 import com.dct.model.config.properties.SecurityProps;
-import com.dct.model.constants.BaseSecurityConstants;
 import com.dct.model.security.BaseJwtProvider;
 
 import jakarta.servlet.FilterChain;
-import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
@@ -14,10 +12,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.util.StringUtils;
-
-import java.util.Arrays;
-import java.util.Objects;
 
 public class BaseJwtFilter extends BaseAuthenticationFilter {
 
@@ -25,8 +19,7 @@ public class BaseJwtFilter extends BaseAuthenticationFilter {
     private final SecurityProps securityProps;
     private final BaseJwtProvider jwtProvider;
 
-    public BaseJwtFilter(SecurityProps securityProps,
-                         BaseJwtProvider jwtProvider) {
+    public BaseJwtFilter(SecurityProps securityProps, BaseJwtProvider jwtProvider) {
         this.securityProps = securityProps;
         this.jwtProvider = jwtProvider;
     }
@@ -40,32 +33,7 @@ public class BaseJwtFilter extends BaseAuthenticationFilter {
 
     @Override
     protected void authenticate(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) {
-        String token = retrieveToken(request);
-        Authentication authentication = this.jwtProvider.parseToken(token);
+        Authentication authentication = this.jwtProvider.parseToken(SecurityUtils.retrieveToken(request));
         SecurityContextHolder.getContext().setAuthentication(authentication);
-    }
-
-    protected String retrieveToken(HttpServletRequest request) {
-        Cookie[] cookies = request.getCookies();
-        String bearerToken = null;
-
-        if (Objects.nonNull(cookies)) {
-            bearerToken = Arrays.stream(cookies)
-                    .filter(cookie -> BaseSecurityConstants.COOKIES.HTTP_ONLY_COOKIE_ACCESS_TOKEN.equals(cookie.getName()))
-                    .findFirst()
-                    .map(Cookie::getValue)
-                    .orElse(null);
-        }
-
-        if (!StringUtils.hasText(bearerToken))
-            bearerToken = request.getHeader(BaseSecurityConstants.HEADER.AUTHORIZATION_HEADER);
-
-        if (!StringUtils.hasText(bearerToken))
-            bearerToken = request.getHeader(BaseSecurityConstants.HEADER.AUTHORIZATION_GATEWAY_HEADER);
-
-        if (StringUtils.hasText(bearerToken) && bearerToken.startsWith(BaseSecurityConstants.HEADER.TOKEN_TYPE))
-            return bearerToken.substring(7);
-
-        return bearerToken;
     }
 }

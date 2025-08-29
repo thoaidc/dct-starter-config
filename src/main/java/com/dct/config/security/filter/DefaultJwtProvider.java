@@ -1,20 +1,13 @@
 package com.dct.config.security.filter;
 
 import com.dct.model.config.properties.SecurityProps;
-import com.dct.model.constants.BaseExceptionConstants;
 import com.dct.model.constants.BaseSecurityConstants;
 import com.dct.model.dto.auth.BaseTokenDTO;
 import com.dct.model.dto.auth.BaseUserDTO;
-import com.dct.model.exception.BaseAuthenticationException;
-import com.dct.model.exception.BaseBadRequestException;
 import com.dct.model.security.BaseJwtProvider;
 
 import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.MalformedJwtException;
-import io.jsonwebtoken.security.SecurityException;
-import io.jsonwebtoken.security.SignatureException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -40,6 +33,28 @@ public class DefaultJwtProvider extends BaseJwtProvider {
         super(securityProps);
     }
 
+    @Override
+    protected Authentication getAuthentication(Claims claims) {
+        log.debug("[RETRIEVE_AUTHENTICATION] - Claim authentication info from token after authenticated");
+        Integer userId = (Integer) claims.get(BaseSecurityConstants.TOKEN_PAYLOAD.USER_ID);
+        String username = (String) claims.get(BaseSecurityConstants.TOKEN_PAYLOAD.USERNAME);
+        String authorities = (String) claims.get(BaseSecurityConstants.TOKEN_PAYLOAD.AUTHORITIES);
+
+        Set<SimpleGrantedAuthority> userAuthorities = Arrays.stream(authorities.split(","))
+                .filter(StringUtils::hasText)
+                .map(SimpleGrantedAuthority::new)
+                .collect(Collectors.toSet());
+
+        BaseUserDTO principal = BaseUserDTO.userBuilder()
+                .withId(userId)
+                .withUsername(username)
+                .withPassword(username) // Not used but need to avoid `argument 'content': null` error in spring security
+                .withAuthorities(userAuthorities)
+                .build();
+
+        return new UsernamePasswordAuthenticationToken(principal, username, userAuthorities);
+    }
+
     public String generateAccessToken(BaseTokenDTO tokenDTO) {
         long tokenValidityInMilliseconds = Instant.now().toEpochMilli() + ACCESS_TOKEN_VALIDITY;
         return generateToken(tokenDTO, tokenValidityInMilliseconds);
@@ -54,30 +69,6 @@ public class DefaultJwtProvider extends BaseJwtProvider {
             tokenValidityInMilliseconds += this.REFRESH_TOKEN_VALIDITY;
 
         return generateToken(tokenDTO, tokenValidityInMilliseconds);
-    }
-
-    @Override
-    public Authentication parseToken(String token) {
-        log.debug("[VALIDATE_TOKEN] - Validating token by default config");
-
-        if (!StringUtils.hasText(token))
-            throw new BaseBadRequestException(ENTITY_NAME, BaseExceptionConstants.BAD_CREDENTIALS);
-
-        try {
-            return getAuthentication(token);
-        } catch (MalformedJwtException e) {
-            log.error("[JWT_MALFORMED_ERROR] - Invalid JWT: {}", e.getMessage());
-        } catch (SignatureException e) {
-            log.error("[JWT_SIGNATURE_ERROR] - Invalid JWT signature: {}", e.getMessage());
-        } catch (SecurityException e) {
-            log.error("[JWT_SECURITY_ERROR] - Unable to decode JWT: {}", e.getMessage());
-        } catch (ExpiredJwtException e) {
-            log.error("[JWT_EXPIRED_ERROR] - Expired JWT: {}", e.getMessage());
-        } catch (IllegalArgumentException e) {
-            log.error("[ILLEGAL_ARGUMENT_ERROR] - Invalid JWT string (null, empty,...): {}", e.getMessage());
-        }
-
-        throw new BaseAuthenticationException(ENTITY_NAME, BaseExceptionConstants.TOKEN_INVALID_OR_EXPIRED);
     }
 
     private String generateToken(BaseTokenDTO tokenDTO, long tokenValidity) {
@@ -98,27 +89,5 @@ public class DefaultJwtProvider extends BaseJwtProvider {
                 .issuedAt(new Date())
                 .expiration(new Date(validityInMilliseconds))
                 .compact();
-    }
-
-    private Authentication getAuthentication(String token) {
-        log.debug("[RETRIEVE_AUTHENTICATION] - Claim authentication info from token after authenticated");
-        Claims claims = (Claims) jwtParser.parse(token).getPayload();
-        Integer userId = (Integer) claims.get(BaseSecurityConstants.TOKEN_PAYLOAD.USER_ID);
-        String username = (String) claims.get(BaseSecurityConstants.TOKEN_PAYLOAD.USERNAME);
-        String authorities = (String) claims.get(BaseSecurityConstants.TOKEN_PAYLOAD.AUTHORITIES);
-
-        Set<SimpleGrantedAuthority> userAuthorities = Arrays.stream(authorities.split(","))
-                .filter(StringUtils::hasText)
-                .map(SimpleGrantedAuthority::new)
-                .collect(Collectors.toSet());
-
-        BaseUserDTO principal = BaseUserDTO.userBuilder()
-                .withId(userId)
-                .withUsername(username)
-                .withPassword(username) // Not used but needed to avoid `argument 'content': null` error in spring security
-                .withAuthorities(userAuthorities)
-                .build();
-
-        return new UsernamePasswordAuthenticationToken(principal, token, userAuthorities);
     }
 }
