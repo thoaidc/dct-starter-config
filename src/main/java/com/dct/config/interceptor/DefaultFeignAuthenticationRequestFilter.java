@@ -83,7 +83,7 @@ public class DefaultFeignAuthenticationRequestFilter extends BaseFeignAuthentica
             try {
                 Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
                 BaseUserDTO userDTO = (BaseUserDTO) authentication.getPrincipal();
-                Long userId = userDTO.getId();
+                Integer userId = userDTO.getId();
                 String username = userDTO.getUsername();
                 Set<String> authorities = Optional.ofNullable(userDTO.getAuthorities())
                         .orElse(Collections.emptySet())

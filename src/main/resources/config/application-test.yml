@@ -279,3 +279,26 @@ app:
       - "/api/ws"
     broker-prefixes:
       - "/api/topic"
+
+  rabbitmq:
+    activate: enabled
+    servers: armadillo.rmq.cloudamqp.com
+    port: 5672
+    username: dyaakrsb
+    virtual-host: dyaakrsb
+    password: ${RABBIT_MQ_PASSWORD}
+    exchange:
+      direct: amq.direct
+    consumer:
+      concurrent-consumer: 9
+      max-concurrent-consumer: 7
+      prefetch-count: 2
+    producer:
+      reply-timeout: 10000
+    queues:
+      notification:
+        name: ars.notification
+        routing-key: ars.notification.key
+      bill-complete:
+        name: ars.bill.complete
+        routing-key: ars.bill.complete.key
