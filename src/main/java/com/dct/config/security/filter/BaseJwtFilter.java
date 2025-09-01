@@ -13,13 +13,12 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 
 public class BaseJwtFilter extends BaseAuthenticationFilter {
-
     private static final Logger log = LoggerFactory.getLogger(BaseJwtFilter.class);
-    private final SecurityProps securityProps;
+    private final String[] publicRequestPatterns;
     private final BaseJwtProvider jwtProvider;
 
     public BaseJwtFilter(SecurityProps securityProps, BaseJwtProvider jwtProvider) {
-        this.securityProps = securityProps;
+        this.publicRequestPatterns = securityProps.getPublicRequestPatterns();
         this.jwtProvider = jwtProvider;
     }
 
@@ -27,12 +26,12 @@ public class BaseJwtFilter extends BaseAuthenticationFilter {
     protected boolean shouldAuthenticateRequest(HttpServletRequest request) {
         String requestURI = request.getRequestURI();
         log.info("[JWT_FILTER] - Filtering {}: {}", request.getMethod(), requestURI);
-        return SecurityUtils.checkIfAuthenticationRequired(requestURI, securityProps.getPublicRequestPatterns());
+        return SecurityUtils.checkIfAuthenticationRequired(requestURI, publicRequestPatterns);
     }
 
     @Override
     protected void authenticate(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) {
-        Authentication authentication = this.jwtProvider.parseToken(SecurityUtils.retrieveToken(request));
+        Authentication authentication = this.jwtProvider.validateAccessToken(SecurityUtils.retrieveToken(request));
         SecurityContextHolder.getContext().setAuthentication(authentication);
     }
 }

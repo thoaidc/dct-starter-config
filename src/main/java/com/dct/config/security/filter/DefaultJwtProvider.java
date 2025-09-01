@@ -3,21 +3,16 @@ package com.dct.config.security.filter;
 import com.dct.model.config.properties.SecurityProps;
 import com.dct.model.constants.BaseSecurityConstants;
 import com.dct.model.dto.auth.BaseTokenDTO;
-import com.dct.model.dto.auth.BaseUserDTO;
 
-import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.util.StringUtils;
 
+import javax.crypto.SecretKey;
 import java.time.Instant;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -31,31 +26,9 @@ public class DefaultJwtProvider extends BaseJwtProvider {
         super(securityProps);
     }
 
-    @Override
-    protected Authentication getAuthentication(Claims claims) {
-        log.debug("[RETRIEVE_AUTHENTICATION] - Claim authentication info from token after authenticated");
-        Integer userId = (Integer) claims.get(BaseSecurityConstants.TOKEN_PAYLOAD.USER_ID);
-        String username = (String) claims.get(BaseSecurityConstants.TOKEN_PAYLOAD.USERNAME);
-        String authorities = (String) claims.get(BaseSecurityConstants.TOKEN_PAYLOAD.AUTHORITIES);
-
-        Set<SimpleGrantedAuthority> userAuthorities = Arrays.stream(authorities.split(","))
-                .filter(StringUtils::hasText)
-                .map(SimpleGrantedAuthority::new)
-                .collect(Collectors.toSet());
-
-        BaseUserDTO principal = BaseUserDTO.userBuilder()
-                .withId(userId)
-                .withUsername(username)
-                .withPassword(username) // Not used but need to avoid `argument 'content': null` error in spring security
-                .withAuthorities(userAuthorities)
-                .build();
-
-        return new UsernamePasswordAuthenticationToken(principal, username, userAuthorities);
-    }
-
     public String generateAccessToken(BaseTokenDTO tokenDTO) {
         long tokenValidityInMilliseconds = Instant.now().toEpochMilli() + ACCESS_TOKEN_VALIDITY;
-        return generateToken(tokenDTO, tokenValidityInMilliseconds);
+        return generateToken(tokenDTO, accessTokenSecretKey, tokenValidityInMilliseconds);
     }
 
     public String generateRefreshToken(BaseTokenDTO tokenDTO) {
@@ -66,10 +39,10 @@ public class DefaultJwtProvider extends BaseJwtProvider {
         else
             tokenValidityInMilliseconds += this.REFRESH_TOKEN_VALIDITY;
 
-        return generateToken(tokenDTO, tokenValidityInMilliseconds);
+        return generateToken(tokenDTO, refreshTokenSecretKey, tokenValidityInMilliseconds);
     }
 
-    private String generateToken(BaseTokenDTO tokenDTO, long tokenValidity) {
+    private String generateToken(BaseTokenDTO tokenDTO, SecretKey secretKey, long tokenValidity) {
         Authentication authentication = tokenDTO.getAuthentication();
         Set<String> userAuthorities = authentication.getAuthorities()
                 .stream()
