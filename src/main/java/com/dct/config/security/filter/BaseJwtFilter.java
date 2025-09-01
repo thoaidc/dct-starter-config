@@ -2,7 +2,6 @@ package com.dct.config.security.filter;
 
 import com.dct.model.common.SecurityUtils;
 import com.dct.model.config.properties.SecurityProps;
-import com.dct.model.security.BaseJwtProvider;
 
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.http.HttpServletRequest;

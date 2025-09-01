@@ -4,7 +4,6 @@ import com.dct.model.config.properties.SecurityProps;
 import com.dct.model.constants.BaseSecurityConstants;
 import com.dct.model.dto.auth.BaseTokenDTO;
 import com.dct.model.dto.auth.BaseUserDTO;
-import com.dct.model.security.BaseJwtProvider;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
@@ -25,7 +24,6 @@ import java.util.stream.Collectors;
 
 @SuppressWarnings("unused")
 public class DefaultJwtProvider extends BaseJwtProvider {
-
     private static final Logger log = LoggerFactory.getLogger(DefaultJwtProvider.class);
     private static final String ENTITY_NAME = "com.dct.config.security.filter.DefaultJwtProvider";
 

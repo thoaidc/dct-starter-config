@@ -5,6 +5,7 @@ import com.dct.config.security.config.DefaultBaseSecurityFilterChainConfig;
 import com.dct.config.security.filter.BaseAuthenticationFilter;
 import com.dct.config.security.filter.BaseHeaderSecurityFilter;
 import com.dct.config.security.filter.BaseJwtFilter;
+import com.dct.config.security.filter.BaseJwtProvider;
 import com.dct.config.security.filter.DefaultJwtProvider;
 import com.dct.config.security.handler.BaseOAuth2AuthenticationFailureHandler;
 import com.dct.config.security.handler.BaseOAuth2AuthenticationSuccessHandler;
@@ -13,7 +14,6 @@ import com.dct.model.config.properties.SecurityProps.OAuth2Config;
 import com.dct.model.constants.ActivateStatus;
 import com.dct.model.constants.AuthenticationType;
 import com.dct.model.constants.BasePropertiesConstants;
-import com.dct.model.security.BaseJwtProvider;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -53,6 +53,10 @@ public class SecurityFilterChainAutoConfiguration {
     }
 
     @Bean
+    @ConditionalOnProperty(
+        name = BasePropertiesConstants.AUTHENTICATION_TYPE,
+        havingValue = AuthenticationType.JWT_VERIFY_VALUE
+    )
     @ConditionalOnMissingBean(BaseJwtProvider.class)
     public BaseJwtProvider defaultJwtProvider(SecurityProps securityConfig) {
         log.debug("[JWT_PROVIDER_AUTO_CONFIG] - Use default JWT provider");

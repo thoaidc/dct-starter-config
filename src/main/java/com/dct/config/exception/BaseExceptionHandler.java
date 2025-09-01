@@ -214,6 +214,7 @@ public abstract class BaseExceptionHandler extends ResponseEntityExceptionHandle
     }
 
     private BaseResponseDTO convertResponse(int code, String message) {
+        log.error("Error: {}", message);
         return BaseResponseDTO.builder().code(code).success(Boolean.FALSE).message(message).build();
     }
 }
