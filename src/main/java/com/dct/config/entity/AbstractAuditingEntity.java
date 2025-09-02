@@ -60,7 +60,11 @@ public abstract class AbstractAuditingEntity implements Serializable {
     // Automatically saves the time the record was created (usually using system time)
     @CreatedDate
     @Column(name = "created_date", updatable = false)
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = BaseDatetimeConstants.Formatter.DD_MM_YYYY_HH_MM_SS_SLASH)
+    @JsonFormat(
+        shape = JsonFormat.Shape.STRING,
+        pattern = BaseDatetimeConstants.Formatter.DD_MM_YYYY_HH_MM_SS_DASH,
+        timezone = BaseDatetimeConstants.ZoneID.DEFAULT
+    )
     private Instant createdDate;
 
     /**
@@ -75,7 +79,11 @@ public abstract class AbstractAuditingEntity implements Serializable {
     // Automatically saves the time of the last edit (usually using system time)
     @LastModifiedDate
     @Column(name = "last_modified_date")
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = BaseDatetimeConstants.Formatter.DD_MM_YYYY_HH_MM_SS_SLASH)
+    @JsonFormat(
+        shape = JsonFormat.Shape.STRING,
+        pattern = BaseDatetimeConstants.Formatter.DD_MM_YYYY_HH_MM_SS_DASH,
+        timezone = BaseDatetimeConstants.ZoneID.DEFAULT
+    )
     private Instant lastModifiedDate;
 
     public Integer getId() {
@@ -92,6 +100,14 @@ public abstract class AbstractAuditingEntity implements Serializable {
 
     public void setLastModifiedBy(String lastModifiedBy) {
         this.lastModifiedBy = lastModifiedBy;
+    }
+
+    public void setCreatedDate(Instant createdDate) {
+        this.createdDate = createdDate;
+    }
+
+    public void setLastModifiedDate(Instant lastModifiedDate) {
+        this.lastModifiedDate = lastModifiedDate;
     }
 
     public String getCreatedBy() {
