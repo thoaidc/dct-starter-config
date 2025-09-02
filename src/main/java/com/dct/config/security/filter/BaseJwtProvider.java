@@ -2,16 +2,17 @@ package com.dct.config.security.filter;
 
 import com.dct.model.config.properties.SecurityProps;
 import com.dct.model.dto.auth.BaseTokenDTO;
-import com.dct.model.exception.BaseException;
 import com.dct.model.exception.BaseIllegalArgumentException;
 import com.dct.model.security.AbstractJwtProvider;
 
+import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtParser;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.security.core.Authentication;
 import org.springframework.util.StringUtils;
 
 import javax.crypto.SecretKey;
@@ -42,15 +43,9 @@ public abstract class BaseJwtProvider extends AbstractJwtProvider {
         refreshTokenParser = Jwts.parser().verifyWith(refreshTokenSecretKey).build();
     }
 
-    public boolean validateRefreshToken(String refreshToken) {
-        try {
-            super.parseToken(refreshTokenParser, refreshToken);
-            return true;
-        } catch (BaseException e) {
-            log.error("[VALIDATE_REFRESH_TOKEN_ERROR] - error: {}", e.getErrorKey());
-        }
-
-        return false;
+    public Authentication validateRefreshToken(String refreshToken) {
+        Claims claims = super.parseToken(this.refreshTokenParser, refreshToken);
+        return super.getAuthentication(claims);
     }
 
     public abstract String generateAccessToken(BaseTokenDTO tokenDTO);

@@ -8,14 +8,11 @@ import io.jsonwebtoken.Jwts;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.GrantedAuthority;
 
 import javax.crypto.SecretKey;
 import java.time.Instant;
 import java.util.Date;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 @SuppressWarnings("unused")
 public class DefaultJwtProvider extends BaseJwtProvider {
@@ -43,16 +40,10 @@ public class DefaultJwtProvider extends BaseJwtProvider {
     }
 
     private String generateToken(BaseTokenDTO tokenDTO, SecretKey secretKey, long tokenValidity) {
-        Authentication authentication = tokenDTO.getAuthentication();
-        Set<String> userAuthorities = authentication.getAuthorities()
-                .stream()
-                .map(GrantedAuthority::getAuthority)
-                .collect(Collectors.toSet());
-
         long validityInMilliseconds = Instant.now().toEpochMilli() + tokenValidity;
-
+        Set<String> userAuthorities = tokenDTO.getAuthorities();
         return Jwts.builder()
-                .subject(authentication.getName())
+                .subject(tokenDTO.getUsername())
                 .claim(BaseSecurityConstants.TOKEN_PAYLOAD.USER_ID, tokenDTO.getUserId())
                 .claim(BaseSecurityConstants.TOKEN_PAYLOAD.USERNAME, tokenDTO.getUsername())
                 .claim(BaseSecurityConstants.TOKEN_PAYLOAD.AUTHORITIES, String.join(",", userAuthorities))
