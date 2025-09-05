@@ -39,8 +39,7 @@ public class DefaultJwtProvider extends BaseJwtProvider {
         return generateToken(tokenDTO, refreshTokenSecretKey, tokenValidityInMilliseconds);
     }
 
-    private String generateToken(BaseTokenDTO tokenDTO, SecretKey secretKey, long tokenValidity) {
-        long validityInMilliseconds = Instant.now().toEpochMilli() + tokenValidity;
+    private String generateToken(BaseTokenDTO tokenDTO, SecretKey secretKey, long tokenValidityInMilliseconds) {
         Set<String> userAuthorities = tokenDTO.getAuthorities();
         return Jwts.builder()
                 .subject(tokenDTO.getUsername())
@@ -49,7 +48,7 @@ public class DefaultJwtProvider extends BaseJwtProvider {
                 .claim(BaseSecurityConstants.TOKEN_PAYLOAD.AUTHORITIES, String.join(",", userAuthorities))
                 .signWith(secretKey)
                 .issuedAt(new Date())
-                .expiration(new Date(validityInMilliseconds))
+                .expiration(new Date(tokenValidityInMilliseconds))
                 .compact();
     }
 }

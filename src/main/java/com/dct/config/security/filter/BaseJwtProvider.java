@@ -24,6 +24,7 @@ public abstract class BaseJwtProvider extends AbstractJwtProvider {
     private static final String ENTITY_NAME = "com.dct.model.security.filter.BaseJwtProvider";
     protected final JwtParser refreshTokenParser;
     protected final SecretKey refreshTokenSecretKey;
+    protected final long ACCESS_TOKEN_VALIDITY;
     protected final long REFRESH_TOKEN_VALIDITY;
     protected final long REFRESH_TOKEN_VALIDITY_FOR_REMEMBER;
 
@@ -31,6 +32,7 @@ public abstract class BaseJwtProvider extends AbstractJwtProvider {
         super(securityProps);
         SecurityProps.JwtConfig jwtConfig = securityProps.getJwt();
         String base64RefreshTokenSecretKey = jwtConfig.getRefreshToken().getBase64SecretKey();
+        ACCESS_TOKEN_VALIDITY = jwtConfig.getAccessToken().getValidity();
         REFRESH_TOKEN_VALIDITY = jwtConfig.getRefreshToken().getValidity();
         REFRESH_TOKEN_VALIDITY_FOR_REMEMBER = jwtConfig.getRefreshToken().getValidityForRemember();
 
