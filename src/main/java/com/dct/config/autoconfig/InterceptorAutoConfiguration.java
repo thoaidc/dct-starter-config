@@ -24,7 +24,6 @@ import static com.dct.model.constants.ActivateStatus.ENABLED_VALUE;
 @EnableConfigurationProperties(InterceptorProps.class)
 @ConditionalOnProperty(name = BasePropertiesConstants.ENABLED_INTERCEPTOR_CONFIG, havingValue = ENABLED_VALUE)
 public class InterceptorAutoConfiguration implements WebMvcConfigurer {
-
     private static final Logger log = LoggerFactory.getLogger(InterceptorAutoConfiguration.class);
     private final ApplicationContext applicationContext;
     private final InterceptorProps interceptorProps;

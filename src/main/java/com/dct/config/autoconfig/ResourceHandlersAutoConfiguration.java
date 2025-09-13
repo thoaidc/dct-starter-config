@@ -22,7 +22,6 @@ import java.util.Optional;
 @ConditionalOnProperty(name = BasePropertiesConstants.ENABLED_RESOURCE, havingValue = ActivateStatus.ENABLED_VALUE)
 @EnableConfigurationProperties(ResourceProps.class)
 public class ResourceHandlersAutoConfiguration implements WebMvcConfigurer {
-
     private static final Logger log = LoggerFactory.getLogger(ResourceHandlersAutoConfiguration.class);
     private final ResourceProps resourceProps;
 

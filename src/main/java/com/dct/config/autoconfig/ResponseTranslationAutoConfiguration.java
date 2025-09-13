@@ -12,7 +12,6 @@ import org.springframework.context.annotation.Bean;
 
 @AutoConfiguration
 public class ResponseTranslationAutoConfiguration {
-
     private static final Logger log = LoggerFactory.getLogger(ResponseTranslationAutoConfiguration.class);
 
     @Bean

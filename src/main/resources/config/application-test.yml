@@ -28,7 +28,7 @@ spring:
     name: starter-config
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://localhost:3306/ars_auth_db?serverTimezone=UTC
+    url: jdbc:mysql://localhost:3306/ars_user?serverTimezone=UTC
     username: admin
     password: 123456
     hikari:

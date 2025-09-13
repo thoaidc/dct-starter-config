@@ -25,7 +25,6 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseBodyAdvice;
  */
 @ControllerAdvice
 public abstract class BaseResponseFilter implements ResponseBodyAdvice<Object> {
-
     private static final Logger log = LoggerFactory.getLogger(BaseResponseFilter.class);
 
     /**
@@ -64,6 +63,5 @@ public abstract class BaseResponseFilter implements ResponseBodyAdvice<Object> {
     }
 
     protected abstract boolean isSupport(MethodParameter returnType, Class<? extends HttpMessageConverter<?>> converter);
-
     protected abstract Object writeBody(Object body, ServerHttpRequest request, ServerHttpResponse response);
 }

@@ -27,7 +27,6 @@ import java.util.Arrays;
 import java.util.Objects;
 
 public abstract class BaseSecurityFilterChainConfig {
-
     private static final Logger log = LoggerFactory.getLogger(BaseSecurityFilterChainConfig.class);
     private final SecurityProps securityProps;
     private final CorsFilter corsFilter;

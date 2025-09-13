@@ -45,13 +45,11 @@ public class DefaultBaseAccessDeniedHandler implements AccessDeniedHandler {
         response.setContentType(MediaType.APPLICATION_JSON_VALUE); // Convert response body to JSON
         response.setCharacterEncoding(StandardCharsets.UTF_8.name());
         response.setStatus(BaseHttpStatusConstants.FORBIDDEN);
-
         BaseResponseDTO responseDTO = BaseResponseDTO.builder()
                 .code(BaseHttpStatusConstants.FORBIDDEN)
                 .success(Boolean.FALSE)
                 .message(messageTranslationUtils.getMessageI18n(BaseExceptionConstants.FORBIDDEN))
                 .build();
-
         response.getWriter().write(JsonUtils.toJsonString(responseDTO));
         response.flushBuffer();
     }

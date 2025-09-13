@@ -37,9 +37,8 @@ import java.time.Instant;
 @EntityListeners(AuditingEntityListener.class)
 @SuppressWarnings("unused")
 public abstract class AbstractAuditingEntity implements Serializable {
-
-    // Used to identify the version of the class when performing serialization.
-    // Ensures compatibility when serialized data is read from different versions of the class.
+    // Used to identify the version of the class when performing serialization
+    // Ensures compatibility when serialized data is read from different versions of the class
     @Serial
     private static final long serialVersionUID = 1L;
 

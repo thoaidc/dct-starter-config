@@ -49,7 +49,6 @@ import static com.dct.model.constants.ActivateStatus.ENABLED_VALUE;
     Resilience4jTimeLimiterProps.class
 })
 public class CircuitBreakerAutoConfiguration {
-
     private static final Logger log = LoggerFactory.getLogger(CircuitBreakerAutoConfiguration.class);
     private final CircuitBreakerProps circuitBreakerProps;
     private final Resilience4jRetryProps resilience4jRetryProps;

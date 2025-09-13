@@ -25,7 +25,6 @@ import java.util.Optional;
 @EnableConfigurationProperties(SocketProps.class)
 @EnableWebSocketMessageBroker
 public class WebSocketAutoConfiguration implements WebSocketMessageBrokerConfigurer {
-
     private static final Logger log = LoggerFactory.getLogger(WebSocketAutoConfiguration.class);
     private final SocketProps socketProps;
     private final CorsProps corsProps;

@@ -22,7 +22,6 @@ import java.util.stream.Collectors;
 
 @SuppressWarnings("unused")
 public class DataUtils {
-
     private static final Logger log = LoggerFactory.getLogger(DataUtils.class);
     private static final String ENTITY_NAME = "com.dct.config.common.DataUtils";
 
@@ -31,7 +30,6 @@ public class DataUtils {
     }
 
     public static class QueryBuilder {
-
         private final EntityManager entityManager;
         private String querySql;
         private String countQuerySql;

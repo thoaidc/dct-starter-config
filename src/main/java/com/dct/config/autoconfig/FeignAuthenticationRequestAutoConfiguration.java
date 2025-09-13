@@ -12,7 +12,6 @@ import org.springframework.context.annotation.Bean;
 
 @AutoConfiguration
 public class FeignAuthenticationRequestAutoConfiguration {
-
     private static final Logger log = LoggerFactory.getLogger(FeignAuthenticationRequestAutoConfiguration.class);
     private final SecurityProps securityProps;
 

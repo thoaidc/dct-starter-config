@@ -58,7 +58,6 @@ import java.util.stream.Collectors;
  * @author thoaidc
  */
 public class DefaultFeignAuthenticationRequestFilter extends BaseFeignAuthenticationRequestFilter {
-
     private static final Logger log = LoggerFactory.getLogger(DefaultFeignAuthenticationRequestFilter.class);
     private static final String ENTITY_NAME = "com.dct.config.interceptor.DefaultFeignAuthenticationRequestFilter";
     private final SecurityProps securityProps;

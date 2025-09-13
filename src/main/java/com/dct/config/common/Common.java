@@ -1,33 +1,26 @@
 package com.dct.config.common;
 
-import com.dct.config.entity.AbstractAuditingEntity;
-import com.dct.model.constants.BaseDatetimeConstants;
-import com.dct.model.dto.response.AuditingEntityDTO;
-import com.dct.model.common.DateUtils;
+import com.dct.model.common.JsonUtils;
+import com.dct.model.constants.BaseHttpStatusConstants;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import com.dct.model.dto.response.BaseResponseDTO;
+import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.http.MediaType;
 
-@SuppressWarnings("unused")
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+
 public class Common {
-
-    private static final Logger log = LoggerFactory.getLogger(Common.class);
-
-    public static void setAuditingInfo(AbstractAuditingEntity entity, AuditingEntityDTO auditingDTO) {
-        auditingDTO.setCreatedByStr(entity.getCreatedBy());
-        auditingDTO.setLastModifiedByStr(entity.getLastModifiedBy());
-
-        try {
-            String createdDate = DateUtils.ofInstant(entity.getCreatedDate())
-                    .toString(BaseDatetimeConstants.Formatter.DD_MM_YYYY_HH_MM_SS_DASH);
-
-            String lastModifiedDate = DateUtils.ofInstant(entity.getLastModifiedDate())
-                    .toString(BaseDatetimeConstants.Formatter.DD_MM_YYYY_HH_MM_SS_DASH);
-
-            auditingDTO.setCreatedDateStr(createdDate);
-            auditingDTO.setLastModifiedDateStr(lastModifiedDate);
-        } catch (Exception e) {
-            log.error("[SET_AUDITING_INFO_ERROR] - Could not set entity auditing info. {}", e.getMessage());
-        }
+    public static void handleUnauthorizedError(HttpServletResponse response, String message) throws IOException {
+        response.setContentType(MediaType.APPLICATION_JSON_VALUE); // Convert response body to JSON
+        response.setCharacterEncoding(StandardCharsets.UTF_8.name());
+        response.setStatus(BaseHttpStatusConstants.UNAUTHORIZED);
+        BaseResponseDTO responseDTO = BaseResponseDTO.builder()
+                .code(BaseHttpStatusConstants.UNAUTHORIZED)
+                .success(Boolean.FALSE)
+                .message(message)
+                .build();
+        response.getWriter().write(JsonUtils.toJsonString(responseDTO));
+        response.flushBuffer();
     }
 }

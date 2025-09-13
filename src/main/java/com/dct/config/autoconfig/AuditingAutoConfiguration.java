@@ -36,7 +36,6 @@ import java.util.Optional;
 @ConditionalOnProperty(name = BasePropertiesConstants.ENABLED_AUDITING, havingValue = ActivateStatus.ENABLED_VALUE)
 @EnableJpaAuditing(auditorAwareRef = "auditorProvider", dateTimeProviderRef = "auditingDateTimeProvider")
 public class AuditingAutoConfiguration {
-
     private static final Logger log = LoggerFactory.getLogger(AuditingAutoConfiguration.class);
 
     /**

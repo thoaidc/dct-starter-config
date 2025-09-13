@@ -4,6 +4,7 @@ import com.dct.model.constants.BaseCommonConstants;
 import com.dct.model.dto.image.ImageDTO;
 import com.dct.model.common.ImageConverter;
 
+import com.dct.model.dto.image.ImageParameterDTO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.StringUtils;
@@ -29,7 +30,6 @@ import java.util.UUID;
  */
 @SuppressWarnings("unused")
 public class FileUtils {
-
     private static final Logger log = LoggerFactory.getLogger(FileUtils.class);
     private String uploadDirectory = BaseCommonConstants.UPLOAD_RESOURCES.DEFAULT_DIRECTORY;
     private String prefixPath = BaseCommonConstants.UPLOAD_RESOURCES.DEFAULT_PREFIX_PATH;
@@ -92,23 +92,24 @@ public class FileUtils {
     }
 
     public String save(ImageDTO imageDTO) {
+        ImageParameterDTO imageParameterDTO = imageDTO.getImageParameterDTO();
         try {
-            String fileName = generateUniqueFileName(imageDTO.getImageParameterDTO().getFileExtension());
-            File fileToSaveImage = getFileToSave(fileName, true);
+            String fileName = generateUniqueFileName(imageParameterDTO.getFileExtension());
+            File fileToSave = getFileToSave(fileName, true);
 
-            if (imageDTO.getCompressedImage() != null && fileToSaveImage != null) {
+            if (imageDTO.getCompressedImage() != null && fileToSave != null) {
                 Path sourcePath = imageDTO.getCompressedImage().toPath();
-                Path targetPath = fileToSaveImage.toPath();
+                Path targetPath = fileToSave.toPath();
                 Files.copy(sourcePath, targetPath, StandardCopyOption.REPLACE_EXISTING);
 
                 if (!imageDTO.getCompressedImage().delete())
-                    log.warn("[CLEAN_UP_ERROR] - Could not clean up temporary for: {}", fileToSaveImage.getAbsolutePath());
+                    log.warn("[CLEAN_UP_ERROR] - Could not clean up temporary for: {}", fileToSave.getAbsolutePath());
 
-                log.debug("[SAVE_FILE_SUCCESS] - Save new file to: {}", fileToSaveImage.getAbsolutePath());
+                log.debug("[SAVE_FILE_SUCCESS] - Save new file to: {}", fileToSave.getAbsolutePath());
                 return prefixPath + fileName;
             }
         } catch (IOException e) {
-            log.error("[SAVE_FILE_ERROR] - Could not save file: {}", imageDTO.getImageParameterDTO().getOriginalImageFilename(), e);
+            log.error("[SAVE_FILE_ERROR] - Could not save file: {}", imageParameterDTO.getOriginalImageFilename(), e);
         }
 
         return null;

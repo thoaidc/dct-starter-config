@@ -12,7 +12,6 @@ import org.springframework.http.server.ServerHttpRequest;
 import org.springframework.http.server.ServerHttpResponse;
 
 public class DefaultBaseResponseFilter extends BaseResponseFilter {
-
     private static final Logger log = LoggerFactory.getLogger(DefaultBaseResponseFilter.class);
     private final MessageTranslationUtils messageUtils;
 

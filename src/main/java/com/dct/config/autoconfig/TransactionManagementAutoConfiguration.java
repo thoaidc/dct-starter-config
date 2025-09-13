@@ -36,7 +36,6 @@ import org.springframework.transaction.support.TransactionTemplate;
 @ConditionalOnProperty(name = BasePropertiesConstants.ENABLED_DATASOURCE, havingValue = ActivateStatus.ENABLED_VALUE)
 @EnableTransactionManagement // Enable annotations-based transaction management (@Transactional) in Spring application
 public class TransactionManagementAutoConfiguration {
-
     private static final Logger log = LoggerFactory.getLogger(TransactionManagementAutoConfiguration.class);
 
     /**

@@ -18,7 +18,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 @SpringBootApplication
 @EnableAspectJAutoProxy(proxyTargetClass = true)
 public class StarterConfigApplication {
-
     private static final Logger log = LoggerFactory.getLogger(StarterConfigApplication.class);
 
     /**

@@ -13,7 +13,6 @@ import org.springframework.security.oauth2.core.endpoint.OAuth2AuthorizationRequ
 import java.util.Objects;
 
 public class DefaultOAuth2AuthRequestResolver implements OAuth2AuthorizationRequestResolver {
-
     private static final Logger log = LoggerFactory.getLogger(DefaultOAuth2AuthRequestResolver.class);
     private final DefaultOAuth2AuthorizationRequestResolver delegate;
 

@@ -28,7 +28,6 @@ import java.util.Objects;
  * @author thoaidc
  */
 public abstract class BaseCheckAuthorizeAspect {
-
     private static final Logger log = LoggerFactory.getLogger(BaseCheckAuthorizeAspect.class);
     private static final String ENTITY_NAME = "com.dct.config.aop.BaseCheckAuthorizeAspect";
 

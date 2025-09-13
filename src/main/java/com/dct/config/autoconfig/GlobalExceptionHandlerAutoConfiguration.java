@@ -11,7 +11,6 @@ import org.springframework.context.annotation.Bean;
 
 @AutoConfiguration
 public class GlobalExceptionHandlerAutoConfiguration {
-
     private static final Logger log = LoggerFactory.getLogger(GlobalExceptionHandlerAutoConfiguration.class);
 
     @Bean

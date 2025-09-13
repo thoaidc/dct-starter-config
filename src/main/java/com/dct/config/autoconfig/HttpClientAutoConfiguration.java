@@ -32,7 +32,6 @@ import static com.dct.model.constants.ActivateStatus.ENABLED_VALUE;
 @ConditionalOnProperty(name = BasePropertiesConstants.ENABLED_REST_TEMPLATE, havingValue = ENABLED_VALUE)
 @EnableConfigurationProperties(HttpClientProps.class)
 public class HttpClientAutoConfiguration {
-
     private static final Logger log = LoggerFactory.getLogger(HttpClientAutoConfiguration.class);
     private final ObjectMapper objectMapper;
     private final HttpClientProps httpClientProps;

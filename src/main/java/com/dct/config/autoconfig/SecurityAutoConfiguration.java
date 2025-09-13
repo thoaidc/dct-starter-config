@@ -33,7 +33,6 @@ import java.util.Optional;
 @AutoConfiguration
 @EnableConfigurationProperties({SecurityProps.class, CorsProps.class})
 public class SecurityAutoConfiguration {
-
     private static final Logger log = LoggerFactory.getLogger(SecurityAutoConfiguration.class);
     private final SecurityProps securityProps;
 

@@ -42,7 +42,6 @@ import java.util.Objects;
  */
 @ControllerAdvice
 public abstract class BaseExceptionHandler extends ResponseEntityExceptionHandler {
-
     private static final Logger log = LoggerFactory.getLogger(BaseExceptionHandler.class);
 
     /**
@@ -107,11 +106,11 @@ public abstract class BaseExceptionHandler extends ResponseEntityExceptionHandle
     }
 
     @Override
-    protected ResponseEntity<Object> handleHttpMessageNotReadable(@Nullable HttpMessageNotReadableException ex,
+    protected ResponseEntity<Object> handleHttpMessageNotReadable(@Nullable HttpMessageNotReadableException exception,
                                                                   @Nullable HttpHeaders headers,
                                                                   @Nullable HttpStatusCode status,
                                                                   @Nullable WebRequest request) {
-        log.error("[HTTP_MESSAGE_NOT_READABLE] - error: ", ex);
+        log.error("[HTTP_MESSAGE_NOT_READABLE] - error: ", exception);
         BaseResponseDTO responseDTO = convertResponse(
             BaseHttpStatusConstants.UNPROCESSABLE_ENTITY,
             BaseExceptionConstants.INVALID_REQUEST_DATA
@@ -120,11 +119,11 @@ public abstract class BaseExceptionHandler extends ResponseEntityExceptionHandle
     }
 
     @Override
-    protected ResponseEntity<Object> handleHttpMessageNotWritable(@Nullable HttpMessageNotWritableException ex,
+    protected ResponseEntity<Object> handleHttpMessageNotWritable(@Nullable HttpMessageNotWritableException exception,
                                                                   @Nullable HttpHeaders headers,
                                                                   @Nullable HttpStatusCode status,
                                                                   @Nullable WebRequest request) {
-        log.error("[HTTP_MESSAGE_NOT_WRITABLE] - error: ", ex);
+        log.error("[HTTP_MESSAGE_NOT_WRITABLE] - error: ", exception);
         BaseResponseDTO responseDTO = convertResponse(
             BaseHttpStatusConstants.UNPROCESSABLE_ENTITY,
             BaseExceptionConstants.UNCERTAIN_ERROR
@@ -185,7 +184,7 @@ public abstract class BaseExceptionHandler extends ResponseEntityExceptionHandle
     @ExceptionHandler({ NullPointerException.class })
     public ResponseEntity<Object> handleNullPointerException(NullPointerException exception, WebRequest request) {
         // Handle NullPointerException (include of Objects.requireNonNull())
-        log.error("[NULL_POINTER_EXCEPTION] - at: {}, message: {}", request.getClass().getName(), exception.getMessage());
+        log.error("[NULL_POINTER_EXCEPTION] - at: {}. ", request.getClass().getName(), exception);
         BaseResponseDTO responseDTO = convertResponse(
             BaseHttpStatusConstants.INTERNAL_SERVER_ERROR,
             BaseExceptionConstants.NULL_EXCEPTION

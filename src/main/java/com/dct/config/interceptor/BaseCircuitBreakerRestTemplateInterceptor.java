@@ -15,7 +15,7 @@ import org.springframework.lang.NonNull;
  * method to the abstract {@link #handle(HttpRequest, byte[], ClientHttpRequestExecution)} method,
  * which must be implemented by subclasses to define the actual interception logic.
  *
- * <h2>Important Notes:</h2>
+ * <h6>Important Notes:</h6>
  * <ul>
  *   <li>
  *       Unlike Feign's {@code RequestInterceptor}, RestTemplate does <b>not</b> automatically
@@ -28,8 +28,9 @@ import org.springframework.lang.NonNull;
  *   </li>
  * </ul>
  *
- * <h2>Usage Example:</h2>
- * <pre>{@code
+ * <h6>Usage Example:</h6>
+ * <pre>
+ * {@code
  *    @Component
  *    public class MyCircuitBreakerInterceptor extends BaseCircuitBreakerRestTemplateInterceptor {
  *        @Override
@@ -47,7 +48,8 @@ import org.springframework.lang.NonNull;
  *            return restTemplate;
  *        }
  *    }
- * }</pre>
+ * }
+ * </pre>
  *
  * This ensures that all outgoing requests via the configured RestTemplate
  * will pass through the Circuit Breaker logic defined in {@link #handle}

@@ -24,7 +24,7 @@ import java.util.function.Supplier;
  * {@link Retry}, and {@link TimeLimiter}
  * to outgoing HTTP requests made with {@link org.springframework.web.client.RestTemplate}
  *
- * <h2>Responsibilities:</h2>
+ * <h6>Responsibilities:</h6>
  * <ul>
  *   <li>Intercept outgoing HTTP requests from RestTemplate</li>
  *   <li>Wrap request execution in a {@link CircuitBreaker} to prevent repeated calls to failing endpoints</li>
@@ -33,7 +33,7 @@ import java.util.function.Supplier;
  *   <li>Convert failures into {@link BaseInternalServerException} with diagnostic logging</li>
  * </ul>
  *
- * <h2>Execution Flow:</h2>
+ * <h6>Execution Flow:</h6>
  * <ol>
  *   <li>Create a {@link Supplier} that executes the actual HTTP request</li>
  *   <li>Decorate the supplier with {@link CircuitBreaker}.</li>
@@ -42,15 +42,17 @@ import java.util.function.Supplier;
  *   <li>Otherwise, execute the supplier synchronously</li>
  * </ol>
  *
- * <h2>Usage:</h2>
- * <pre>{@code
+ * <h6>Usage:</h6>
+ * <pre>
+ * {@code
  *    @Bean
  *    public RestTemplate restTemplate(DefaultCircuitBreakerRestTemplateInterceptor interceptor) {
  *        RestTemplate restTemplate = new RestTemplate();
  *        restTemplate.getInterceptors().add(interceptor);
  *        return restTemplate;
  *    }
- * }</pre>
+ * }
+ * </pre>
  *
  * <p>This ensures that all HTTP requests executed via the configured RestTemplate
  * will automatically benefit from circuit breaker, retry, and timeout protections
@@ -58,7 +60,6 @@ import java.util.function.Supplier;
  * @author thoaidc
  */
 public class DefaultCircuitBreakerRestTemplateInterceptor extends BaseCircuitBreakerRestTemplateInterceptor {
-
     private static final Logger log = LoggerFactory.getLogger(DefaultCircuitBreakerRestTemplateInterceptor.class);
     private static final String ENTITY_NAME = "com.dct.config.interceptor.DefaultCircuitBreakerRestTemplateInterceptor";
     private final CircuitBreaker circuitBreaker;
@@ -104,19 +105,19 @@ public class DefaultCircuitBreakerRestTemplateInterceptor extends BaseCircuitBre
 
         // If TimeLimiter present → run async + wrap with TimeLimiter
         if (Objects.nonNull(timeLimiter)) {
-            log.debug("[CIRCUIT_BREAKER_TIME_LIMITER] - Callable decorated with TimeLimiter: '{}'", timeLimiter.getName());
+            log.debug("[CIRCUIT_BREAKER_TIME_LIMITER] - Callable decorated with: '{}'", timeLimiter.getName());
             // Reassign this variable because used in lambda expression should be final or effectively final
             Supplier<ClientHttpResponse> finalSupplier = supplier;
 
             Callable<ClientHttpResponse> decorated = TimeLimiter.decorateFutureSupplier(
-                    timeLimiter,
-                    () -> {
-                        log.debug(
-                            "[CIRCUIT_BREAKER_TIME_LIMITER] - Starting async execution with timeout {}ms",
-                            timeLimiter.getTimeLimiterConfig().getTimeoutDuration().toMillis()
-                        );
-                        return CompletableFuture.supplyAsync(finalSupplier);
-                    }
+                timeLimiter,
+                () -> {
+                    log.debug(
+                        "[CIRCUIT_BREAKER_TIME_LIMITER] - Starting async execution with timeout {}ms",
+                        timeLimiter.getTimeLimiterConfig().getTimeoutDuration().toMillis()
+                    );
+                    return CompletableFuture.supplyAsync(finalSupplier);
+                }
             );
 
             try {
@@ -149,7 +150,7 @@ public class DefaultCircuitBreakerRestTemplateInterceptor extends BaseCircuitBre
 
             try {
                 ClientHttpResponse response = execution.execute(request, body);
-                log.debug("[CB_REST_TEMPLATE] - Received response: {} {}", response.getStatusCode(), response.getStatusText());
+                log.debug("[CB_REST_TEMPLATE] - Received: {} {}", response.getStatusCode(), response.getStatusText());
                 return response;
             } catch (IOException e) {
                 log.error("[CB_REST_TEMPLATE] - IOException occurred: {}", e.getMessage(), e);

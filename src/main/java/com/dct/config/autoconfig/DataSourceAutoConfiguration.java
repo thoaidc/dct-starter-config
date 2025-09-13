@@ -32,7 +32,6 @@ import java.util.Properties;
     HikariDataSourceProps.class
 })
 public class DataSourceAutoConfiguration {
-
     private static final Logger log = LoggerFactory.getLogger(DataSourceAutoConfiguration.class);
     private static final String ENTITY_NAME = "com.dct.config.autoconfig.DataSourceAutoConfiguration";
     private final DataSourceProps dataSourceProps;

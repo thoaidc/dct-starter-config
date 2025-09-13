@@ -11,7 +11,6 @@ import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.web.filter.CorsFilter;
 
 public class DefaultBaseSecurityFilterChainConfig extends BaseSecurityFilterChainConfig {
-
     public DefaultBaseSecurityFilterChainConfig(
         SecurityProps securityProps,
         CorsFilter corsFilter,

@@ -30,7 +30,6 @@ import java.util.Optional;
 @AutoConfiguration
 @EnableConfigurationProperties(I18nProps.class)
 public class LocaleAutoConfiguration {
-
     private static final Logger log = LoggerFactory.getLogger(LocaleAutoConfiguration.class);
     private final I18nProps i18nProps;
 
