@@ -7,11 +7,14 @@ import com.dct.model.common.MessageTranslationUtils;
 import com.dct.model.config.properties.CorsProps;
 import com.dct.model.config.properties.SecurityProps;
 
+import com.dct.model.constants.ActivateStatus;
+import com.dct.model.constants.BasePropertiesConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -26,8 +29,13 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.security.web.servlet.util.matcher.MvcRequestMatcher;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+import org.springframework.web.filter.CorsFilter;
 import org.springframework.web.servlet.handler.HandlerMappingIntrospector;
 
+import java.time.Duration;
+import java.util.Objects;
 import java.util.Optional;
 
 @AutoConfiguration
@@ -35,9 +43,11 @@ import java.util.Optional;
 public class SecurityAutoConfiguration {
     private static final Logger log = LoggerFactory.getLogger(SecurityAutoConfiguration.class);
     private final SecurityProps securityProps;
+    private final CorsProps corsProps;
 
-    public SecurityAutoConfiguration(SecurityProps securityProps) {
+    public SecurityAutoConfiguration(SecurityProps securityProps, CorsProps corsProps) {
         this.securityProps = securityProps;
+        this.corsProps = corsProps;
     }
 
     @Bean
@@ -96,5 +106,29 @@ public class SecurityAutoConfiguration {
     public AuthenticationManager authenticationManager(AuthenticationConfiguration auth) throws Exception {
         log.debug("[AUTHENTICATION_MANAGER_AUTO_CONFIG] - Use default authentication manager");
         return auth.getAuthenticationManager();
+    }
+
+    @Bean
+    @ConditionalOnMissingBean(CorsFilter.class)
+    @ConditionalOnProperty(name = BasePropertiesConstants.ENABLED_CORS, havingValue = ActivateStatus.ENABLED_VALUE)
+    public CorsFilter corsFilter() {
+        log.debug("[CORS_FILTER_AUTO_CONFIG] - Use default cors filter");
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+
+        corsProps.getPatterns().forEach((path, config) -> {
+            CorsConfiguration cors = new CorsConfiguration();
+            cors.setAllowedOrigins(config.getAllowedOrigins());
+            cors.setAllowedMethods(config.getAllowedMethods());
+            cors.setAllowedHeaders(config.getAllowedHeaders());
+            cors.setAllowCredentials(config.getAllowCredentials());
+
+            if (Objects.nonNull(config.getMaxAge())) {
+                cors.setMaxAge(Duration.ofSeconds(config.getMaxAge()));
+            }
+
+            source.registerCorsConfiguration(path, cors);
+        });
+
+        return new CorsFilter(source);
     }
 }
