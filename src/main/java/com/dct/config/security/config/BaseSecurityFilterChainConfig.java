@@ -9,7 +9,6 @@ import com.dct.model.config.properties.SecurityProps;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpMethod;
-import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.annotation.web.configurers.HeadersConfigurer;
@@ -58,7 +57,7 @@ public abstract class BaseSecurityFilterChainConfig {
     public void cors(HttpSecurity http) throws Exception {
         // Because of using JWT, CSRF is not required
         log.debug("[CORS_AND_CSRF_AUTO_CONFIG] - Use default cors and csrf configuration: CSRF is disabled");
-        http.csrf(AbstractHttpConfigurer::disable).cors(Customizer.withDefaults());
+        http.csrf(AbstractHttpConfigurer::disable).cors(AbstractHttpConfigurer::disable);
     }
 
     public void addFilters(HttpSecurity http) {
