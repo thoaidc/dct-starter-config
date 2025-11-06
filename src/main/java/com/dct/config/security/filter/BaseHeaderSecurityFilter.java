@@ -57,7 +57,6 @@ public class BaseHeaderSecurityFilter extends BaseAuthenticationFilter{
         BaseUserDTO userDTO = BaseUserDTO.userBuilder()
                 .withId(Integer.parseInt(userId))
                 .withUsername(username)
-                .withPassword(username) // Not used but needed to avoid `argument 'content': null` error in spring security
                 .withAuthorities(userAuthorities)
                 .build();
 
