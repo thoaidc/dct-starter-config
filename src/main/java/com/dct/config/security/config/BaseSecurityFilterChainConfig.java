@@ -68,7 +68,7 @@ public abstract class BaseSecurityFilterChainConfig {
         }
 
         if (Objects.nonNull(authenticationFilter)) {
-            log.debug("[AUTHENTICATION_FILTER_AUTO_CONFIG] - Use filer: {}", authenticationFilter.getClass().getName());
+            log.debug("[AUTHENTICATION_FILTER_AUTO_CONFIG] - Use filter: {}", authenticationFilter.getClass().getName());
             http.addFilterBefore(authenticationFilter, UsernamePasswordAuthenticationFilter.class);
         }
     }
