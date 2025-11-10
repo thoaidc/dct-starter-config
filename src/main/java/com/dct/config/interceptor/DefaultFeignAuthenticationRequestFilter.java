@@ -78,7 +78,7 @@ public class DefaultFeignAuthenticationRequestFilter extends BaseFeignAuthentica
         String requestUrl = URI.create(targetUrl).getPath() + requestTemplate.path();
         log.info("[FEIGN_REQUEST_FORWARDED] - Filtering: {}", requestUrl);
 
-        if (SecurityUtils.checkIfAuthenticationRequired(requestUrl, securityProps.getPublicRequestPatterns())) {
+        if (SecurityUtils.checkIfAuthenticationRequired(requestUrl, securityProps.getExternalServicePublicRequestPatterns())) {
             try {
                 Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
                 BaseUserDTO userDTO = (BaseUserDTO) authentication.getPrincipal();
