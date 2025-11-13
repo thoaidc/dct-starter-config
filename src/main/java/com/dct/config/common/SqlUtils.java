@@ -10,6 +10,8 @@ import jakarta.persistence.Query;
 import jakarta.validation.constraints.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.util.StringUtils;
 
@@ -225,6 +227,10 @@ public class SqlUtils {
             }
 
             return this;
+        }
+
+        public <T> Page<T> getResultsWithPaging(String mappingName) {
+            return new PageImpl<>(getResultsWithDTO(mappingName), this.pageable, countTotalRecords());
         }
 
         public <T> List<T> getResultsWithDTO(String mappingName) {
