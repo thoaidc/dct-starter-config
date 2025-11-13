@@ -56,7 +56,7 @@ public class AuditingAutoConfiguration {
         };
     }
 
-    @Bean // Makes ZonedDateTime compatible with auditing fields
+    @Bean
     public DateTimeProvider auditingDateTimeProvider() {
         return () -> Optional.of(Instant.now());
     }

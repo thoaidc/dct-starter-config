@@ -4,6 +4,7 @@ import com.dct.model.config.properties.DataSourceProps;
 import com.dct.model.config.properties.HikariDataSourceProps;
 import com.dct.model.config.properties.HikariProps;
 import com.dct.model.constants.ActivateStatus;
+import com.dct.model.constants.BaseDatetimeConstants;
 import com.dct.model.constants.BaseExceptionConstants;
 import com.dct.model.constants.BasePropertiesConstants;
 import com.dct.model.exception.BaseIllegalArgumentException;
@@ -85,7 +86,7 @@ public class DataSourceAutoConfiguration {
         }
 
         properties.setProperty("passwordCharacterEncoding", StandardCharsets.UTF_8.name());
-        properties.setProperty("serverTimezone", "UTC"); // Uses the UTC standard for internationalized time
+        properties.setProperty("serverTimezone", BaseDatetimeConstants.ZoneID.DEFAULT); // Uses the UTC standard for internationalized time
         hikariConfig.setDataSourceProperties(properties);
 
         log.info("[DATASOURCE_AUTO_CONFIG] - HikariCP DataSource configured successfully - Pool: {}, Max: {}, Min: {}",

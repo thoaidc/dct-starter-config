@@ -35,6 +35,7 @@ import org.springframework.web.filter.CorsFilter;
 import org.springframework.web.servlet.handler.HandlerMappingIntrospector;
 
 import java.time.Duration;
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -117,15 +118,18 @@ public class SecurityAutoConfiguration {
 
         corsProps.getPatterns().forEach((path, config) -> {
             CorsConfiguration cors = new CorsConfiguration();
-            cors.setAllowedOrigins(config.getAllowedOrigins());
+            List<String> allowedOriginPatterns = config.getAllowedOriginPatterns();
+
+            if (Objects.nonNull(allowedOriginPatterns) && !allowedOriginPatterns.isEmpty()) {
+                cors.setAllowedOriginPatterns(allowedOriginPatterns);
+            } else {
+                cors.setAllowedOrigins(config.getAllowedOrigins());
+            }
+
             cors.setAllowedMethods(config.getAllowedMethods());
             cors.setAllowedHeaders(config.getAllowedHeaders());
             cors.setAllowCredentials(config.getAllowCredentials());
-
-            if (Objects.nonNull(config.getMaxAge())) {
-                cors.setMaxAge(Duration.ofSeconds(config.getMaxAge()));
-            }
-
+            cors.setMaxAge(Duration.ofSeconds(config.getMaxAge()));
             source.registerCorsConfiguration(path, cors);
         });
 
