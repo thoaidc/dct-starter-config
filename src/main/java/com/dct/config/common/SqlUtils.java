@@ -149,6 +149,14 @@ public class SqlUtils {
         query.setMaxResults(pageSize);
     }
 
+    public static void setOrderByAscending(StringBuilder sql, String columName) {
+        sql.append(" ORDER BY ").append(columName).append(" ASC");
+    }
+
+    public static void setOrderByDecreasing(StringBuilder sql, String columName) {
+        sql.append(" ORDER BY ").append(columName).append(" DESC");
+    }
+
     public static void setParams(Query query, Map<String, Object> params) {
         if (query == null || params == null || params.isEmpty())
             return;
@@ -225,7 +233,8 @@ public class SqlUtils {
             }
 
             Query query = entityManager.createNativeQuery(querySql, mappingName);
-            params.forEach(query::setParameter);
+            setPageable(query, pageable);
+            setParams(query, params);
 
             if (Objects.nonNull(pageable) && pageable.getOffset() >= 0L && pageable.getPageSize() > 0) {
                 query.setFirstResult((int) pageable.getOffset());
@@ -242,7 +251,8 @@ public class SqlUtils {
             }
 
             Query query = entityManager.createNativeQuery(querySql, mappingName);
-            params.forEach(query::setParameter);
+            setPageable(query, pageable);
+            setParams(query, params);
 
             try {
                 //noinspection unchecked
@@ -260,7 +270,8 @@ public class SqlUtils {
             }
 
             Query countQuery = entityManager.createNativeQuery(countQuerySql);
-            params.forEach(countQuery::setParameter);
+            setPageable(countQuery, pageable);
+            setParams(countQuery, params);
 
             try {
                 Object totalRecords = countQuery.getSingleResult();
