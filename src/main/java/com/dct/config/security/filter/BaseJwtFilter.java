@@ -11,6 +11,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.web.util.UrlUtils;
 
 public class BaseJwtFilter extends BaseAuthenticationFilter {
     private static final Logger log = LoggerFactory.getLogger(BaseJwtFilter.class);
@@ -24,9 +25,8 @@ public class BaseJwtFilter extends BaseAuthenticationFilter {
 
     @Override
     protected boolean shouldAuthenticateRequest(HttpServletRequest request) {
-        String requestURI = request.getRequestURI();
-        log.info("[JWT_FILTER] - Filtering {}: {}", request.getMethod(), requestURI);
-        return SecurityUtils.checkIfAuthenticationRequired(requestURI, publicRequestPatterns);
+        log.info("[JWT_FILTER] - Filtering {}: {}", request.getMethod(), UrlUtils.buildRequestUrl(request));
+        return SecurityUtils.checkIfAuthenticationRequired(request.getRequestURI(), publicRequestPatterns);
     }
 
     @Override
