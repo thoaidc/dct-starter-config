@@ -59,7 +59,8 @@ public class FileUtils {
     }
 
     private File getFileToSave(String fileName, boolean isMakeNew) {
-        File file = new File(uploadDirectory + File.separator + fileName);
+        File uploadDir = new File(uploadDirectory).getAbsoluteFile();
+        File file = new File(uploadDir, fileName);
 
         if (file.exists() || !isMakeNew)
             return file;
@@ -69,16 +70,15 @@ public class FileUtils {
             File parentDir = file.getParentFile();
 
             if (Objects.nonNull(parentDir) && !parentDir.exists() && !parentDir.mkdirs()) {
-                log.warn("[SAVE_FILE_ERROR] - Could not create parent directory: {}", parentDir.getAbsolutePath());
+                log.warn("[GET_FILE_TO_SAVE_ERROR] - Could not create parent directory: {}", parentDir.getAbsolutePath());
                 return null;
             }
 
-            return file.createNewFile() ? file : null;
+            return file;
         } catch (Exception e) {
-            log.warn("[SAVE_FILE_ERROR] - Could not create new file at: {}", file.getAbsolutePath());
+            log.warn("[GET_FILE_TO_SAVE_ERROR] - Error preparing file path: {}", file.getAbsolutePath(), e);
+            return null;
         }
-
-        return null;
     }
 
     public static String generateUniqueFileName(String fileNameOrFileExtension) {
@@ -105,7 +105,7 @@ public class FileUtils {
                 if (!imageDTO.getCompressedImage().delete())
                     log.warn("[CLEAN_UP_ERROR] - Could not clean up temporary for: {}", fileToSave.getAbsolutePath());
 
-                log.debug("[SAVE_FILE_SUCCESS] - Save new file to: {}", fileToSave.getAbsolutePath());
+                log.debug("[SAVE_FILE_SUCCESS] - Save compressed image file to: {}", fileToSave.getAbsolutePath());
                 return prefixPath + fileName;
             }
         } catch (IOException e) {
@@ -125,16 +125,17 @@ public class FileUtils {
         }
 
         String fileName = generateUniqueFileName(file.getOriginalFilename());
-        File directory = getFileToSave(fileName, true);
+        File fileToSave = getFileToSave(fileName, true);
 
-        if (Objects.isNull(directory))
+        if (Objects.isNull(fileToSave))
             return null;
 
         try {
-            file.transferTo(directory);
+            file.transferTo(fileToSave.getAbsoluteFile());
+            log.debug("[SAVE_FILE_SUCCESS] - Save new file to: {}", fileToSave.getAbsolutePath());
             return prefixPath + fileName;
         } catch (IOException e) {
-            log.error("[SAVE_FILE_ERROR] - Could not save this file to: {}", directory.getAbsolutePath(), e);
+            log.error("[SAVE_FILE_ERROR] - Could not save this file to: {}", fileToSave.getAbsolutePath(), e);
         }
 
         return null;
