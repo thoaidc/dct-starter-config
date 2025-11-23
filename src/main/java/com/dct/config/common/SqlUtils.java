@@ -22,6 +22,11 @@ import java.util.*;
 public class SqlUtils {
     private static final Logger log = LoggerFactory.getLogger(SqlUtils.class);
     private static final String ENTITY_NAME = "com.dct.config.common.DataUtils";
+    public static final String WHERE_CLAUSE_REPLACED = "WHERE 1=1";
+    public static final String WHERE_CLAUSE_AND_REPLACED = "WHERE 1=1 AND";
+    public static final String AND_CLAUSE = " AND ";
+    public static final String WHERE_CLAUSE = "WHERE ";
+    public static final String ORDER_BY_CLAUSE = " ORDER BY ";
 
     public static void appendDateCondition(StringBuilder sql,
                                            Map<String, Object> params,
@@ -31,14 +36,14 @@ public class SqlUtils {
         Instant instantEnd = request.getToInstantSearch();
 
         if (Objects.nonNull(instantStart) && Objects.nonNull(instantEnd)) {
-            sql.append(" AND ").append(columnName).append(" BETWEEN :fromDate AND :toDate");
+            sql.append(AND_CLAUSE).append(columnName).append(" BETWEEN :fromDate AND :toDate");
             params.put("fromDate", instantStart);
             params.put("toDate", instantEnd);
         } else if (Objects.nonNull(instantStart)) {
-            sql.append(" AND ").append(columnName).append(" >= :fromDate");
+            sql.append(AND_CLAUSE).append(columnName).append(" >= :fromDate");
             params.put("fromDate", instantStart);
         } else if (Objects.nonNull(instantEnd)) {
-            sql.append(" AND ").append(columnName).append(" <= :toDate");
+            sql.append(AND_CLAUSE).append(columnName).append(" <= :toDate");
             params.put("toDate", instantEnd);
         }
     }
@@ -48,7 +53,7 @@ public class SqlUtils {
                                                String columnName,
                                                Object value) {
         if (Objects.nonNull(value)) {
-            sql.append(" AND ").append(columnName).append(" = :").append(columnName);
+            sql.append(AND_CLAUSE).append(columnName).append(" = :").append(columnName);
             params.put(columnName, value);
         }
     }
@@ -58,7 +63,7 @@ public class SqlUtils {
                                                      String columnName,
                                                      Object value) {
         if (Objects.nonNull(value)) {
-            sql.append(" AND ").append(columnName).append(" > :").append(columnName);
+            sql.append(AND_CLAUSE).append(columnName).append(" > :").append(columnName);
             params.put(columnName, value);
         }
     }
@@ -68,7 +73,7 @@ public class SqlUtils {
                                                           String columnName,
                                                           Object value) {
         if (Objects.nonNull(value)) {
-            sql.append(" AND ").append(columnName).append(" >= :").append(columnName);
+            sql.append(AND_CLAUSE).append(columnName).append(" >= :").append(columnName);
             params.put(columnName, value);
         }
     }
@@ -78,7 +83,7 @@ public class SqlUtils {
                                                   String columnName,
                                                   Object value) {
         if (Objects.nonNull(value)) {
-            sql.append(" AND ").append(columnName).append(" < :").append(columnName);
+            sql.append(AND_CLAUSE).append(columnName).append(" < :").append(columnName);
             params.put(columnName, value);
         }
     }
@@ -88,7 +93,7 @@ public class SqlUtils {
                                                        String columnName,
                                                        Object value) {
         if (Objects.nonNull(value)) {
-            sql.append(" AND ").append(columnName).append(" =< :").append(columnName);
+            sql.append(AND_CLAUSE).append(columnName).append(" =< :").append(columnName);
             params.put(columnName, value);
         }
     }
@@ -99,7 +104,7 @@ public class SqlUtils {
                                                  Object startValue,
                                                  Object endValue) {
         if (Objects.nonNull(startValue) && Objects.nonNull(endValue)) {
-            sql.append(" AND ")
+            sql.append(AND_CLAUSE)
                 .append(columnName)
                 .append(" BETWEEN :")
                 .append(columnName)
@@ -120,7 +125,7 @@ public class SqlUtils {
                                             String columnName,
                                             Collection<?> values) {
         if (values != null && !values.isEmpty()) {
-            sql.append(" AND ").append(columnName).append(" IN (:").append(columnName).append("List)");
+            sql.append(AND_CLAUSE).append(columnName).append(" IN (:").append(columnName).append("List)");
             params.put(columnName + "List", values);
         }
     }
@@ -130,7 +135,7 @@ public class SqlUtils {
                                               String columnName,
                                               String value) {
         if (StringUtils.hasText(value)) {
-            sql.append(" AND ").append(columnName).append(" LIKE :").append(columnName);
+            sql.append(AND_CLAUSE).append(columnName).append(" LIKE :").append(columnName);
 
             if (value.startsWith("%")) {
                 params.put(columnName, value);
@@ -146,17 +151,24 @@ public class SqlUtils {
 
         int pageNumber = pageable.getPageNumber();
         int pageSize = pageable.getPageSize();
-        int firstResult = pageNumber * pageSize; // offset
+        int firstResult; // offset
+
+        if (pageable.getOffset() >= 0L) {
+            firstResult = (int) pageable.getOffset();
+        } else {
+            firstResult = pageNumber * pageSize;
+        }
+
         query.setFirstResult(firstResult);
         query.setMaxResults(pageSize);
     }
 
     public static void setOrderByAscending(StringBuilder sql, String columName) {
-        sql.append(" ORDER BY ").append(columName).append(" ASC");
+        sql.append(ORDER_BY_CLAUSE).append(columName).append(" ASC");
     }
 
     public static void setOrderByDecreasing(StringBuilder sql, String columName) {
-        sql.append(" ORDER BY ").append(columName).append(" DESC");
+        sql.append(ORDER_BY_CLAUSE).append(columName).append(" DESC");
     }
 
     public static void setParams(Query query, Map<String, Object> params) {
@@ -167,20 +179,22 @@ public class SqlUtils {
         params.forEach(query::setParameter);
     }
 
-    public static void replaceWhere(@NotNull StringBuilder query) {
-        String toReplace = "WHERE 1=1 AND";
-        int index = query.indexOf("WHERE 1=1 AND");
+    public static String replaceWhere(@NotNull StringBuilder query) {
+        String toReplace = WHERE_CLAUSE_AND_REPLACED;
+        int index = query.indexOf(toReplace);
 
         if (index > 0) {
-            query.replace(index, index + toReplace.length(), "WHERE ");
+            query.replace(index, index + toReplace.length(), WHERE_CLAUSE);
         } else {
-            toReplace = "WHERE 1=1";
+            toReplace = WHERE_CLAUSE_REPLACED;
             index = query.indexOf(toReplace);
 
             if (index > 0) {
                 query.replace(index, index + toReplace.length(), " ");
             }
         }
+
+        return query.toString();
     }
 
     public static QueryBuilder queryBuilder(EntityManager entityManager) {
@@ -200,7 +214,7 @@ public class SqlUtils {
 
         public QueryBuilder querySql(String querySql) {
             if (StringUtils.hasText(querySql)) {
-                this.querySql = querySql;
+                this.querySql = replaceWhere(new StringBuilder(querySql));
                 return this;
             }
 
@@ -209,7 +223,7 @@ public class SqlUtils {
 
         public QueryBuilder countQuerySql(String countQuerySql) {
             if (StringUtils.hasText(countQuerySql)) {
-                this.countQuerySql = countQuerySql;
+                this.countQuerySql = replaceWhere(new StringBuilder(countQuerySql));
                 return this;
             }
 
@@ -241,11 +255,6 @@ public class SqlUtils {
             Query query = entityManager.createNativeQuery(querySql, mappingName);
             setPageable(query, pageable);
             setParams(query, params);
-
-            if (Objects.nonNull(pageable) && pageable.getOffset() >= 0L && pageable.getPageSize() > 0) {
-                query.setFirstResult((int) pageable.getOffset());
-                query.setMaxResults(pageable.getPageSize());
-            }
 
             //noinspection unchecked
             return (List<T>) query.getResultList();
