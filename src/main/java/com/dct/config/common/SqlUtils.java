@@ -25,6 +25,7 @@ public class SqlUtils {
     public static final String WHERE_CLAUSE_REPLACED = "WHERE 1=1";
     public static final String WHERE_CLAUSE_AND_REPLACED = "WHERE 1=1 AND";
     public static final String AND_CLAUSE = " AND ";
+    public static final String OR_CLAUSE = " OR ";
     public static final String WHERE_CLAUSE = "WHERE ";
     public static final String ORDER_BY_CLAUSE = " ORDER BY ";
 
@@ -132,16 +133,34 @@ public class SqlUtils {
 
     public static void appendSqlLikeCondition(StringBuilder sql,
                                               Map<String, Object> params,
-                                              String columnName,
-                                              String value) {
-        if (StringUtils.hasText(value)) {
-            sql.append(AND_CLAUSE).append(columnName).append(" LIKE :").append(columnName);
+                                              String value,
+                                              String... columnNames) {
+        if (!StringUtils.hasText(value) || columnNames == null || columnNames.length == 0) {
+            return;
+        }
 
-            if (value.startsWith("%")) {
-                params.put(columnName, value);
-            } else {
-                params.put(columnName, "%" + value + "%");
+        String likeValue = value.startsWith("%") ? value : "%" + value + "%";
+        boolean multipleColumns = columnNames.length > 1;
+        sql.append(AND_CLAUSE);
+
+        if (multipleColumns) {
+            sql.append("(");
+        }
+
+        for (int i = 0; i < columnNames.length; i++) {
+            String column = columnNames[i];
+            String paramName = column + "_like";
+            sql.append(column).append(" LIKE :").append(paramName);
+
+            if (i < columnNames.length - 1) {
+                sql.append(OR_CLAUSE);
             }
+
+            params.put(paramName, likeValue);
+        }
+
+        if (multipleColumns) {
+            sql.append(")");
         }
     }
 
