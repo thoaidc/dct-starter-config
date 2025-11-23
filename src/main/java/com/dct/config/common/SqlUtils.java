@@ -6,8 +6,8 @@ import com.dct.model.exception.BaseIllegalArgumentException;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.NoResultException;
 import jakarta.persistence.Query;
-
 import jakarta.validation.constraints.NotNull;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
@@ -15,157 +15,153 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.util.StringUtils;
 
-import java.time.Instant;
-import java.util.*;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
 
 @SuppressWarnings("unused")
 public class SqlUtils {
     private static final Logger log = LoggerFactory.getLogger(SqlUtils.class);
     private static final String ENTITY_NAME = "com.dct.config.common.DataUtils";
-    public static final String WHERE_CLAUSE_REPLACED = "WHERE 1=1";
-    public static final String WHERE_CLAUSE_AND_REPLACED = "WHERE 1=1 AND";
-    public static final String AND_CLAUSE = " AND ";
-    public static final String OR_CLAUSE = " OR ";
-    public static final String WHERE_CLAUSE = "WHERE ";
-    public static final String ORDER_BY_CLAUSE = " ORDER BY ";
+    public static final String SPACE = " ";
+    public static final String EMPTY = "";
+    public static final String START = "Start";
+    public static final String END = "End";
+    public static final String PERCENT = "%";
+    public static final String LIKE = " LIKE :";
+    public static final String LIKE_SUFFIX = "Like";
+    public static final String LIST = "List";
+    public static final String WHERE = "WHERE ";
+    public static final String WHERE_DEFAULT = "WHERE 1=1";
+    public static final String WHERE_AND = "WHERE 1=1 AND";
+    public static final String OR = " OR ";
+    public static final String AND = " AND ";
+    public static final String AND_PARAM = " AND :";
+    public static final String BETWEEN = " BETWEEN :";
+    public static final String EQUALS = " = :";
+    public static final String NOT_EQUALS = " <> :";
+    public static final String GREATER_THAN = " > :";
+    public static final String GREATER_THAN_OR_EQUAL = " >= :";
+    public static final String LESS_THAN = " < :";
+    public static final String LESS_THAN_OR_EQUAL = " <= :";
+    public static final String IN = " IN (:";
+    public static final String OPEN_PAREN = "(";
+    public static final String CLOSE_PAREN = ")";
+    public static final String ORDER_BY = " ORDER BY ";
+    public static final String DESC = " DESC";
 
-    public static void appendDateCondition(StringBuilder sql,
-                                           Map<String, Object> params,
-                                           BaseRequestDTO request,
-                                           String columnName) {
-        Instant instantStart = request.getFromInstantSearch();
-        Instant instantEnd = request.getToInstantSearch();
-
-        if (Objects.nonNull(instantStart) && Objects.nonNull(instantEnd)) {
-            sql.append(AND_CLAUSE).append(columnName).append(" BETWEEN :fromDate AND :toDate");
-            params.put("fromDate", instantStart);
-            params.put("toDate", instantEnd);
-        } else if (Objects.nonNull(instantStart)) {
-            sql.append(AND_CLAUSE).append(columnName).append(" >= :fromDate");
-            params.put("fromDate", instantStart);
-        } else if (Objects.nonNull(instantEnd)) {
-            sql.append(AND_CLAUSE).append(columnName).append(" <= :toDate");
-            params.put("toDate", instantEnd);
-        }
+    public static <T extends BaseRequestDTO> void addDateTimeCondition(
+        StringBuilder sql,
+        Map<String, Object> params,
+        T request,
+        String column
+    ) {
+        addBetweenCondition(sql, params, column, request.getFromInstantSearch(), request.getToInstantSearch());
     }
 
-    public static void appendSqlEqualCondition(StringBuilder sql,
-                                               Map<String, Object> params,
-                                               String columnName,
-                                               Object value) {
+    public static void addEqualCondition(StringBuilder sql, Map<String, Object> params, String column, Object value) {
+        addSqlSingleCondition(sql, params, EQUALS, column, value);
+    }
+
+    public static void addGreaterThanCondition(StringBuilder sql, Map<String, Object> params, String column, Object value) {
+        addSqlSingleCondition(sql, params, GREATER_THAN, column, value);
+    }
+
+    public static void addGreaterThanOrEqualCondition(StringBuilder sql, Map<String, Object> params, String column, Object value) {
+        addSqlSingleCondition(sql, params, GREATER_THAN_OR_EQUAL, column, value);
+    }
+
+    public static void addLessThanCondition(StringBuilder sql, Map<String, Object> params, String column, Object value) {
+        addSqlSingleCondition(sql, params, LESS_THAN, column, value);
+    }
+
+    public static void addLessThanOrEqualCondition(StringBuilder sql, Map<String, Object> params, String column, Object value) {
+        addSqlSingleCondition(sql, params, LESS_THAN_OR_EQUAL, column, value);
+    }
+
+    private static void addSqlSingleCondition(
+        StringBuilder sql,
+        Map<String, Object> params,
+        String condition,
+        String column,
+        Object value
+    ) {
         if (Objects.nonNull(value)) {
-            sql.append(AND_CLAUSE).append(columnName).append(" = :").append(columnName);
-            params.put(columnName, value);
+            sql.append(AND).append(column).append(condition).append(column);
+            params.put(column, value);
         }
     }
 
-    public static void appendSqlGreaterThanCondition(StringBuilder sql,
-                                                     Map<String, Object> params,
-                                                     String columnName,
-                                                     Object value) {
-        if (Objects.nonNull(value)) {
-            sql.append(AND_CLAUSE).append(columnName).append(" > :").append(columnName);
-            params.put(columnName, value);
-        }
-    }
-
-    public static void appendSqlGreaterThanEqualCondition(StringBuilder sql,
-                                                          Map<String, Object> params,
-                                                          String columnName,
-                                                          Object value) {
-        if (Objects.nonNull(value)) {
-            sql.append(AND_CLAUSE).append(columnName).append(" >= :").append(columnName);
-            params.put(columnName, value);
-        }
-    }
-
-    public static void appendSqlLessThanCondition(StringBuilder sql,
-                                                  Map<String, Object> params,
-                                                  String columnName,
-                                                  Object value) {
-        if (Objects.nonNull(value)) {
-            sql.append(AND_CLAUSE).append(columnName).append(" < :").append(columnName);
-            params.put(columnName, value);
-        }
-    }
-
-    public static void appendSqlLessThanEqualCondition(StringBuilder sql,
-                                                       Map<String, Object> params,
-                                                       String columnName,
-                                                       Object value) {
-        if (Objects.nonNull(value)) {
-            sql.append(AND_CLAUSE).append(columnName).append(" =< :").append(columnName);
-            params.put(columnName, value);
-        }
-    }
-
-    public static void appendSqlBetweenCondition(StringBuilder sql,
-                                                 Map<String, Object> params,
-                                                 String columnName,
-                                                 Object startValue,
-                                                 Object endValue) {
+    public static void addBetweenCondition(
+        StringBuilder sql,
+        Map<String, Object> params,
+        String column,
+        Object startValue,
+        Object endValue
+    ) {
         if (Objects.nonNull(startValue) && Objects.nonNull(endValue)) {
-            sql.append(AND_CLAUSE)
-                .append(columnName)
-                .append(" BETWEEN :")
-                .append(columnName)
-                .append("Start AND :")
-                .append(columnName)
-                .append("End");
-            params.put(columnName + "Start", startValue);
-            params.put(columnName + "End", endValue);
+            sql.append(AND).append(column)
+                .append(BETWEEN).append(column).append(START)
+                .append(AND_PARAM).append(column).append(END);
+            params.put(column + START, startValue);
+            params.put(column + END, endValue);
         } else if (Objects.nonNull(startValue)) {
-            appendSqlGreaterThanCondition(sql, params, columnName, startValue);
+            addGreaterThanCondition(sql, params, column, startValue);
         } else if (Objects.nonNull(endValue)) {
-            appendSqlLessThanCondition(sql, params, columnName, endValue);
+            addLessThanCondition(sql, params, column, endValue);
         }
     }
 
-    public static void appendSqlInCondition(StringBuilder sql,
-                                            Map<String, Object> params,
-                                            String columnName,
-                                            Collection<?> values) {
-        if (values != null && !values.isEmpty()) {
-            sql.append(AND_CLAUSE).append(columnName).append(" IN (:").append(columnName).append("List)");
-            params.put(columnName + "List", values);
+    public static void addInCondition(StringBuilder sql, Map<String, Object> params, String column, Collection<?> values) {
+        if (Objects.nonNull(values) && !values.isEmpty()) {
+            sql.append(AND).append(column).append(IN).append(column).append(LIST).append(CLOSE_PAREN);
+            params.put(column + LIST, values);
         }
     }
 
-    public static void appendSqlLikeCondition(StringBuilder sql,
-                                              Map<String, Object> params,
-                                              String value,
-                                              String... columnNames) {
-        if (!StringUtils.hasText(value) || columnNames == null || columnNames.length == 0) {
+    public static void addLikeCondition(StringBuilder sql, Map<String, Object> params, String value, String... columns) {
+        if (!StringUtils.hasText(value) || Objects.isNull(columns) || columns.length == 0) {
             return;
         }
 
-        String likeValue = value.startsWith("%") ? value : "%" + value + "%";
-        boolean multipleColumns = columnNames.length > 1;
-        sql.append(AND_CLAUSE);
+        String likeValue = value.startsWith(PERCENT) ? value : PERCENT + value + PERCENT;
+        boolean multipleColumns = columns.length > 1;
+        sql.append(AND);
 
         if (multipleColumns) {
-            sql.append("(");
+            sql.append(OPEN_PAREN);
         }
 
-        for (int i = 0; i < columnNames.length; i++) {
-            String column = columnNames[i];
-            String paramName = column + "_like";
-            sql.append(column).append(" LIKE :").append(paramName);
+        for (int i = 0; i < columns.length; i++) {
+            String column = columns[i];
+            String columnName = column + LIKE_SUFFIX;
+            sql.append(column).append(LIKE).append(columnName);
 
-            if (i < columnNames.length - 1) {
-                sql.append(OR_CLAUSE);
+            if (i < columns.length - 1) {
+                sql.append(OR);
             }
 
-            params.put(paramName, likeValue);
+            params.put(columnName, likeValue);
         }
 
         if (multipleColumns) {
-            sql.append(")");
+            sql.append(CLOSE_PAREN);
         }
     }
 
+    public static void setOrderByAscending(StringBuilder sql, String column) {
+        sql.append(ORDER_BY).append(column);
+    }
+
+    public static void setOrderByDecreasing(StringBuilder sql, String column) {
+        sql.append(ORDER_BY).append(column).append(DESC);
+    }
+
     public static void setPageable(Query query, Pageable pageable) {
-        if (query == null || pageable == null)
+        if (Objects.isNull(query) || Objects.isNull(pageable))
             return;
 
         int pageNumber = pageable.getPageNumber();
@@ -182,34 +178,26 @@ public class SqlUtils {
         query.setMaxResults(pageSize);
     }
 
-    public static void setOrderByAscending(StringBuilder sql, String columName) {
-        sql.append(ORDER_BY_CLAUSE).append(columName).append(" ASC");
-    }
-
-    public static void setOrderByDecreasing(StringBuilder sql, String columName) {
-        sql.append(ORDER_BY_CLAUSE).append(columName).append(" DESC");
-    }
-
-    public static void setParams(Query query, Map<String, Object> params) {
-        if (query == null || params == null || params.isEmpty())
+    private static void setParams(Query query, Map<String, Object> params) {
+        if (Objects.isNull(query) || Objects.isNull(params) || params.isEmpty())
             return;
 
-        params.replaceAll((key, value) -> value != null ? value : "");
+        params.replaceAll((key, value) -> Objects.nonNull(value) ? value : EMPTY);
         params.forEach(query::setParameter);
     }
 
-    public static String replaceWhere(@NotNull StringBuilder query) {
-        String toReplace = WHERE_CLAUSE_AND_REPLACED;
+    private static String replaceWhere(@NotNull StringBuilder query) {
+        String toReplace = WHERE_AND;
         int index = query.indexOf(toReplace);
 
         if (index > 0) {
-            query.replace(index, index + toReplace.length(), WHERE_CLAUSE);
+            query.replace(index, index + toReplace.length(), WHERE);
         } else {
-            toReplace = WHERE_CLAUSE_REPLACED;
+            toReplace = WHERE_DEFAULT;
             index = query.indexOf(toReplace);
 
             if (index > 0) {
-                query.replace(index, index + toReplace.length(), " ");
+                query.replace(index, index + toReplace.length(), SPACE);
             }
         }
 
@@ -263,10 +251,10 @@ public class SqlUtils {
         }
 
         public <T> Page<T> getResultsWithPaging(String mappingName) {
-            return new PageImpl<>(getResultsWithDTO(mappingName), this.pageable, countTotalRecords());
+            return new PageImpl<>(getResults(mappingName), this.pageable, count());
         }
 
-        public <T> List<T> getResultsWithDTO(String mappingName) {
+        public <T> List<T> getResults(String mappingName) {
             if (!StringUtils.hasText(querySql)) {
                 throw new BaseIllegalArgumentException(ENTITY_NAME, "Query SQL must be set before execution");
             }
@@ -279,13 +267,12 @@ public class SqlUtils {
             return (List<T>) query.getResultList();
         }
 
-        public <T> Optional<T> getSingleResultWithDTO(String mappingName) {
+        public <T> Optional<T> getSingleResult(String mappingName) {
             if (!StringUtils.hasText(querySql)) {
                 throw new BaseIllegalArgumentException(ENTITY_NAME, "Query SQL must be set before execution");
             }
 
             Query query = entityManager.createNativeQuery(querySql, mappingName);
-            setPageable(query, pageable);
             setParams(query, params);
 
             try {
@@ -298,13 +285,12 @@ public class SqlUtils {
             return Optional.empty();
         }
 
-        public long countTotalRecords() {
+        public long count() {
             if (!StringUtils.hasText(countQuerySql)) {
                 throw new BaseIllegalArgumentException(ENTITY_NAME, "Count query SQL must be set before execution");
             }
 
             Query countQuery = entityManager.createNativeQuery(countQuerySql);
-            setPageable(countQuery, pageable);
             setParams(countQuery, params);
 
             try {
