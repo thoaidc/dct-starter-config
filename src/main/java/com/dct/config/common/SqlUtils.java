@@ -66,6 +66,10 @@ public class SqlUtils {
         addSqlSingleCondition(sql, params, EQUALS, column, value);
     }
 
+    public static void addNotEqualCondition(StringBuilder sql, Map<String, Object> params, String column, Object value) {
+        addSqlSingleCondition(sql, params, NOT_EQUALS, column, value);
+    }
+
     public static void addGreaterThanCondition(StringBuilder sql, Map<String, Object> params, String column, Object value) {
         addSqlSingleCondition(sql, params, GREATER_THAN, column, value);
     }
