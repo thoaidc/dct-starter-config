@@ -1,9 +1,11 @@
 package com.dct.config.security.filter;
 
+import com.dct.config.common.Common;
 import com.dct.model.config.properties.SecurityProps;
 import com.dct.model.constants.BaseSecurityConstants;
 import com.dct.model.dto.auth.BaseTokenDTO;
 
+import io.jsonwebtoken.JwtBuilder;
 import io.jsonwebtoken.Jwts;
 
 import org.slf4j.Logger;
@@ -12,6 +14,7 @@ import org.slf4j.LoggerFactory;
 import javax.crypto.SecretKey;
 import java.time.Instant;
 import java.util.Date;
+import java.util.Map;
 import java.util.Set;
 
 @SuppressWarnings("unused")
@@ -39,15 +42,17 @@ public class DefaultJwtProvider extends BaseJwtProvider {
     }
 
     private String generateToken(BaseTokenDTO tokenDTO, SecretKey secretKey, long tokenValidityInMilliseconds) {
+        Map<String, Object> extraClaims = Common.extractClaims(tokenDTO);
         Set<String> userAuthorities = tokenDTO.getAuthorities();
-        return Jwts.builder()
+        JwtBuilder builder = Jwts.builder()
                 .subject(tokenDTO.getUsername())
                 .claim(BaseSecurityConstants.TOKEN_PAYLOAD.USER_ID, tokenDTO.getUserId())
                 .claim(BaseSecurityConstants.TOKEN_PAYLOAD.USERNAME, tokenDTO.getUsername())
                 .claim(BaseSecurityConstants.TOKEN_PAYLOAD.AUTHORITIES, String.join(",", userAuthorities))
                 .signWith(secretKey)
                 .issuedAt(new Date())
-                .expiration(new Date(tokenValidityInMilliseconds))
-                .compact();
+                .expiration(new Date(tokenValidityInMilliseconds));
+        extraClaims.forEach(builder::claim);
+        return builder.compact();
     }
 }

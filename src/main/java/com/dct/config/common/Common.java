@@ -1,5 +1,6 @@
 package com.dct.config.common;
 
+import com.dct.model.annotation.JwtIgnore;
 import com.dct.model.autoconfig.DataConverterAutoConfiguration;
 import com.dct.model.common.JsonUtils;
 import com.dct.model.constants.BaseExceptionConstants;
@@ -18,14 +19,16 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.util.StringUtils;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
 import java.io.IOException;
+import java.lang.reflect.Field;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.Base64;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -59,16 +62,12 @@ public class Common {
                 return user;
             }
 
-            ServletRequestAttributes attrs = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
-            HttpServletRequest request = Objects.nonNull(attrs) ? attrs.getRequest() : null;
+            ServletRequestAttributes attributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
+            HttpServletRequest request = Objects.nonNull(attributes) ? attributes.getRequest() : null;
             String jwt = Objects.nonNull(request) ? request.getHeader(HttpHeaders.AUTHORIZATION) : null;
-
-            if (!StringUtils.hasText(jwt)) {
-                jwt = authentication.getCredentials().toString();
-            }
-
             JwtDTO jwtDTO = Optional.ofNullable(getInfoJwt(jwt)).orElseGet(JwtDTO::new);
-            BaseUserDTO.userBuilder()
+
+            return BaseUserDTO.userBuilder()
                     .withId(jwtDTO.getUserId())
                     .withShopId(jwtDTO.getShopId())
                     .withUsername(jwtDTO.getUsername())
@@ -90,5 +89,31 @@ public class Common {
         }
 
         return null;
+    }
+
+    public static Map<String, Object> extractClaims(Object obj) {
+        Map<String, Object> claims = new HashMap<>();
+        Class<?> clazz = obj.getClass();
+
+        while (clazz != null) {
+            for (Field field : clazz.getDeclaredFields()) {
+                field.setAccessible(true);
+
+                if (field.isAnnotationPresent(JwtIgnore.class))
+                    continue;
+
+                try {
+                    Object value = field.get(obj);
+
+                    if (value != null) {
+                        claims.put(field.getName(), value);
+                    }
+                } catch (IllegalAccessException ignored) {}
+            }
+
+            clazz = clazz.getSuperclass();
+        }
+
+        return claims;
     }
 }
