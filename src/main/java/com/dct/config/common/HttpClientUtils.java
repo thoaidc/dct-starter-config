@@ -9,6 +9,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.*;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
@@ -32,7 +33,8 @@ public class HttpClientUtils {
         private String url;
         private HttpMethod method;
         private Map<String, List<String>> headers;
-        private Map<String, String> params;
+        private Map<String, List<String>> params;
+        private MultiValueMap<String, Object> formData;
         private Object body;
 
         public Builder restTemplate(RestTemplate restTemplate) {
@@ -55,7 +57,7 @@ public class HttpClientUtils {
             return this;
         }
 
-        public Builder params(Map<String, String> params) {
+        public Builder params(Map<String, List<String>> params) {
             this.params = params;
             return this;
         }
@@ -65,9 +67,15 @@ public class HttpClientUtils {
             return this;
         }
 
+        public Builder formData(MultiValueMap<String, Object> formData) {
+            this.formData = formData;
+            return this;
+        }
+
         public <T> T execute(Class<T> responseType) {
             HttpHeaders httpHeaders = HttpClientUtils.initHeaders();
             UriComponentsBuilder uriBuilder = UriComponentsBuilder.fromUriString(url);
+            Object requestBody = body;
 
             if (Objects.nonNull(headers)) {
                 httpHeaders.putAll(headers);
@@ -77,9 +85,14 @@ public class HttpClientUtils {
                 params.forEach(uriBuilder::queryParam);
             }
 
+            if (Objects.nonNull(formData)) {
+                httpHeaders.setContentType(MediaType.MULTIPART_FORM_DATA);
+                requestBody = formData;
+            }
+
             try {
                 URI uri = uriBuilder.build(Boolean.TRUE).toUri();
-                HttpEntity<?> httpEntity = HttpClientUtils.initHttpEntity(httpHeaders, body);
+                HttpEntity<?> httpEntity = HttpClientUtils.initHttpEntity(httpHeaders, requestBody);
                 ResponseEntity<?> response = restTemplate.exchange(uri, method, httpEntity, responseType);
                 return objectMapper.convertValue(response.getBody(), responseType);
             } catch (Exception e) {
@@ -91,6 +104,10 @@ public class HttpClientUtils {
 
     public static HttpEntity<?> initHttpEntity(HttpHeaders headers, Object requestBody) {
         HttpEntity<?> request;
+
+        if (MediaType.MULTIPART_FORM_DATA.equals(headers.getContentType())) {
+            return new HttpEntity<>(requestBody, headers);
+        }
 
         try {
             String json = Objects.nonNull(requestBody) ? objectMapper.writeValueAsString(requestBody) : null;
@@ -107,12 +124,6 @@ public class HttpClientUtils {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         headers.add(HttpHeaders.USER_AGENT, "Mozilla/5.0 Firefox/26.0");
-        return headers;
-    }
-
-    public static HttpHeaders initHeaders(Map<String, List<String>> headerParams) {
-        HttpHeaders headers = initHeaders();
-        headers.putAll(headerParams);
         return headers;
     }
 }
