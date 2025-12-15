@@ -5,6 +5,7 @@ import com.dct.model.autoconfig.DataConverterAutoConfiguration;
 import com.dct.model.common.JsonUtils;
 import com.dct.model.constants.BaseExceptionConstants;
 import com.dct.model.constants.BaseHttpStatusConstants;
+import com.dct.model.constants.BaseRoleConstants;
 import com.dct.model.dto.auth.BaseUserDTO;
 import com.dct.model.dto.auth.JwtDTO;
 import com.dct.model.dto.response.BaseResponseDTO;
@@ -19,6 +20,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.util.StringUtils;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
@@ -31,6 +33,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @SuppressWarnings("unused")
@@ -52,6 +55,34 @@ public class Common {
         response.flushBuffer();
     }
 
+    public static BaseUserDTO checkShopAuthorities(Integer shopId) {
+        BaseUserDTO userDTO = getUserWithAuthorities();
+
+        if (userDTO.hasAuthority(BaseRoleConstants.ADMIN)) {
+            return userDTO;
+        }
+
+        if (Objects.nonNull(shopId) && !Objects.equals(shopId, userDTO.getShopId())) {
+            throw new BaseAuthenticationException(ENTITY_NAME, BaseExceptionConstants.FORBIDDEN);
+        }
+
+        return userDTO;
+    }
+
+    public static BaseUserDTO checkUserAuthorities(Integer userId) {
+        BaseUserDTO userDTO = getUserWithAuthorities();
+
+        if (userDTO.hasAuthority(BaseRoleConstants.ADMIN)) {
+            return userDTO;
+        }
+
+        if (Objects.nonNull(userId) && !Objects.equals(userId, userDTO.getId())) {
+            throw new BaseAuthenticationException(ENTITY_NAME, BaseExceptionConstants.FORBIDDEN);
+        }
+
+        return userDTO;
+    }
+
     public static BaseUserDTO getUserWithAuthorities() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
@@ -66,12 +97,17 @@ public class Common {
             HttpServletRequest request = Objects.nonNull(attributes) ? attributes.getRequest() : null;
             String jwt = Objects.nonNull(request) ? request.getHeader(HttpHeaders.AUTHORIZATION) : null;
             JwtDTO jwtDTO = Optional.ofNullable(getInfoJwt(jwt)).orElseGet(JwtDTO::new);
+            String userAuthoritiesStr = Optional.ofNullable(jwtDTO.getAuthorities()).orElse("");
+            Set<String> authorities = Arrays.stream(userAuthoritiesStr.split(","))
+                    .filter(StringUtils::hasText)
+                    .collect(Collectors.toSet());
 
             return BaseUserDTO.userBuilder()
                     .withId(jwtDTO.getUserId())
                     .withShopId(jwtDTO.getShopId())
+                    .withShopName(jwtDTO.getShopName())
                     .withUsername(jwtDTO.getUsername())
-                    .withAuthorities(Arrays.stream(jwtDTO.getAuthorities().split(",")).collect(Collectors.toSet()))
+                    .withAuthorities(authorities)
                     .build();
         }
 
