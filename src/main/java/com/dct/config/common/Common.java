@@ -87,12 +87,6 @@ public class Common {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
         if (Objects.nonNull(authentication) && authentication.isAuthenticated()) {
-            Object principal = authentication.getPrincipal();
-
-            if (principal instanceof BaseUserDTO user) {
-                return user;
-            }
-
             ServletRequestAttributes attributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
             HttpServletRequest request = Objects.nonNull(attributes) ? attributes.getRequest() : null;
             String jwt = Objects.nonNull(request) ? request.getHeader(HttpHeaders.AUTHORIZATION) : null;
