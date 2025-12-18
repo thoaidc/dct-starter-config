@@ -267,11 +267,11 @@ app:
     activate: enabled
     endpoints:
       - "/ws"
-      - "/wss"
     application-prefixes:
-      - "/api/ws"
+      - "/api/p/v1/messages"
     broker-prefixes:
-      - "/api/topic"
+      - "/topics"
+    allowed-origin-patterns: "*"
 
   rabbitmq:
     activate: enabled
