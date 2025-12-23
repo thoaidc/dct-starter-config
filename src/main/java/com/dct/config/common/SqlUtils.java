@@ -52,6 +52,7 @@ public class SqlUtils {
     public static final String CLOSE_PAREN = ")";
     public static final String ORDER_BY = " ORDER BY ";
     public static final String DESC = " DESC";
+    public static final String GROUP_BY = " GROUP BY ";
 
     public static <T extends BaseRequestDTO> void addDateTimeCondition(
         StringBuilder sql,
@@ -84,6 +85,10 @@ public class SqlUtils {
 
     public static void addLessThanOrEqualCondition(StringBuilder sql, Map<String, Object> params, String column, Object value) {
         addSqlSingleCondition(sql, params, LESS_THAN_OR_EQUAL, column, value);
+    }
+
+    public static void addGroupByClause(StringBuilder sql, String column) {
+        sql.append(GROUP_BY).append(column);
     }
 
     private static void addSqlSingleCondition(
