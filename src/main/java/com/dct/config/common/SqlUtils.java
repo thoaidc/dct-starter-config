@@ -195,7 +195,7 @@ public class SqlUtils {
         params.forEach(query::setParameter);
     }
 
-    private static String replaceWhere(@NotNull StringBuilder query) {
+    public static String replaceWhere(@NotNull StringBuilder query) {
         String toReplace = WHERE_AND;
         int index = query.indexOf(toReplace);
 
