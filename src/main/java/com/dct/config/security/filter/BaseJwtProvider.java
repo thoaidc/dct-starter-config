@@ -1,7 +1,9 @@
 package com.dct.config.security.filter;
 
 import com.dct.model.config.properties.SecurityProps;
+import com.dct.model.constants.BaseSecurityConstants;
 import com.dct.model.dto.auth.BaseTokenDTO;
+import com.dct.model.dto.auth.BaseUserDTO;
 import com.dct.model.exception.BaseIllegalArgumentException;
 import com.dct.model.security.AbstractJwtProvider;
 
@@ -12,11 +14,16 @@ import io.jsonwebtoken.security.Keys;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.util.StringUtils;
 
 import javax.crypto.SecretKey;
+import java.util.Arrays;
 import java.util.Base64;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @SuppressWarnings("unused")
 public abstract class BaseJwtProvider extends AbstractJwtProvider {
@@ -47,7 +54,36 @@ public abstract class BaseJwtProvider extends AbstractJwtProvider {
 
     public Authentication validateRefreshToken(String refreshToken) {
         Claims claims = super.parseToken(this.refreshTokenParser, refreshToken);
-        return super.getAuthentication(claims);
+        return getAuthentication(claims);
+    }
+
+    @Override
+    protected Authentication getAuthentication(Claims claims) {
+        try {
+            Integer userId = (Integer) claims.get(BaseSecurityConstants.TOKEN_PAYLOAD.USER_ID);
+            Integer shopId = null;
+
+            try {
+                shopId = (Integer) claims.get(BaseSecurityConstants.TOKEN_PAYLOAD.SHOP_ID);
+            } catch (Exception ignored){}
+
+            String username = (String) claims.get(BaseSecurityConstants.TOKEN_PAYLOAD.USERNAME);
+            String authorities = (String) claims.get(BaseSecurityConstants.TOKEN_PAYLOAD.AUTHORITIES);
+            Set<SimpleGrantedAuthority> userAuthorities = Arrays.stream(authorities.split(","))
+                    .filter(StringUtils::hasText)
+                    .map(SimpleGrantedAuthority::new)
+                    .collect(Collectors.toSet());
+            BaseUserDTO principal = BaseUserDTO.userBuilder()
+                    .withId(userId)
+                    .withShopId(shopId)
+                    .withUsername(username)
+                    .withAuthorities(userAuthorities)
+                    .build();
+            return new UsernamePasswordAuthenticationToken(principal, username, userAuthorities);
+        } catch (Exception e) {
+            log.error("[JWT_PROVIDER_GET_AUTHENTICATION_ERROR] - error: {}", e.getMessage());
+            throw new BaseIllegalArgumentException(ENTITY_NAME, "Could not get authentication from token");
+        }
     }
 
     public abstract String generateAccessToken(BaseTokenDTO tokenDTO);
