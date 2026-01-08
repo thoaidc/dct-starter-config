@@ -48,6 +48,7 @@ public class SqlUtils {
     public static final String LESS_THAN = " < :";
     public static final String LESS_THAN_OR_EQUAL = " <= :";
     public static final String IN = " IN (:";
+    public static final String NOT_IN = " NOT IN (:";
     public static final String OPEN_PAREN = "(";
     public static final String CLOSE_PAREN = ")";
     public static final String ORDER_BY = " ORDER BY ";
@@ -127,6 +128,13 @@ public class SqlUtils {
     public static void addInCondition(StringBuilder sql, Map<String, Object> params, String column, Collection<?> values) {
         if (Objects.nonNull(values) && !values.isEmpty()) {
             sql.append(AND).append(column).append(IN).append(column).append(LIST).append(CLOSE_PAREN);
+            params.put(column + LIST, values);
+        }
+    }
+
+    public static void addNotInCondition(StringBuilder sql, Map<String, Object> params, String column, Collection<?> values) {
+        if (Objects.nonNull(values) && !values.isEmpty()) {
+            sql.append(AND).append(column).append(NOT_IN).append(column).append(LIST).append(CLOSE_PAREN);
             params.put(column + LIST, values);
         }
     }
